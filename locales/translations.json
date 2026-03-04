@@ -1,0 +1,226 @@
+{
+  "AF=None einschließen": {
+    "de": "AF=None einschließen",
+    "en": "Include AF=None"
+  },
+  "API Key speichern": {
+    "de": "API Key speichern",
+    "en": "Save API key"
+  },
+  "Angezeigt: ? Varianten": {
+    "de": "Angezeigt: ? Varianten",
+    "en": "Displayed: ? variants"
+  },
+  "Blacklist (ausschließen):": {
+    "de": "Blacklist (ausschließen):",
+    "en": "Blacklist (exclude):"
+  },
+  "CADD Filter:": {
+    "de": "CADD Filter:",
+    "en": "CADD filter:"
+  },
+  "CSV Export": {
+    "de": "CSV Export",
+    "en": "CSV export"
+  },
+  "DP-Filter aktivieren (Read Depth)": {
+    "de": "DP-Filter aktivieren (Read Depth)",
+    "en": "Enable DP filter (Read Depth)"
+  },
+  "Datei auswählen": {
+    "de": "Datei auswählen",
+    "en": "Select file"
+  },
+  "Datei wählen": {
+    "de": "Datei wählen",
+    "en": "Choose file"
+  },
+  "Dateiauswahl": {
+    "de": "Dateiauswahl",
+    "en": "File selection"
+  },
+  "Datenalter für Refresh (Tage):": {
+    "de": "Datenalter für Refresh (Tage):",
+    "en": "Data age for refresh (days)"
+  },
+  "Datenbankdatei:": {
+    "de": "Datenbankdatei:",
+    "en": "Database file:"
+  },
+  "Excel Export": {
+    "de": "Excel Export",
+    "en": "Excel export"
+  },
+  "Export Format wählen:": {
+    "de": "Export Format wählen:",
+    "en": "Choose export format:"
+  },
+  "FASTQ-Datei:": {
+    "de": "FASTQ-Datei:",
+    "en": "FASTQ file:"
+  },
+  "FILTER=PASS": {
+    "de": "FILTER=PASS",
+    "en": "FILTER=PASS"
+  },
+  "Hauptfilter": {
+    "de": "Hauptfilter",
+    "en": "Main filter"
+  },
+  "Hinweis: AlphaMissense Scores werden nur für gefilterte Varianten abgerufen.": {
+    "de": "Hinweis: AlphaMissense Scores werden nur für gefilterte Varianten abgerufen.",
+    "en": "Note: AlphaMissense scores are retrieved only for filtered variants."
+  },
+  "Keine Datei ausgewählt": {
+    "de": "Keine Datei ausgewählt",
+    "en": "No file selected"
+  },
+  "Laden": {
+    "de": "Laden",
+    "en": "Load"
+  },
+  "Nachfilter": {
+    "de": "Nachfilter",
+    "en": "Post-filter"
+  },
+  "Nachfilter anwenden": {
+    "de": "Nachfilter anwenden",
+    "en": "Apply post-filter"
+  },
+  "Nur PASS Filter": {
+    "de": "Nur PASS Filter",
+    "en": "PASS filter only"
+  },
+  "Nur PASS-Varianten akzeptieren (FILTER-Spalte)": {
+    "de": "Nur PASS-Varianten akzeptieren (FILTER-Spalte)",
+    "en": "Accept only PASS variants (FILTER column)"
+  },
+  "PDF Export": {
+    "de": "PDF Export",
+    "en": "PDF export"
+  },
+  "Phase: —": {
+    "de": "Phase: —",
+    "en": "Phase: —"
+  },
+  "Speichern": {
+    "de": "Speichern",
+    "en": "Save"
+  },
+  "VCF Export": {
+    "de": "VCF Export",
+    "en": "VCF export"
+  },
+  "Varianten ohne AF-Wert können verschiedene Gründe haben:": {
+    "de": "Varianten ohne AF-Wert können verschiedene Gründe haben:",
+    "en": "Variants without AF value may have different reasons:"
+  },
+  "Verarbeitung läuft...": {
+    "de": "Verarbeitung läuft...",
+    "en": "Processing..."
+  },
+  "Whitelist (einschließen):": {
+    "de": "Whitelist (einschließen):",
+    "en": "Whitelist (include):"
+  },
+  "Übernehmen": {
+    "de": "Übernehmen",
+    "en": "Apply"
+  },
+  "⚠️ EMPFOHLEN: Immer aktiviert lassen für klinische Analyse!": {
+    "de": "⚠️ EMPFOHLEN: Immer aktiviert lassen für klinische Analyse!",
+    "en": "⚠️ RECOMMENDED: Keep always enabled for clinical analysis!"
+  },
+  "🔍 AF-None-Behandlung (Anzeige-Filterung)": {
+    "de": "🔍 AF-None-Behandlung (Anzeige-Filterung)",
+    "en": "🔍 AF-None handling (display filtering)"
+  },
+  "🔵 Nie geprüfte in Anzeige einschließen": {
+    "de": "🔵 Nie geprüfte in Anzeige einschließen",
+    "en": "🔵 Include never-checked in display"
+  },
+  "🟠 Fehlerhafte Abrufe in Anzeige einschließen": {
+    "de": "🟠 Fehlerhafte Abrufe in Anzeige einschließen",
+    "en": "🟠 Include failed retrievals in display"
+  },
+  "🟢 Validiert seltene in Anzeige einschließen": {
+    "de": "🟢 Validiert seltene in Anzeige einschließen",
+    "en": "🟢 Include validated rare in display"
+  },
+  "Angezeigt: 0 Varianten": {
+    "de": "Angezeigt: 0 Varianten",
+    "en": "Displayed: 0 variants"
+  },
+  "Annotiertes VCF exportieren": {
+    "de": "Annotiertes VCF exportieren",
+    "en": "Export annotated VCF"
+  },
+  "Blacklist laden": {
+    "de": "Blacklist laden",
+    "en": "Load blacklist"
+  },
+  "Blacklist speichern": {
+    "de": "Blacklist speichern",
+    "en": "Save blacklist"
+  },
+  "Blacklist:": {
+    "de": "Blacklist:",
+    "en": "Blacklist:"
+  },
+  "CSV exportieren": {
+    "de": "CSV exportieren",
+    "en": "Export CSV"
+  },
+  "Datei:": {
+    "de": "Datei:",
+    "en": "File:"
+  },
+  "Excel exportieren": {
+    "de": "Excel exportieren",
+    "en": "Export Excel"
+  },
+  "Export": {
+    "de": "Export",
+    "en": "Export"
+  },
+  "Fehler": {
+    "de": "Fehler",
+    "en": "Error"
+  },
+  "Filter anwenden": {
+    "de": "Filter anwenden",
+    "en": "Apply filter"
+  },
+  "Filter zurücksetzen": {
+    "de": "Filter zurücksetzen",
+    "en": "Reset filter"
+  },
+  "GEN-Whitelist:": {
+    "de": "GEN-Whitelist:",
+    "en": "GEN whitelist:"
+  },
+  "Nachgestellte Filter": {
+    "de": "Nachgestellte Filter",
+    "en": "Subsequent filters"
+  },
+  "PDF exportieren": {
+    "de": "PDF exportieren",
+    "en": "Export PDF"
+  },
+  "Phase: –": {
+    "de": "Phase: –",
+    "en": "Phase: –"
+  },
+  "Whitelist laden": {
+    "de": "Whitelist laden",
+    "en": "Load whitelist"
+  },
+  "Whitelist speichern": {
+    "de": "Whitelist speichern",
+    "en": "Save whitelist"
+  },
+  "Wählen": {
+    "de": "Wählen",
+    "en": "Select"
+  }
+}

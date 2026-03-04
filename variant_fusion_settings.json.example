@@ -1,0 +1,115 @@
+{
+  "af_threshold": 0.007,
+  "include_none": false,
+  "cadd_highlight_threshold": 22.0,
+  "stale_days": 200,
+  "alphagenome_key": "",
+  "skip_info_recycling": true,
+  "vcf_export_mode": "filtered",
+  "visible_columns": [
+    "genotype", "impact", "pubmed", "coding", "ref", "cadd",
+    "cons", "rsid", "pos", "chr", "af", "full_status", "ag",
+    "consequence", "build", "meanAF_status", "clin_sig", "alt",
+    "phenotypes", "gene"
+  ],
+  "quality_settings": {
+    "preset": "custom",
+    "filter_pass_only": false,
+    "qual_threshold": 10.0,
+    "use_dp_filter": false,
+    "min_dp": 5,
+    "max_dp": null,
+    "filter_homref": true
+  },
+  "theme": "cosmo",
+  "external_db_viewer": "",
+  "stale_days_full": 30,
+  "column_links": {
+    "gene": {
+      "trigger": "double",
+      "template": "https://www.malacards.org/card/{value}"
+    },
+    "rsid": {
+      "trigger": "double",
+      "template": "https://www.ncbi.nlm.nih.gov/snp/{value}"
+    },
+    "pos": {
+      "trigger": "none",
+      "template": "https://gnomad.broadinstitute.org/region/{chr}-{pos}-{pos}?dataset=gnomad_r4"
+    },
+    "pubmed": {
+      "trigger": "double",
+      "template": "https://pubmed.ncbi.nlm.nih.gov/?term={gene}+{consequence}+variant"
+    }
+  },
+  "cloud_warning_dismissed": false,
+  "setup_dialog_suppressed": false,
+  "api_settings": {
+    "global": {
+      "max_retries": 3,
+      "ncbi_api_key": ""
+    },
+    "phase1_af": {
+      "myvariant": {
+        "enabled": true,
+        "timeout": 71,
+        "batch_size": 400,
+        "workers": 8
+      },
+      "gnomad": {
+        "enabled": true,
+        "timeout": 63,
+        "workers": 8
+      },
+      "vep": {
+        "enabled": true,
+        "timeout": 63,
+        "batch_size": 25,
+        "workers": 4
+      },
+      "alfa": {
+        "enabled": true,
+        "timeout": 34,
+        "workers": 4
+      },
+      "topmed": {
+        "enabled": false,
+        "timeout": 19,
+        "workers": 6
+      }
+    },
+    "phase2_full": {
+      "myvariant_full": {
+        "enabled": true,
+        "timeout": 60,
+        "batch_size": 500
+      }
+    },
+    "phase4_rsid": {
+      "ncbi_allele": {
+        "enabled": true,
+        "timeout": 10,
+        "rate_limit": 0.35
+      }
+    },
+    "phase5_fill": {
+      "ncbi_clinvar": {
+        "enabled": true,
+        "timeout": 10,
+        "rate_limit": 0.5
+      },
+      "myvariant_cons": {
+        "enabled": true,
+        "timeout": 10,
+        "rate_limit": 0.5
+      }
+    },
+    "phase6_ag": {
+      "alphagenome": {
+        "enabled": true,
+        "timeout": 30,
+        "api_key": ""
+      }
+    }
+  }
+}

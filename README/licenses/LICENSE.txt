@@ -1,0 +1,47 @@
+LICENSE – Variant Fusion
+1. Usage Rights
+• 	The purchase of a license applies to the entire organization (e.g., institute, university, company).
+• 	All members of this organization may use the software and internally share the provided source code.
+• 	Redistribution to external third parties outside the organization is not permitted.
+2. Modification
+• 	Members of the organization may adapt and modify the source code for internal use.
+• 	Custom modifications may be shared within the organization.
+• 	Publication or redistribution of modifications outside the organization is prohibited.
+3. Redistribution
+• 	Internal redistribution within the organization is permitted.
+• 	External redistribution, publication, or sale of the software or source code is prohibited.
+4. Third‑Party Libraries
+• 	The software uses third‑party libraries under MIT, BSD, and Apache 2.0 licenses.
+• 	The respective license texts are included and remain unaffected.
+• 	Users are required to comply with these licenses.
+5. Research and Educational Purposes
+• 	The software is intended exclusively for educational and research purposes.
+• 	It is not medically validated and must not be used for clinical diagnosis or therapeutic decisions.
+• 	Results must always be verified using medically validated software or procedures.
+• 	The software is intended solely as a screening tool.
+6. Experimental Features
+• 	Processing of FASTQ and FASTA files is a highly experimental feature.
+• 	Results from these functions must be interpreted with particular caution.
+• 	It is recommended to use these functions only for testing and research purposes.
+7. Disclaimer of Liability
+• 	The software is provided without any warranty (“as is”).
+• 	Liability for damages arising from its use is excluded to the extent permitted by law.
+• 	Liability for intent, gross negligence, and for damages to life, body, or health remains unaffected.
+8. Updates
+• 	There is no obligation to provide regular updates to the software.
+• 	Updates or improvements may be provided at the discretion of the author, without any entitlement.
+
+Third‑Party Licenses
+This software uses, among others, the following libraries:
+• 	requests (Apache 2.0)
+• 	intervaltree (Apache 2.0)
+• 	aiohttp (Apache 2.0)
+• 	psutil (BSD)
+• 	pystray (MIT)
+• 	Pillow (PIL License)
+• 	openpyxl (MIT, optional)
+• 	reportlab (BSD, optional)
+• 	numpy (BSD, optional)
+• 	biopython (Biopython License, optional)
+• 	pyfaidx (MIT, optional)
+• 	alphagenome (separately licensed, usable only with a valid API key)
