@@ -234,7 +234,13 @@ except ImportError:
 __version__ = "17.0"
 APP_VERSION = "V17"
 APP_NAME = "Variant Fusion Pro"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# PyInstaller One-File: _MEIPASS fuer gebundelte Daten, EXE-Pfad fuer User-Dateien
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+    _BUNDLE_DIR = getattr(sys, '_MEIPASS', BASE_DIR)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    _BUNDLE_DIR = BASE_DIR
 
 # =============================================================================
 # EARLY SPLASH WINDOW (V17.1) - Sofortiges visuelles Feedback beim Start
@@ -1035,7 +1041,7 @@ config = Config()
 TEMP_VCF_DIR = config.TEMP_VCF_DIR
 SETTINGS_FILE = config.SETTINGS_FILE
 CACHE_FILE = config.CACHE_FILE
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# BASE_DIR bereits oben gesetzt (PyInstaller-kompatibel)
 
 # =============================================================================
 # SINGLE INSTANCE LOCK & CLOUD SYNC CHECK
@@ -21703,6 +21709,19 @@ class App(ttk.Window):
             logger.log("[App] 🛑 Beende Anwendung...")
             
             # ============================================================
+            # FAST EXIT fuer PyInstaller (kein Cleanup noetig)
+            # ============================================================
+            if getattr(sys, 'frozen', False):
+                if hasattr(self, "stopflag") and isinstance(self.stopflag, StopFlag):
+                    self.stopflag.stop()
+                try:
+                    self.destroy()
+                except Exception:
+                    pass
+                release_single_instance()
+                os._exit(0)
+            
+            # ============================================================
             # PHASE 1: STOPFLAG SETZEN
             # ============================================================
             if hasattr(self, "stopflag") and isinstance(self.stopflag, StopFlag):
@@ -21855,6 +21874,9 @@ class App(ttk.Window):
             # PHASE 8: BACKOFFICE-CRAWLER STARTEN
             # ============================================================
             try:
+                if getattr(sys, 'frozen', False):
+                    logger.log('[App] ℹ️ PyInstaller-Modus: BackofficeCrawler deaktiviert (sauberer Exit)')
+                    db_path = None  # Skip Crawler
                 if db_path:
                     logger.log("[App] 🚀 Starte BackofficeCrawler...")
                     
@@ -21903,6 +21925,10 @@ class App(ttk.Window):
                 # ✅ V17: PID Lock freigeben
                 release_single_instance()
                 logger.log("[App] 👋 Auf Wiedersehen!")
+                
+                # PyInstaller: Harter Exit um haengende non-daemon Threads zu beenden
+                if getattr(sys, 'frozen', False):
+                    os._exit(0)
 
 
     # =========================================================================
