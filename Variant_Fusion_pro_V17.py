@@ -3691,8 +3691,8 @@ async def mv_fetch_async(keys, build, fetch_full, batch_size=1000, logger=None, 
 
     try:
         connector = aiohttp.TCPConnector(
-            limit=max_concurrent,
-            limit_per_host=max_concurrent,
+            limit=_sem_count,
+            limit_per_host=_sem_count,
             ttl_dns_cache=300
         )
 
@@ -23629,6 +23629,13 @@ class App(ttk.Window):
             onvalue=True, offvalue=False, command=self._save_settings
         )
         
+        # Sprache
+        optionsmenu.add_separator()
+        langmenu = tk.Menu(optionsmenu, tearoff=0)
+        optionsmenu.add_cascade(label="Sprache / Language", menu=langmenu)
+        langmenu.add_command(label="Deutsch", command=lambda: self.change_language("de"))
+        langmenu.add_command(label="English", command=lambda: self.change_language("en"))
+
         # Design-Menü
         designmenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Design", menu=designmenu)
@@ -23856,8 +23863,11 @@ class App(ttk.Window):
         settings_window.title("Allgemeine Einstellungen & Links")
         settings_window.geometry("850x700")
         settings_window.transient(self)
-        settings_window.grab_set()
+        settings_window.withdraw()
+        settings_window.update_idletasks()
         settings_window.place_window_center()
+        settings_window.deiconify()
+        settings_window.grab_set()
         
         notebook = ttk.Notebook(settings_window)
         notebook.pack(fill=BOTH, expand=YES, padx=10, pady=10)
