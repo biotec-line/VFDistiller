@@ -329,10 +329,14 @@ GUI-Updates via `EmitQueue` mit Throttling (max. alle 100ms).
 
 ## Bekannte Architektur-Schulden
 
-1. **Flag_and_Options_Manager nicht vollstaendig integriert** — App verwendet teilweise noch direkt tk.BooleanVar statt FlagManager
-2. **AFFetchController doppelt instanziiert** — In App und BackgroundMaintainer separat
-3. **EmitQueue Direktzugriffe** — VCFBuffer greift direkt auf emit_queue zu statt drain_live_enqueue
-4. **CodingFilter doppelt instanziiert** — In MainFilterGate und Distiller
+1. **Flag_and_Options_Manager nicht vollstaendig integriert** — App verwendet parallel tk.BooleanVar neben dem FlagManager
+2. **EmitQueue Direktzugriffe** — VCFBuffer greift direkt auf emit_queue zu statt drain_live_enqueue (bewusste Designentscheidung fuer Single-Key-Updates)
+3. **CodingFilter doppelt instanziiert** — Separate Instanzen in MainFilterGate und Distiller
+
+### Erledigt (2026-03)
+
+- **AFFetchController** — Einzelinstanz in App, wird per Referenz an Distiller und BackgroundMaintainer uebergeben
+- **STALE_DAYS Refactoring** — Config.STALE_DAYS_AF=365, Config.STALE_DAYS_FULL=30, separate Getter/Setter, UI-Integration
 
 ## Konfigurationsdateien
 

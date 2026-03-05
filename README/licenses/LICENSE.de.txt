@@ -1,49 +1,58 @@
-LICENSE – Variant Fusion
+VFDistiller Lizenz v1.0
 
-1. Nutzungsrechte
-• 	Der Erwerb einer Lizenz gilt für die gesamte Organisation (z. B. Institut, Universität, Unternehmen).
-• 	Alle Mitglieder dieser Organisation dürfen die Software nutzen und den mitgelieferten Quellcode intern weitergeben.
-• 	Eine Weitergabe an externe Dritte außerhalb der Organisation ist nicht gestattet.
-2. Anpassung
-• 	Mitglieder der Organisation dürfen den Quellcode für den internen Gebrauch anpassen und modifizieren.
-• 	Eigene Anpassungen dürfen innerhalb der Organisation geteilt werden.
-• 	Eine Veröffentlichung oder Weitergabe der Anpassungen außerhalb der Organisation ist untersagt.
-3. Weitergabe
-• 	Interne Weitergabe innerhalb der Organisation ist erlaubt.
-• 	Externe Weitergabe, Veröffentlichung oder Verkauf der Software oder des Quellcodes ist untersagt.
-4. Drittbibliotheken
-• 	Die Software nutzt Drittbibliotheken unter MIT, BSD und Apache 2.0 Lizenzen.
-• 	Die jeweiligen Lizenztexte sind beigefügt und bleiben unberührt.
-• 	Der Nutzer verpflichtet sich, diese Lizenzen einzuhalten.
-5. Forschungs- und Bildungszwecke
-• 	Die Software ist ausschließlich für Bildungs- und Forschungszwecke vorgesehen.
-• 	Sie ist nicht medizinisch validiert und darf nicht für klinische Diagnosen oder Therapieentscheidungen verwendet werden.
-• 	Ergebnisse müssen stets durch medizinisch validierte Software oder Verfahren überprüft werden.
-• 	Die Software ist nur als Screening‑Werkzeug gedacht.
-6. Experimentelle Funktionen
-• 	Die Verarbeitung von FASTQ und FASTA Dateien ist ein hoch experimentelles Feature.
-• 	Ergebnisse aus diesen Funktionen sind mit besonderer Vorsicht zu interpretieren.
-• 	Es wird empfohlen, diese Funktionen nur zu Test‑ und Forschungszwecken einzusetzen.
-7. Haftungsausschluss
-• 	Die Software wird ohne jegliche Garantie bereitgestellt („as is“).
-• 	Eine Haftung für Schäden, die aus der Nutzung entstehen, ist ausgeschlossen, soweit gesetzlich zulässig.
-• 	Die Haftung für Vorsatz, grobe Fahrlässigkeit sowie für Schäden an Leben, Körper und Gesundheit bleibt unberührt.
-8. Updates
-• 	Es besteht keine Verpflichtung, die Software regelmäßig zu aktualisieren.
-• 	Updates oder Verbesserungen können nach Ermessen des Autors bereitgestellt werden, ohne dass ein Anspruch darauf besteht.
+Copyright (c) 2024-2026 Lukas Geiger. Alle Rechte vorbehalten.
 
-Third‑Party Licenses
-Die Software verwendet u. a. folgende Bibliotheken:
-• 	requests (Apache 2.0)
-• 	intervaltree (Apache 2.0)
-• 	aiohttp (Apache 2.0)
-• 	psutil (BSD)
-• 	pystray (MIT)
-• 	Pillow (PIL License)
-• 	openpyxl (MIT, optional)
-• 	reportlab (BSD, optional)
-• 	numpy (BSD, optional)
-• 	biopython (Biopython License, optional)
-• 	pyfaidx (MIT, optional)
-• 	alphagenome (separat lizenziert, nur mit gültigem API‑Key nutzbar)
-Die vollständigen Lizenztexte dieser Bibliotheken sind im Ordner  beigefügt.
+Hiermit wird jeder Person oder Organisation, die eine Kopie dieser Software
+und der zugehoerigen Dokumentationsdateien (die "Software") erhaelt,
+kostenlos die Erlaubnis erteilt, die Software zu nutzen, zu kopieren und
+zu modifizieren, vorbehaltlich der folgenden Bedingungen:
+
+1. ERLAUBTE NUTZUNG
+   - Die Software darf fuer jeden Zweck verwendet werden, einschliesslich
+     Forschung, Bildung und persoenlicher Nutzung.
+   - Der Quellcode darf fuer interne Zwecke angepasst und modifiziert werden.
+
+2. NUR INTERNE WEITERGABE
+   - Kopien oder Modifikationen der Software duerfen innerhalb der eigenen
+     Organisation (z.B. Institut, Universitaet, Unternehmen) geteilt werden.
+   - Eine Weitergabe an externe Dritte ausserhalb der Organisation ist ohne
+     schriftliche Zustimmung des Autors nicht gestattet.
+
+3. KEIN WEITERVERKAUF
+   - Die Software darf weder im Original noch in modifizierter Form verkauft,
+     unterlizenziert oder kommerziell weiterverbreitet werden.
+   - Das Anbieten der Software oder abgeleiteter Werke als kostenpflichtiges
+     Produkt oder Dienstleistung ist untersagt.
+
+4. VERSIONSGEBUNDENE LIZENZ
+   - Diese Lizenz gilt fuer die spezifische Hauptversion der Software, mit
+     der sie ausgeliefert wurde (z.B. V17.x).
+   - Nachfolgeprodukte oder neue Hauptversionen koennen unter anderen
+     Bedingungen veroeffentlicht werden.
+
+5. DRITTBIBLIOTHEKEN
+   - Die Software enthaelt Drittbibliotheken unter MIT-, BSD- und
+     Apache-2.0-Lizenzen. Deren jeweilige Lizenzbedingungen gelten unveraendert.
+   - Siehe THIRD_PARTY_LICENSES.txt fuer Details.
+
+6. MEDIZINISCHER HAFTUNGSAUSSCHLUSS
+   - Die Software ist ausschliesslich fuer Forschungs- und Bildungszwecke bestimmt.
+   - Sie ist NICHT medizinisch validiert und darf NICHT fuer klinische Diagnosen
+     oder Therapieentscheidungen verwendet werden.
+   - Ergebnisse muessen stets durch medizinisch validierte Verfahren ueberprueft werden.
+
+7. KEINE GARANTIE
+   - DIE SOFTWARE WIRD "WIE BESEHEN" BEREITGESTELLT, OHNE JEGLICHE AUSDRUECKLICHE
+     ODER STILLSCHWEIGENDE GARANTIE, EINSCHLIESSLICH DER GARANTIE DER
+     MARKTGAENGIGKEIT, DER EIGNUNG FUER EINEN BESTIMMTEN ZWECK UND DER
+     NICHTVERLETZUNG VON RECHTEN DRITTER.
+   - DER AUTOR HAFTET IN KEINEM FALL FUER ANSPRUECHE, SCHAEDEN ODER SONSTIGE
+     VERBINDLICHKEITEN AUS DER NUTZUNG DER SOFTWARE.
+   - Die Haftung fuer Vorsatz, grobe Fahrlaessigkeit sowie fuer Schaeden an
+     Leben, Koerper und Gesundheit bleibt nach deutschem Recht unberuehrt.
+
+8. UPDATES
+   - Es besteht keine Verpflichtung, Updates oder Support bereitzustellen.
+   - Updates koennen nach Ermessen des Autors bereitgestellt werden.
+
+Lizenzanfragen: https://github.com/lukisch/VFDistiller

@@ -42,10 +42,11 @@ logs/
 .vf_instance.lock
 
 # ---------------------------------------------------------------------------
-# Data-Verzeichnis (Annotationen separat tracken)
+# Data-Verzeichnis (werden zur Laufzeit heruntergeladen)
 # ---------------------------------------------------------------------------
 data/lightdb_config.json
 data/annotations/*_index.pkl
+data/annotations/*.gtf.gz
 
 # ---------------------------------------------------------------------------
 # Cache / Bytecode
@@ -85,6 +86,8 @@ _WARTUNG/
 # ---------------------------------------------------------------------------
 AUFGABEN.txt
 classes.txt
+RELEASE_PLAN.md
+_persönlich/
 .claude/
 COMPLETE_PROJECT_CONTEXT.txt
 

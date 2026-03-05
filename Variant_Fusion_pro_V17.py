@@ -7,30 +7,26 @@ Maintenance nur im Leerlauf, DB-Batch-Writes und gedrosselten GUI-Updates.
 Windows-tauglich, ohne pysam/bcftools/samtools.
 
 ═══════════════════════════════════════════════════════════════════════════════
-V10 ARCHITEKTUR (Stand: 2024-12) - REFAKTORIERT
+V17 ARCHITEKTUR (Stand: 2026-03) - REFAKTORIERT
 ═══════════════════════════════════════════════════════════════════════════════
 
 OFFENE ARCHITEKTUR-SCHULDEN:
 
 1. FLAG_AND_OPTIONS_MANAGER NICHT VOLLSTÄNDIG INTEGRIERT
-   - Der Flag_and_Options_Manager existiert, wird aber NICHT von der App instanziiert
-   - Stattdessen verwendet die App direkt tk.BooleanVar (z.B. prefilter_protein_coding)
-   - Der Distiller greift über app_ref auf diese Variablen zu (Durchreichung)
-   - SOLL-Zustand: App erstellt Flag_Manager, übergibt ihn an alle Komponenten
-   
-2. AFFETCHCONTROLLER DOPPELT VERWENDET
-   - Wird sowohl in App als auch im BackgroundMaintainer erstellt
-   - Primär für BackgroundMaintainer gedacht
-   - Distiller hat eigene AF-Logik in _phase_af_fetch
-   
-3. EMIT_QUEUE DIREKTZUGRIFFE
-   - VCFBuffer und _ensure_gui_update greifen direkt auf emit_queue zu
-   - Für Batch-Updates sollte drain_live_enqueue verwendet werden
-   - Direktzugriff ist okay für Einzelupdates, aber sollte dokumentiert sein
+   - App verwendet parallel tk.BooleanVar neben dem FlagManager
+   - SOLL: App erstellt FlagManager, übergibt ihn an alle Komponenten
 
-4. CODING_FILTER DOPPELT INSTANZIIERT
-   - Sowohl in MainFilterGate als auch in Distiller
-   - Sollte nur an EINER Stelle sein (MainFilterGate)
+2. EMIT_QUEUE DIREKTZUGRIFFE (bewusste Designentscheidung)
+   - VCFBuffer greift direkt auf emit_queue zu statt drain_live_enqueue
+   - Für Single-Key-Updates akzeptabel, für Batch sollte drain_live_enqueue genutzt werden
+
+3. CODING_FILTER DOPPELT INSTANZIIERT
+   - Separate Instanzen in MainFilterGate und Distiller
+   - Sollte nur in MainFilterGate existieren und durchgereicht werden
+
+ERLEDIGT (2026-03):
+  - AFFetchController: Einzelinstanz in App, wird per Referenz an Distiller + BackgroundMaintainer übergeben
+  - STALE_DAYS Refactoring: Config.STALE_DAYS_AF=365, Config.STALE_DAYS_FULL=30, separate Getter/Setter, UI-Integration
    
 GENE-ANNOTATION DEBUGGING:
    - GeneAnnotator loggt jetzt detailliert: Pfade, Cache-Status, Build-Verfügbarkeit
@@ -389,11 +385,11 @@ if not HAVE_AIOHTTP:
     print("!"*70 + "\n")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# METHODENVERZEICHNIS V10 (zur Wartung)
+# METHODENVERZEICHNIS V17 (zur Wartung)
 # ═══════════════════════════════════════════════════════════════════════════════
 """
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        VARIANT FUSION PRO V10 - ARCHITEKTUR                     │
+│                        VARIANT FUSION PRO V17 - ARCHITEKTUR                     │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  App (GUI)                                                                      │
@@ -439,7 +435,7 @@ Externe APIs:      gnomad_fetch_async, vep_fetch_async, alfa_fetch_async
                    normalize_for_gnomad, normalize_for_vep
 
 ════════════════════════════════════════════════════════════════════════════════
-4. MANAGER-KLASSEN (V10 Architektur)
+4. MANAGER-KLASSEN (V17 Architektur)
 ════════════════════════════════════════════════════════════════════════════════
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
@@ -493,7 +489,7 @@ Config:            Zentrale Konfigurationskonstanten
 │   ├── _phase_missing_fill_streaming    → Fehlende Felder ergänzen              │
 │   └── _phase_alphagenome_streaming     → AlphaGenome Scores                    │
 │                                                                                 │
-│   FILTER-METHODEN (V10: Delegieren an MainFilterGate):                         │
+│   FILTER-METHODEN (Delegieren an MainFilterGate):                              │
 │   ├── _apply_af_filter_final(key, val) → "emit"|"reject"                       │
 │   └── _validate_af_in_cache(key, row)  → "emit"|"reject"|"fetch"               │
 │                                                                                 │
@@ -549,17 +545,6 @@ App:               Hauptfenster (Tkinter)
 
 QualitySettingsDialog:  Dialog für Quality-Filter Einstellungen
 
-════════════════════════════════════════════════════════════════════════════════
-V10 ÄNDERUNGEN GEGENÜBER V9
-════════════════════════════════════════════════════════════════════════════════
-
-✅ Flag_and_Options_Manager: Erweitert auf ~30 Flags (vorher 5)
-✅ MainFilterGate: Jetzt tatsächlich genutzt (vorher nie instanziiert)
-✅ CodingFilter: Nur noch in MainFilterGate (vorher doppelt)
-✅ AfNoneTreatmentManager: Jetzt SubGate von MainFilterGate
-✅ Dependency Injection: App erstellt alle Manager, übergibt an Distiller
-✅ Filter-Methoden: Delegieren an MainFilterGate statt eigene Logik
-✅ include_none: Trace auf korrekte Variable (Bug gefixt)
 """
 # =============================================================================
 # CONFIG: Zentrale Konfiguration (VOLLSTÄNDIG)
@@ -1206,56 +1191,10 @@ def pause_onedrive(logger=None) -> bool:
 
     Grund: OneDrive blockiert Dateien wenn es während Sync abgeschaltet wird.
     Lösung: DBs in lokalen Ordner auslagern statt OneDrive zu stoppen.
-
-    TODO: Arbeitsumgebung außerhalb OneDrive + Backup-Kopie nach VFDistiller
     """
     if logger:
         logger.log("[OneDrive] ⏸️ pause_onedrive() DEAKTIVIERT - Funktion blockiert")
     return False
-
-    # === ORIGINAL CODE (DEAKTIVIERT) ===
-    # global _onedrive_was_running
-    #
-    # def log(msg):
-    #     if logger:
-    #         logger.log(f"[OneDrive] {msg}")
-    #
-    # # Prüfe ob OneDrive läuft
-    # try:
-    #     result = subprocess.run(
-    #         ["tasklist", "/FI", "IMAGENAME eq OneDrive.exe"],
-    #         capture_output=True, text=True, timeout=5
-    #     )
-    #     if "OneDrive.exe" not in result.stdout:
-    #         log("OneDrive läuft nicht - nichts zu stoppen")
-    #         _onedrive_was_running = False
-    #         return False
-    # except Exception:
-    #     pass
-    #
-    # _onedrive_was_running = True
-    #
-    # onedrive_exe = _find_onedrive_exe()
-    # if not onedrive_exe:
-    #     log("⚠️ OneDrive.exe nicht gefunden - überspringe")
-    #     return False
-    #
-    # try:
-    #     log("⏸️ Stoppe OneDrive für Pipeline-Performance...")
-    #     subprocess.run(
-    #         [str(onedrive_exe), "/shutdown"],
-    #         timeout=10,
-    #         capture_output=True
-    #     )
-    #     time.sleep(2)  # Warten bis vollständig beendet
-    #     log("✅ OneDrive gestoppt")
-    #     return True
-    # except subprocess.TimeoutExpired:
-    #     log("⚠️ OneDrive-Shutdown Timeout")
-    #     return False
-    # except Exception as e:
-    #     log(f"⚠️ Konnte OneDrive nicht stoppen: {e}")
-    #     return False
 
 
 def resume_onedrive(logger=None) -> bool:
@@ -1264,44 +1203,10 @@ def resume_onedrive(logger=None) -> bool:
 
     Grund: OneDrive blockiert Dateien wenn es während Sync abgeschaltet wird.
     Lösung: DBs in lokalen Ordner auslagern statt OneDrive zu stoppen.
-
-    TODO: Arbeitsumgebung außerhalb OneDrive + Backup-Kopie nach VFDistiller
     """
     if logger:
         logger.log("[OneDrive] ▶️ resume_onedrive() DEAKTIVIERT - Funktion blockiert")
     return False
-
-    # === ORIGINAL CODE (DEAKTIVIERT) ===
-    # global _onedrive_was_running
-    #
-    # def log(msg):
-    #     if logger:
-    #         logger.log(f"[OneDrive] {msg}")
-    #
-    # if not _onedrive_was_running:
-    #     log("OneDrive war nicht aktiv - überspringe Start")
-    #     return False
-    #
-    # onedrive_exe = _find_onedrive_exe()
-    # if not onedrive_exe:
-    #     log("⚠️ OneDrive.exe nicht gefunden - überspringe")
-    #     return False
-    #
-    # try:
-    #     log("▶️ Starte OneDrive im Hintergrund...")
-    #     # Im Hintergrund starten (silent, kein Explorer-Fenster)
-    #     subprocess.Popen(
-    #         [str(onedrive_exe), "/background"],
-    #         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
-    #         stdout=subprocess.DEVNULL,
-    #         stderr=subprocess.DEVNULL
-    #     )
-    #     log("✅ OneDrive gestartet")
-    #     _onedrive_was_running = False  # Reset
-    #     return True
-    # except Exception as e:
-    #     log(f"⚠️ Konnte OneDrive nicht starten: {e}")
-    #     return False
 
 
 # =============================================================================
@@ -10193,11 +10098,6 @@ class VCFMigrationsdienst(multiprocessing.Process):
     - Automatic Cache-Cleanup nach erfolgreicher Migration
     - PID-File für Process-Management
     
-    TODO:
-    - Retry-Logik für fehlgeschlagene Batches
-    - Incremental Migration (nur neue Records)
-    - Compression für Cache-File
-    - Progress-Reporting über IPC
     """
     
     def __init__(
@@ -10592,11 +10492,6 @@ class BackofficeCrawler:
     - Flexible Maintainer-Class-Injection
     - Error-Handling mit Status-Anzeige
     
-    TODO:
-    - Logging in separate Datei
-    - Restart-Mechanismus bei Maintainer-Crash
-    - Resource-Monitoring (CPU, Memory)
-    - Remote-Control über Socket/IPC
     """
     
     def __init__(
@@ -10850,8 +10745,6 @@ class BackofficeCrawler:
     def stop(self):
         """
         Stoppt BackofficeCrawler und Maintainer.
-        
-        TODO: Implementieren (aktuell nur via Tray-Icon quit)
         """
         self._running = False
         if self.icon:
@@ -10866,29 +10759,8 @@ class BackgroundMaintainer:
     """
     ✅ ERWEITERT: AF-None-Awareness + Mode-basierte Priorities
     
-    TODO - STALE DAYS REFACTORING (WICHTIG):
-    ========================================
-    Aktuell werden stale_days an verschiedenen Stellen unterschiedlich verwendet:
-    - BackgroundMaintainer.__init__ (stale_days Parameter)
-    - automatic_fetch_decission_and_processing_unit (stale_days Parameter)
-    - for_background_priorities (stale_days Parameter)
-    - Distiller (stale_days Attribut)
-    
-    PROBLEM:
-    - AF-Daten sollten ~365 Tage stale sein (ändern sich selten)
-    - Full-Annotation sollte ~30 Tage stale sein (ClinVar updates)
-    - Aktuell: Ein einheitlicher stale_days Wert für beide
-    
-    LÖSUNG (für später):
-    1. Code-Analyse: Alle Verwendungen von stale_days finden
-    2. Aufteilen in: stale_days_full, stale_days_af, af_variance_days
-    3. Config-Defaults definieren (Config.STALE_DAYS_*)
-    4. Alle Aufrufstellen anpassen
-    5. UI-Integration vorbereiten (Settings-Menü)
-    6. Thundering Herd Prevention: AF mit ±100 Tage Randomisierung
-    
-    NICHT ÄNDERN ohne vollständige Code-Analyse!
-    ========================================
+    STALE DAYS: Refactoring abgeschlossen (2026-03).
+    Config.STALE_DAYS_AF=365, Config.STALE_DAYS_FULL=30, UI-Integration vorhanden.
     """
     
     def __init__(
@@ -21108,7 +20980,6 @@ class App(ttk.Window):
             self.after(5000, self._poll_lightdb_status)
             
            
-    #Wenn nicht genutzt oder benötigt bitte löschen
     def _ensure_gui_update(self, key, updated_fields):
         """
         FIX: Forciert GUI-Update nach Feld-Annotation.
@@ -21941,8 +21812,7 @@ class App(ttk.Window):
             # ============================================================
             # PHASE 5: CACHE-PATH ERMITTELN
             # ============================================================
-            # TODO: Cache-Path sollte aus Config oder Distiller kommen
-            # Für jetzt: Standard-Pfad prüfen
+            # Standard-Pfad prüfen
             potential_cache_paths = [
                 "data/vcf_cache.json",
                 "vcf_cache.json",
@@ -24293,66 +24163,6 @@ if __name__ == "__main__":
 
     app = App()
     app.mainloop()
-    
-    
-"""
-Zukünftiger Prompt: Implementierung des Custom Link Systems
-Kontext: Ich möchte die Software "Variant Fusion" (aktueller Stand V6) erweitern. Derzeit sind die Links für Gen-Symbole (GeneCards/MalaCards) und rsIDs (dbSNP) hardcodiert. Ich möchte ein Templating-System einführen, das es erlaubt, für jede Spalte der Tabelle (z.B. pos, gene, rsid) eigene URL-Muster zu definieren.
-
-Aufgabe: Bitte modifiziere den Python-Code (Klasse App und Config), um das "Column Link Templating System" zu implementieren.
-
-Spezifikationen:
-
-Config-Erweiterung:
-
-Ergänze Config um ein DEFAULT_COLUMN_LINKS Dictionary.
-
-Beispielstruktur: {'gene': 'https://www.genecards.org/cgi-bin/carddisp.pl?gene={value}', 'rsid': 'https://www.ncbi.nlm.nih.gov/snp/{value}'}.
-
-Settings-Logik (App):
-
-Passe _init_gui_variables an, um diese Map zu halten.
-
-Aktualisiere _load_settings und _save_settings, um das Dictionary aus der JSON-Datei zu laden/speichern.
-
-GUI: Allgemeine Einstellungen (open_general_settings):
-
-Ersetze die einfachen Comboboxen für "Single Click" und "Double Click".
-
-Baue stattdessen eine dynamische Liste oder Tabelle, in der man pro Spalte konfigurieren kann:
-
-Auslöser: (Keiner / Einfach-Klick / Doppel-Klick).
-
-URL-Template: Ein Eingabefeld für die URL.
-
-Füge einen "Preset"-Button oder Dropdown hinzu, der Standard-Templates (z.B. gnomAD für Positionen, ClinVar für rsIDs) automatisch in das Feld einträgt.
-
-Click-Handler (_on_double_click & _on_click_single):
-
-Entferne die harte if col == "gene" Logik.
-
-Implementiere einen generischen Lookup:
-
-Prüfe, ob für die angeklickte Spalte ein Template in den Settings existiert.
-
-Wenn ja, nutze Python .format(), um Platzhalter zu ersetzen.
-
-Öffne die URL im Browser.
-
-Verfügbare Platzhalter: Das System muss folgende Platzhalter im URL-String unterstützen:
-
-{value} (Der Wert der angeklickten Zelle)
-
-# ==============================================================================
-#                    OFFENE TO-DOS (Stand: V16 - 20.01.2026)
-# ==============================================================================
-# Siehe AUFGABEN.txt für vollständige Liste mit Details!
-#
-# VERBLEIBENDE PUNKTE:
-# ------------------------------------------------------------------------------
-# [ ] COLUMN_LABELS vervollständigen (meanAF_status, full_status fehlen)
-# [ ] STALE_DAYS Refactoring (STALE_DAYS_FULL vs STALE_DAYS_AF trennen)
-# =============================================================================="""
 
 
 

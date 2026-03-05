@@ -183,12 +183,48 @@ VFDistiller/
 
 ## Lizenz
 
-Proprietaer — Alle Rechte vorbehalten. Siehe `README/licenses/LICENSE.txt` fuer Details.
+**VFDistiller License v1.0** — Kostenlos nutzbar, Modifikation erlaubt, kein Weiterverkauf. Siehe [LICENSE](LICENSE) fuer Details.
 
-Die Software ist ausschliesslich fuer Forschungs- und Bildungszwecke bestimmt. Sie ist nicht medizinisch validiert und darf nicht fuer klinische Diagnosen oder therapeutische Entscheidungen verwendet werden.
+- Nutzung fuer Forschung, Bildung und persoenliche Zwecke: **erlaubt**
+- Anpassung und Modifikation des Quellcodes: **erlaubt**
+- Weitergabe innerhalb der eigenen Organisation: **erlaubt**
+- Weiterverkauf oder kommerzielle Weiterverbreitung: **verboten**
+- Diese Lizenz gilt fuer V17.x — Nachfolgeversionen koennen andere Bedingungen haben
+
+Die Software ist nicht medizinisch validiert und darf nicht fuer klinische Diagnosen oder therapeutische Entscheidungen verwendet werden.
 
 Third-Party-Bibliotheken unterliegen ihren jeweiligen Lizenzen (MIT, BSD, Apache 2.0). Siehe `README/licenses/THIRD_PARTY_LICENSES.txt`.
+
+> **Windows Store:** Eine vorpaketierte Version mit zusaetzlichen Features (Cython-Beschleunigung, Offline-Datenbank) wird in Kuerze im Microsoft Store verfuegbar sein.
 
 ## Version
 
 V17.0 — Aktuelle Produktionsversion (Maerz 2026).
+
+---
+
+## English
+
+A bioinformatics desktop tool for processing genetic variant data with multi-format import (VCF, gVCF, 23andMe, FASTA), automatic build detection, and multi-source annotation via gnomAD, Ensembl VEP, and AlphaGenome.
+
+### Features
+
+- Multi-format import (VCF, gVCF, 23andMe, FASTA)
+- Automatic build detection (GRCh37/GRCh38)
+- Multi-source annotation (gnomAD, Ensembl VEP, AlphaGenome)
+- Advanced filtering (AF, CADD, Impact, ClinSig)
+- Export (CSV, Excel, PDF, annotated VCF)
+- Optional Cython acceleration
+
+### Installation
+
+```bash
+git clone https://github.com/lukisch/VFDistiller.git
+cd VFDistiller
+pip install -r requirements.txt
+python "Variant_Fusion_pro_V17.py"
+```
+
+### License
+
+**VFDistiller License v1.0** — Free to use and modify, no resale. See [LICENSE](LICENSE) for details.
