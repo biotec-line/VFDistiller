@@ -1,43 +1,43 @@
 # VFDistiller — Variant Fusion Distiller
 
-Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation genetischer Variantendaten. Unterstuetzt VCF, gVCF, 23andMe-Rohdaten und FASTA — ohne pysam/bcftools/samtools (Windows-kompatibel).
+A bioinformatics desktop tool for processing, converting, and annotating genetic variant data. Supports VCF, gVCF, 23andMe raw data, and FASTA — without pysam/bcftools/samtools (Windows-compatible).
 
-![Variant Fusion - Hauptansicht](README/screenshots/main_view.png)
+![Variant Fusion - Main View](README/screenshots/main_view.png)
 
 ## Features
 
-- **Multi-Format-Import** — VCF, gVCF, 23andMe (.txt), FASTA (.fa/.fasta)
-- **Automatische Build-Erkennung** — GRCh37 / GRCh38 aus Header, Contigs oder RSID-Positionen
-- **Multi-Source-Annotation** — gnomAD, MyVariant.info, Ensembl VEP, ALFA, TOPMed, AlphaGenome
-- **INFO-Recycling** — Vorhandene VCF-Annotationen werden wiederverwendet
-- **Filterung** — AF-Schwelle, CADD-Score, Variant Impact, ClinSig, Genlisten, FILTER=PASS, Read Depth
-- **Export** — CSV, Excel, PDF, annotiertes VCF (gefiltert oder vollstaendig)
-- **GUI** — ttkbootstrap-Oberflaeche mit System-Tray, Fortschrittsanzeige, Themes
-- **Performance** — Optionaler Cython-Hotpath (5x Gesamt-Speedup), SQLite-Batch-Writes, async HTTP via aiohttp
-- **Hintergrund-Wartung** — Automatisches Nachladen fehlender Annotationen im Leerlauf
-- **Mehrsprachig** — Deutsch und Englisch (JSON-basierte Uebersetzungen)
+- **Multi-Format Import** — VCF, gVCF, 23andMe (.txt), FASTA (.fa/.fasta)
+- **Automatic Build Detection** — GRCh37 / GRCh38 from header, contigs, or RSID positions
+- **Multi-Source Annotation** — gnomAD, MyVariant.info, Ensembl VEP, ALFA, TOPMed, AlphaGenome
+- **INFO Recycling** — Existing VCF annotations are reused
+- **Filtering** — AF threshold, CADD score, Variant Impact, ClinSig, gene lists, FILTER=PASS, Read Depth
+- **Export** — CSV, Excel, PDF, annotated VCF (filtered or complete)
+- **GUI** — ttkbootstrap interface with system tray, progress bar, themes
+- **Performance** — Optional Cython hotpath (5x overall speedup), SQLite batch writes, async HTTP via aiohttp
+- **Background Maintenance** — Automatic reloading of missing annotations during idle time
+- **Multilingual** — German and English (JSON-based translations)
 
-## Voraussetzungen
+## Prerequisites
 
 - Python 3.10+
-- Windows 10/11 (primaer getestet), Linux/macOS experimentell
+- Windows 10/11 (primarily tested), Linux/macOS experimental
 
 ### Installation
 
 ```bash
-# Abhaengigkeiten installieren
+# Install dependencies
 pip install -r requirements.txt
 
-# Optional: Cython-Beschleunigung (erfordert C-Compiler)
+# Optional: Cython acceleration (requires C compiler)
 pip install cython
 cd cython_hotpath
 python setup.py build_ext --inplace
 cd ..
 ```
 
-### Genomreferenzen (optional, fuer FASTA-Validierung)
+### Genome References (optional, for FASTA validation)
 
-Die Genomreferenzen (GRCh37/GRCh38) muessen separat heruntergeladen werden (~3 GB pro Build):
+The genome references (GRCh37/GRCh38) must be downloaded separately (~3 GB per build):
 
 ```bash
 # GRCh37
@@ -49,25 +49,25 @@ wget https://ftp.ensembl.org/pub/release-112/fasta/homo_sapiens/dna/Homo_sapiens
 gunzip Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
 ```
 
-Die Dateien ins Projektverzeichnis legen. Beim ersten Start wird automatisch ein `.fai`-Index erzeugt.
+Place the files in the project directory. A `.fai` index is automatically generated on first launch.
 
 ### gnomAD LightDB (optional)
 
-Fuer schnelle Offline-AF-Lookups kann die gnomAD LightDB heruntergeladen werden. Das Tool bietet beim ersten Start einen Download-Dialog an. Alternativ:
+For fast offline AF lookups, the gnomAD LightDB can be downloaded. The tool offers a download dialog on first launch. Alternatively:
 
 ```bash
 python "Get gnomAD DB light.py"
 ```
 
-## Verwendung
+## Usage
 
-### GUI starten
+### Launch GUI
 
 ```bash
 python Variant_Fusion_pro_V17.py
 ```
 
-Oder unter Windows:
+Or on Windows:
 
 ```
 START.bat
@@ -75,158 +75,134 @@ START.bat
 
 ### Workflow
 
-1. **Datei oeffnen** — VCF, gVCF, 23andMe-Textdatei oder FASTA waehlen
-2. **Build pruefen** — Wird automatisch erkannt, kann manuell ueberschrieben werden
-3. **Pipeline laeuft** — Varianten werden geparst, annotiert und gefiltert
-4. **Ergebnisse** — Tabellenansicht mit sortierbaren Spalten, Doppelklick oeffnet externe Datenbanken
-5. **Export** — CSV, Excel, PDF oder annotiertes VCF exportieren
+1. **Open file** — Select VCF, gVCF, 23andMe text file, or FASTA
+2. **Check build** — Automatically detected, can be manually overridden
+3. **Pipeline runs** — Variants are parsed, annotated, and filtered
+4. **Results** — Table view with sortable columns, double-click opens external databases
+5. **Export** — Export as CSV, Excel, PDF, or annotated VCF
 
-### Konfiguration
+### Configuration
 
-Beim ersten Start wird `variant_fusion_settings.json` aus der Vorlage `variant_fusion_settings.json.example` erstellt. Wichtige Einstellungen:
+On first launch, `variant_fusion_settings.json` is created from the template `variant_fusion_settings.json.example`. Key settings:
 
-| Einstellung | Beschreibung | Standard |
+| Setting | Description | Default |
 |---|---|---|
-| `af_threshold` | Allele-Frequency-Schwelle | 0.007 |
-| `include_none` | Varianten ohne AF anzeigen | false |
-| `cadd_highlight_threshold` | CADD-Score-Hervorhebung | 22.0 |
-| `stale_days` | Tage bis AF-Refresh | 200 |
-| `alphagenome_key` | Google AlphaGenome API-Key | (leer) |
-| `quality_settings` | VCF-Record-Level Filter | siehe Example |
+| `af_threshold` | Allele Frequency threshold | 0.007 |
+| `include_none` | Show variants without AF | false |
+| `cadd_highlight_threshold` | CADD score highlighting | 22.0 |
+| `stale_days` | Days until AF refresh | 200 |
+| `alphagenome_key` | Google AlphaGenome API key | (empty) |
+| `quality_settings` | VCF record-level filter | see example |
 
-### API-Keys
+### API Keys
 
-- **AlphaGenome**: Erfordert einen Google AI API-Key. In `variant_fusion_settings.json` unter `alphagenome_key` und `api_settings.phase6_ag.alphagenome.api_key` eintragen.
-- **NCBI**: Optional fuer hoehere Rate-Limits. Unter `api_settings.global.ncbi_api_key` eintragen.
+- **AlphaGenome:** Requires a Google AI API key. Enter in `variant_fusion_settings.json` under `alphagenome_key` and `api_settings.phase6_ag.alphagenome.api_key`.
+- **NCBI:** Optional for higher rate limits. Enter under `api_settings.global.ncbi_api_key`.
 
 ## Dependencies
 
-### Core (erforderlich)
+### Core (required)
 
-| Paket | Lizenz | Zweck |
+| Package | License | Purpose |
 |---|---|---|
-| requests | Apache 2.0 | HTTP-Requests |
-| psutil | BSD | CPU/Memory-Monitoring |
-| Pillow | PIL License | Icon/Image-Processing |
-| intervaltree | Apache 2.0 | Genomische Intervalle |
-| ttkbootstrap | MIT | Moderne GUI-Themes |
-| pystray | MIT | System-Tray-Icon |
-| aiohttp | Apache 2.0 | Async HTTP-Fetching |
-| scipy | BSD | Statistik |
+| requests | Apache 2.0 | HTTP requests |
+| psutil | BSD | CPU/Memory monitoring |
+| Pillow | PIL License | Icon/Image processing |
+| intervaltree | Apache 2.0 | Genomic intervals |
+| ttkbootstrap | MIT | Modern GUI themes |
+| pystray | MIT | System tray icon |
+| aiohttp | Apache 2.0 | Async HTTP fetching |
+| scipy | BSD | Statistics |
 
 ### Optional
 
-| Paket | Lizenz | Zweck |
+| Package | License | Purpose |
 |---|---|---|
-| openpyxl | MIT | Excel-Export |
-| reportlab | BSD | PDF-Export |
-| numpy | BSD | Array-Operationen |
-| biopython | Biopython License | Sequenz-Alignment |
-| pyfaidx | MIT | FASTA-Indexierung |
-| cython | Apache 2.0 | Hot-Path-Kompilierung |
+| openpyxl | MIT | Excel export |
+| reportlab | BSD | PDF export |
+| numpy | BSD | Array operations |
+| biopython | Biopython License | Sequence alignment |
+| pyfaidx | MIT | FASTA indexing |
+| cython | Apache 2.0 | Hot-path compilation |
 
-## Cython-Beschleunigung
+## Cython Acceleration
 
-Optionale C-kompilierte Hot-Paths fuer kritische Operationen:
+Optional C-compiled hot paths for critical operations:
 
-| Modul | Speedup | Funktion |
+| Module | Speedup | Function |
 |---|---|---|
-| `vcf_parser.pyx` | 8x | VCF-Zeilen-Parsing |
-| `af_validator.pyx` | 100x | AF-Validierung |
-| `key_normalizer.pyx` | 25x | Variant-Key-Normalisierung |
-| `fasta_lookup.pyx` | 100x | FASTA-Sequenz-Lookup |
+| `vcf_parser.pyx` | 8x | VCF line parsing |
+| `af_validator.pyx` | 100x | AF validation |
+| `key_normalizer.pyx` | 25x | Variant key normalization |
+| `fasta_lookup.pyx` | 100x | FASTA sequence lookup |
 
-Gesamt-Pipeline-Speedup: ~5x (50k Varianten: 15 min -> 3 min).
+Overall pipeline speedup: ~5x (50k variants: 15 min -> 3 min).
 
-Wenn Cython nicht installiert ist, werden automatisch Python-Fallbacks verwendet.
+If Cython is not installed, Python fallbacks are used automatically.
 
-## Projektstruktur
+## Project Structure
 
 ```
 VFDistiller/
-├── Variant_Fusion_pro_V17.py .... Hauptprogramm (GUI + Pipeline)
-├── requirements.txt ............. Python-Abhaengigkeiten
-├── variant_fusion_settings.json.example . Konfigurations-Vorlage
-├── VFDistiller.spec ............. PyInstaller Build-Konfiguration
-├── START.bat .................... Windows-Schnellstart
+├── Variant_Fusion_pro_V17.py .... Main program (GUI + Pipeline)
+├── requirements.txt ............. Python dependencies
+├── variant_fusion_settings.json.example . Configuration template
+├── VFDistiller.spec ............. PyInstaller build configuration
+├── START.bat .................... Windows quick start
 │
-├── cython_hotpath/ .............. Optionale Cython-Module
-│   ├── __init__.py .............. CythonAccelerator Hauptklasse
-│   ├── vcf_parser.pyx .......... VCF-Parsing
-│   ├── af_validator.pyx ......... AF-Validierung
-│   ├── key_normalizer.pyx ....... Key-Normalisierung
-│   ├── fasta_lookup.pyx ......... FASTA-Lookup
-│   ├── setup.py ................. Build-Script
+├── cython_hotpath/ .............. Optional Cython modules
+│   ├── __init__.py .............. CythonAccelerator main class
+│   ├── vcf_parser.pyx ........... VCF parsing
+│   ├── af_validator.pyx ......... AF validation
+│   ├── key_normalizer.pyx ....... Key normalization
+│   ├── fasta_lookup.pyx ......... FASTA lookup
+│   ├── setup.py ................. Build script
 │   └── test_performance.py ...... Benchmarks
 │
-├── data/annotations/ ............ Gen-Annotationsdaten
-│   ├── GRCh37.gtf.gz ........... Ensembl Gene-Annotationen
+├── data/annotations/ ............ Gene annotation data
+│   ├── GRCh37.gtf.gz ............ Ensembl gene annotations
 │   └── GRCh38.gtf.gz
 │
 ├── locales/
-│   └── translations.json ........ Uebersetzungen (de/en)
+│   └── translations.json ........ Translations (de/en)
 │
-├── ICO/ICO.ico .................. App-Icon
+├── ICO/ICO.ico .................. App icon
 │
-├── lightdb_index_worker.py ...... gnomAD LightDB Hintergrund-Indexierung
-├── translator.py ................ Uebersetzungs-Engine
-├── translator_patch.py .......... Uebersetzungs-Patches
-├── manage_translations.py ....... Uebersetzungs-Verwaltung
-├── Get gnomAD DB light.py ....... gnomAD Download-Tool
-├── test_performance.py .......... Performance-Tests
+├── lightdb_index_worker.py ....... gnomAD LightDB background indexing
+├── translator.py ................ Translation engine
+├── translator_patch.py .......... Translation patches
+├── manage_translations.py ....... Translation management
+├── Get gnomAD DB light.py ....... gnomAD download tool
+├── test_performance.py .......... Performance tests
 │
-├── ARCHITECTURE.md .............. Entwickler-Dokumentation
-└── README/ ...................... Erweiterte Dokumentation & Lizenzen
+├── ARCHITECTURE.md .............. Developer documentation
+└── README/ ...................... Extended documentation & licenses
     └── licenses/
-        ├── LICENSE.txt .......... Hauptlizenz (Englisch)
-        ├── LICENSE.de.txt ....... Hauptlizenz (Deutsch)
-        └── THIRD_PARTY_LICENSES.txt . Third-Party-Lizenzen
+        ├── LICENSE.txt ........... Main license (English)
+        ├── LICENSE.de.txt ....... Main license (German)
+        └── THIRD_PARTY_LICENSES.txt . Third-party licenses
 ```
 
-## Lizenz
+## License
 
-**VFDistiller License v1.0** — Kostenlos nutzbar, Modifikation erlaubt, kein Weiterverkauf. Siehe [LICENSE](LICENSE) fuer Details.
+**VFDistiller License v1.0** — Free to use, modification allowed, no resale. See [LICENSE](LICENSE) for details.
 
-- Nutzung fuer Forschung, Bildung und persoenliche Zwecke: **erlaubt**
-- Anpassung und Modifikation des Quellcodes: **erlaubt**
-- Weitergabe innerhalb der eigenen Organisation: **erlaubt**
-- Weiterverkauf oder kommerzielle Weiterverbreitung: **verboten**
-- Diese Lizenz gilt fuer V17.x — Nachfolgeversionen koennen andere Bedingungen haben
+- Use for research, education, and personal purposes: **allowed**
+- Modification and customization of the source code: **allowed**
+- Distribution within your own organization: **allowed**
+- Resale or commercial redistribution: **prohibited**
+- This license applies to V17.x — subsequent versions may have different terms
 
-Die Software ist nicht medizinisch validiert und darf nicht fuer klinische Diagnosen oder therapeutische Entscheidungen verwendet werden.
+The software is not medically validated and must not be used for clinical diagnoses or therapeutic decisions.
 
-Third-Party-Bibliotheken unterliegen ihren jeweiligen Lizenzen (MIT, BSD, Apache 2.0). Siehe `README/licenses/THIRD_PARTY_LICENSES.txt`.
+Third-party libraries are subject to their respective licenses (MIT, BSD, Apache 2.0). See `README/licenses/THIRD_PARTY_LICENSES.txt`.
 
-> **Windows Store:** Eine vorpaketierte Version mit zusaetzlichen Features (Cython-Beschleunigung, Offline-Datenbank) wird in Kuerze im Microsoft Store verfuegbar sein.
+> **Windows Store:** A pre-packaged version with additional features (Cython acceleration, offline database) will be available in the Microsoft Store soon.
 
 ## Version
 
-V17.0 — Aktuelle Produktionsversion (Maerz 2026).
+V17.0 — Current production version (March 2026).
 
 ---
 
-## English
-
-A bioinformatics desktop tool for processing genetic variant data with multi-format import (VCF, gVCF, 23andMe, FASTA), automatic build detection, and multi-source annotation via gnomAD, Ensembl VEP, and AlphaGenome.
-
-### Features
-
-- Multi-format import (VCF, gVCF, 23andMe, FASTA)
-- Automatic build detection (GRCh37/GRCh38)
-- Multi-source annotation (gnomAD, Ensembl VEP, AlphaGenome)
-- Advanced filtering (AF, CADD, Impact, ClinSig)
-- Export (CSV, Excel, PDF, annotated VCF)
-- Optional Cython acceleration
-
-### Installation
-
-```bash
-git clone https://github.com/lukisch/VFDistiller.git
-cd VFDistiller
-pip install -r requirements.txt
-python "Variant_Fusion_pro_V17.py"
-```
-
-### License
-
-**VFDistiller License v1.0** — Free to use and modify, no resale. See [LICENSE](LICENSE) for details.
+Deutsche Version: [README.de.md](README.de.md)
