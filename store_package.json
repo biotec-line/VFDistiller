@@ -9,6 +9,6 @@
   "capabilities": "internetClient",
   "category": "Photo & Video",
   "age_rating": "3+",
-  "privacy_url": "https://github.com/lukisch/VFDistiller",
-  "support_url": "https://github.com/lukisch/VFDistiller/issues"
+  "privacy_url": "https://github.com/biotec-line/VFDistiller/blob/main/PRIVACY_POLICY.md",
+  "support_url": "https://github.com/biotec-line/VFDistiller/issues"
 }
