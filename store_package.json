@@ -4,10 +4,10 @@
   "publisher_display": "Lukas Geiger",
   "identity_name": "LukasGeiger.VFDistiller",
   "version": "17.0.0.0",
-  "description": "Video- und Foto-Verarbeitungstool fuer Windows. Kostenlose Basis-Version.",
+  "description": "Genomic variant analysis tool for VCF, gVCF and 23andMe files. Annotation, filtering and reporting.",
   "executable": "VFDistiller.exe",
   "capabilities": "internetClient",
-  "category": "Photo & Video",
+  "category": "Health & fitness",
   "age_rating": "3+",
   "privacy_url": "https://github.com/biotec-line/VFDistiller/blob/main/PRIVACY_POLICY.md",
   "support_url": "https://github.com/biotec-line/VFDistiller/issues"
