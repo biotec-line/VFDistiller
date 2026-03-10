@@ -573,10 +573,13 @@ class Config:
     # =================================
     # FILES & DIRECTORIES
     # =================================
-    TEMP_VCF_DIR = "converted_23andme_vcfs"
-    SETTINGS_FILE = "variant_fusion_settings.json"
-    LOG_FILE = "distiller_debug.log"
-    CACHE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache.json")
+    # V17.2 FIX: Absolute Pfade via BASE_DIR statt relative Pfade/CWD/__file__
+    # Bei PyInstaller-EXE zeigt __file__ in den temp _MEIPASS-Ordner,
+    # und CWD kann ein Systemordner sein (z.B. C:\Windows\System32).
+    TEMP_VCF_DIR = os.path.join(BASE_DIR, "converted_23andme_vcfs")
+    SETTINGS_FILE = os.path.join(BASE_DIR, "variant_fusion_settings.json")
+    LOG_FILE = "distiller_debug.log"  # wird in Logger mit BASE_DIR kombiniert
+    CACHE_FILE = os.path.join(BASE_DIR, "cache.json")
     
     # =================================
     # LOGGING
@@ -2086,7 +2089,7 @@ class MultiSinkLogger:
 # =============================================================================
 _splash_log("Erstelle Logger ...")
 logger = MultiSinkLogger(
-    logfile_path=os.path.join(os.getcwd(), config.LOG_FILE),
+    logfile_path=os.path.join(BASE_DIR, config.LOG_FILE),
     ui_queue=queue.Queue(maxsize=config.QUEUE_MAX_SIZE)
 )
 
@@ -3079,7 +3082,7 @@ def detect_build_for_vcf(path, db_path=None, logger=None, alpha: float = 0.01):
     # V10: Absoluter Pfad als Fallback
     if db_path is None:
         db_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
+            BASE_DIR,
             "data",
             "gnomad_light.db"
         )
@@ -6703,8 +6706,8 @@ class LightDBGnomADManager:
 
         # V10: Pfadresistenz - berechne absolute Pfade
         if base_dir is None:
-            # Fallback auf Script-Verzeichnis
-            base_dir = os.path.dirname(os.path.abspath(__file__))
+            # Fallback auf EXE/Script-Verzeichnis (nicht __file__, das bei PyInstaller in _MEIPASS zeigt)
+            base_dir = BASE_DIR
 
         # V16: Prüfe zuerst ResourceManager für gnomad_db
         rm_db_path = None
@@ -6981,7 +6984,8 @@ class LightDBGnomADManager:
                 os.remove(self.PID_FILE)
 
         # Neuen Worker starten - V10: absoluter Pfad zum Worker-Script
-        worker_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lightdb_index_worker.py")
+        # V17.2: _BUNDLE_DIR fuer gebundelte Scripts (PyInstaller _MEIPASS), BASE_DIR als Fallback
+        worker_script = os.path.join(_BUNDLE_DIR, "lightdb_index_worker.py")
         proc = subprocess.Popen(
             [sys.executable, worker_script, self.OUT_DB, self.progress_file],
             creationflags=subprocess.CREATE_NO_WINDOW
@@ -8225,14 +8229,14 @@ class GeneAnnotator:
         self._log("[GeneAnnotator] ✅ INITIALISIERUNG GESTARTET")
         self._log("=" * 60)
         
-        # ✅ V9 FIX: Absoluter Pfad relativ zur Script-Datei, nicht zum CWD!
+        # ✅ V9 FIX: Absoluter Pfad, nicht CWD!
+        # V17.2: _BUNDLE_DIR fuer gebundelte Daten (PyInstaller _MEIPASS)
         if cache_dir is None:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            cache_dir = os.path.join(script_dir, "data", "annotations")
-        
+            cache_dir = os.path.join(_BUNDLE_DIR, "data", "annotations")
+
         self.cache_dir = os.path.abspath(cache_dir)
-        
-        self._log(f"[GeneAnnotator] Script-Verzeichnis: {os.path.dirname(os.path.abspath(__file__))}")
+
+        self._log(f"[GeneAnnotator] Bundle-Verzeichnis: {_BUNDLE_DIR}")
         self._log(f"[GeneAnnotator] Aktuelles CWD: {os.getcwd()}")
         self._log(f"[GeneAnnotator] Cache-Verzeichnis: {self.cache_dir}")
         
@@ -9137,7 +9141,8 @@ class VariantDB:
         Einfache Initialisierung ohne Connection Pool.
 
         V16: Wenn db_path=None, wird ResourceManager für variant_db genutzt.
-        Fallback auf "variant_fusion.sqlite" im aktuellen Verzeichnis.
+        V17.2 FIX: Fallback nutzt BASE_DIR statt CWD (verhindert "unable to open
+        database file" wenn CWD ein Systemordner ist, z.B. bei EXE-Start via Shortcut).
         """
         # V16: ResourceManager für DB-Pfad nutzen
         if db_path is None:
@@ -9153,10 +9158,14 @@ class VariantDB:
                         db_path = os.path.join(Config.LOCAL_DB_DIR, "variant_fusion.sqlite")
                         print(f"[DB] Nutze lokalen Storage: {db_path}")
                     else:
-                        db_path = "variant_fusion.sqlite"
-                        print(f"[DB] ResourceManager: variant_db nicht gefunden, nutze Default")
+                        db_path = os.path.join(BASE_DIR, "variant_fusion.sqlite")
+                        print(f"[DB] ResourceManager: variant_db nicht gefunden, nutze Default: {db_path}")
             except Exception:
-                db_path = "variant_fusion.sqlite"
+                db_path = os.path.join(BASE_DIR, "variant_fusion.sqlite")
+
+        # Sicherstellen dass der Zielordner existiert
+        db_dir = os.path.dirname(os.path.abspath(db_path))
+        os.makedirs(db_dir, exist_ok=True)
 
         self.db_path = db_path
         self.lock = threading.RLock()  # RLock für nested calls
