@@ -155,7 +155,7 @@ class CythonAccelerator:
                     idx = pos - 1
                     if idx + length <= len(full_seq):
                         return full_seq[idx:idx+length].upper()
-        except:
+        except (IOError, OSError, IndexError, ValueError):
             pass
         return None
 

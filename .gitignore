@@ -110,3 +110,7 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+# Build-Artefakte (zu gross fuer GitHub)
+store_package/*.exe
+*.exe

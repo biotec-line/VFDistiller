@@ -326,7 +326,7 @@ def cleanup_lock():
     try:
         if os.path.exists(lock_file):
             os.remove(lock_file)
-    except:
+    except OSError:
         pass
 
 def check_single_instance():
@@ -2920,6 +2920,7 @@ def decide_build_from_lightdb(keys, db_path: str, logger=None,
 def mv_query_by_rsid_batch(rsids, fields, logger=None):
     """
     Fragt MyVariant nach rsIDs ab und gibt Mapping rsid -> Hit zurück.
+    Retry bei Timeout/ConnectionError: Exponential Backoff 1s/2s/4s, max 3 Versuche.
     """
     results = {}
     if not rsids:
@@ -2927,19 +2928,36 @@ def mv_query_by_rsid_batch(rsids, fields, logger=None):
 
     q = " OR ".join([f"dbsnp.rsid:{r}" for r in rsids])
     params = {"q": q, "fields": ",".join(fields), "size": len(rsids)}
+    url = f"{MV_BASE}/query"
 
-    try:
-        r = requests.get(f"{MV_BASE}/query", params=params, timeout=30)
-        r.raise_for_status()
-        j = r.json()
-        for hit in j.get("hits", []):
-            if isinstance(hit.get("dbsnp"), dict):
-                rs = hit["dbsnp"].get("rsid")
-                if rs:
-                    results[rs] = hit
-    except Exception as e:
-        if logger:
-            logger.log(f"[BuildDetect] ❌ MyVariant rsid query error: {e}")
+    _max_retries = 3
+    _backoff_delays = [1, 2, 4]
+
+    for attempt in range(_max_retries + 1):
+        try:
+            r = requests.get(url, params=params, timeout=30)
+            r.raise_for_status()
+            j = r.json()
+            for hit in j.get("hits", []):
+                if isinstance(hit.get("dbsnp"), dict):
+                    rs = hit["dbsnp"].get("rsid")
+                    if rs:
+                        results[rs] = hit
+            return results
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            if attempt < _max_retries:
+                delay = _backoff_delays[attempt]
+                if logger:
+                    logger.log(f"[BuildDetect] ⚠️ MyVariant Timeout/ConnectionError (Versuch {attempt+1}/{_max_retries}), Retry in {delay}s: {e}")
+                import time; time.sleep(delay)
+            else:
+                if logger:
+                    logger.log(f"[BuildDetect] ❌ MyVariant rsid query nach {_max_retries} Versuchen fehlgeschlagen: {e}")
+        except Exception as e:
+            if logger:
+                logger.log(f"[BuildDetect] ❌ MyVariant rsid query error: {e}")
+            return results
+
     return results
 
 
@@ -8312,7 +8330,7 @@ class GeneAnnotator:
         if self.logger:
             try:
                 self.logger.log(message)
-            except:
+            except Exception:
                 pass
     
     def get_status_report(self) -> str:
@@ -8947,14 +8965,6 @@ class ThroughputTuner:
         cutoff = now - 250
         self.history = [h for h in self.history if h[0] >= cutoff]
 
-    # [PROBABLY DEAD] Inline-Logik in decide() ersetzt diese Methode
-    # def _cpu_cut(self):
-        # self.w = max(self.min_w, self.w - 10)
-        # self._cpu_cooldown_until = time.time() + 10
-        # cutoff = time.time() - 30
-        # self.history = [h for h in self.history if h[0] >= cutoff]
-        # self.safe_log(f"[TUNER] CPU-Cut -> w={self.w}, History auf 30s beschnitten")
-
     def decide(self, current_cpu: Optional[float] = None) -> Tuple[int, int]:
         now = time.time()
         u10 = self._throughput_restload(10)
@@ -9136,6 +9146,33 @@ class VariantDB:
     OTHER_FAIL_CODES = {"020", "030", "040"}
     DELETABLE_CODES = {"013"}
 
+    @staticmethod
+    def _get_writable_db_dir() -> str:
+        """
+        V17.3 MSIX FIX: Ermittelt einen beschreibbaren Ordner für die DB.
+
+        Im MSIX/Store-Container ist das Installationsverzeichnis read-only.
+        In diesem Fall wird %LOCALAPPDATA%/VariantFusion verwendet, das auch
+        im MSIX-Container immer beschreibbar ist.
+        """
+        if getattr(sys, 'frozen', False):
+            install_dir = os.path.dirname(sys.executable)
+            test_path = os.path.join(install_dir, ".vf_write_test")
+            try:
+                with open(test_path, 'w') as f:
+                    f.write("ok")
+                os.remove(test_path)
+            except (OSError, PermissionError):
+                # Read-only → MSIX-Container
+                appdata = os.path.join(
+                    os.environ.get("LOCALAPPDATA", os.path.expanduser("~")),
+                    "VariantFusion"
+                )
+                os.makedirs(appdata, exist_ok=True)
+                print(f"[DB] MSIX-Modus erkannt, nutze AppData: {appdata}")
+                return appdata
+        return None
+
     def __init__(self, db_path: str = None):
         """
         Einfache Initialisierung ohne Connection Pool.
@@ -9143,7 +9180,12 @@ class VariantDB:
         V16: Wenn db_path=None, wird ResourceManager für variant_db genutzt.
         V17.2 FIX: Fallback nutzt BASE_DIR statt CWD (verhindert "unable to open
         database file" wenn CWD ein Systemordner ist, z.B. bei EXE-Start via Shortcut).
+        V17.3 FIX: MSIX/Store-Kompatibilität – bei read-only Installationsverzeichnis
+        wird %LOCALAPPDATA%/VariantFusion als DB-Speicherort verwendet.
         """
+        # V17.3: MSIX/Store – prüfe ob Installationsverzeichnis beschreibbar ist
+        msix_dir = self._get_writable_db_dir()
+
         # V16: ResourceManager für DB-Pfad nutzen
         if db_path is None:
             try:
@@ -9157,11 +9199,15 @@ class VariantDB:
                     if hasattr(Config, 'LOCAL_DB_DIR') and os.path.exists(Config.LOCAL_DB_DIR):
                         db_path = os.path.join(Config.LOCAL_DB_DIR, "variant_fusion.sqlite")
                         print(f"[DB] Nutze lokalen Storage: {db_path}")
+                    elif msix_dir:
+                        # V17.3: MSIX-Fallback vor BASE_DIR
+                        db_path = os.path.join(msix_dir, "variant_fusion.sqlite")
+                        print(f"[DB] MSIX-Store: {db_path}")
                     else:
                         db_path = os.path.join(BASE_DIR, "variant_fusion.sqlite")
                         print(f"[DB] ResourceManager: variant_db nicht gefunden, nutze Default: {db_path}")
             except Exception:
-                db_path = os.path.join(BASE_DIR, "variant_fusion.sqlite")
+                db_path = os.path.join(msix_dir or BASE_DIR, "variant_fusion.sqlite")
 
         # Sicherstellen dass der Zielordner existiert
         db_dir = os.path.dirname(os.path.abspath(db_path))
@@ -10299,7 +10345,7 @@ class VCFMigrationsdienst(multiprocessing.Process):
             )
             try:
                 conn.close()
-            except:
+            except (sqlite3.Error, OSError):
                 pass
             return False
 
@@ -14380,7 +14426,7 @@ class Distiller:
         if hasattr(app, "stale_days_full"):
             try:
                 self.stale_days_full = int(app.stale_days_full.get())
-            except:
+            except (ValueError, TypeError):
                 pass
         
     def set_gene_annotator(self, gene_annotator):
@@ -16837,46 +16883,6 @@ class Distiller:
                 final[k] = result
 
         return final
-    
-    # [PROBABLY DEAD] Nie aufgerufen - Statistics werden anders berechnet
-    # def _get_recent_success_rate(self) -> float:
-        # """
-        # Berechnet Erfolgsrate aus Tuner-History (letzte 60s).
-        # Wird für adaptives Delay-Management verwendet.
-        # """
-        # tuner = self.tuners.get("mv")
-        # if not tuner or not tuner.history:
-            # return 1.0
-        
-        # now = time.time()
-        # recent = [
-            # (successes, duration) 
-            # for (t, successes, duration, _, _, _) in tuner.history 
-            # if now - t <= 60
-        # ]
-        
-        # if not recent:
-            # return 1.0
-        
-        # total_successes = sum(s for s, _ in recent)
-        # total_duration = sum(d for _, d in recent)
-        
-        # Schätze erwartete Erfolge basierend auf Durchschnitt
-        # if not tuner.history:
-            # return 1.0
-        
-        # Nutze die letzten erfolgreichen Batches als Baseline
-        # successful_batches = [s for s, _ in recent if s > 0]
-        # if not successful_batches:
-            # return 0.0
-        
-        # avg_success = sum(successful_batches) / len(successful_batches)
-        # expected_total = avg_success * len(recent)
-        
-        # if expected_total == 0:
-            # return 1.0
-        
-        # return min(1.0, total_successes / expected_total)
     
     async def _phase_af_fetch_streaming(
         self,
@@ -19377,41 +19383,6 @@ def _get_dp_value(rec: dict) -> Optional[str]:
     return None
 
 
-# [PROBABLY DEAD] Nie aufgerufen - Status wird inline bestimmt
-# def _determine_filter_status(rec: dict, row: dict) -> str:
-    # """
-    # Bestimmt den korrekten FILTER-Status für VCF-Export.
-    
-    # VCF-Spec:
-    # - "PASS" für Varianten ohne Filter
-    # - "." ist veraltet, sollte "PASS" sein
-    # - Spezifische Filter-Namen (z.B. "LowQual", "DP10")
-    
-    # Args:
-        # rec: VCF-Record dict aus orig_records
-        # row: DB-Row (fallback)
-    
-    # Returns:
-        # FILTER-String ("PASS", "LowQual", etc.)
-    # """
-    # Aus orig_records (bevorzugt)
-    # flt = rec.get("filter")
-    
-    # Fallback: Aus DB
-    # if not flt:
-        # flt = row.get("filter")
-    
-    # Normalisierung
-    # if not flt or flt == "" or flt == ".":
-        # return "PASS"
-    
-    # flt_upper = str(flt).upper()
-    # if flt_upper == "PASS":
-        # return "PASS"
-    
-    # return str(flt)
-
-
 def _build_format_fields(rec: dict, genotype: str) -> tuple:
     """
     ✅ KORRIGIERT: Konstruiert FORMAT-String und Sample-Werte für VCF-Export.
@@ -20969,7 +20940,7 @@ class App(ttk.Window):
             try:
                 if isinstance(key, tuple) and len(key) == 5:
                     self.live_queue.put_nowait(key)
-            except: pass
+            except queue.Full: pass
         return enqueue
 
     def _load_initial_settings(self):
@@ -20979,7 +20950,7 @@ class App(ttk.Window):
                 with open(Config.SETTINGS_FILE, "r") as f:
                     d = json.load(f)
                     self.saved_theme = d.get("theme", Config.DEFAULT_THEME)
-            except: pass
+            except (OSError, ValueError): pass
 
 
 
@@ -21239,42 +21210,6 @@ class App(ttk.Window):
         except tk.TclError:
             pass
         
-    # [PROBABLY DEAD] Inline-Logik in _add_or_update_row_fast ersetzt diese Methode
-    # def _evict_cache_async(self):
-        # """
-        # Helper: Non-blocking Cache-Eviction.
-        
-        # Änderungen:
-        # - Läuft in separatem Thread
-        # - Evicted nur 10% (sanfter)
-        # - Logging nur alle 10 Evictions
-        # """
-        # try:
-            # current_size = len(self.rows_cache)
-            # evict_count = max(1, int(current_size * 0.1))  # ✅ 10% statt 20%
-            
-            # ✅ Entferne älteste Einträge
-            # for _ in range(evict_count):
-                # try:
-                    # first_key = next(iter(self.rows_cache))
-                    # del self.rows_cache[first_key]
-                # except (StopIteration, KeyError):
-                    # break
-            
-            # ✅ Stats nur alle 10 Evictions
-            # if not hasattr(self, '_evict_count'):
-                # self._evict_count = 0
-            
-            # self._evict_count += 1
-            # if self._evict_count % 10 == 0:
-                # self.logger.log(
-                    # f"[Cache] Eviction #{self._evict_count}: "
-                    # f"{evict_count} entfernt, "
-                    # f"{len(self.rows_cache)} verbleibend"
-                # )
-        # except Exception as e:
-            # self.logger.log(f"[Cache] ⚠️ Eviction error: {e}")
-        
     def _fetch_row_async(self, key):
         """Fetches row from DB asynchronously and updates cache."""
         try:
@@ -21294,65 +21229,6 @@ class App(ttk.Window):
     def _add_or_update_row(self, key):
         self._add_or_update_row_fast(key)
         
-    # [PROBABLY DEAD] Nie aufgerufen - Insert Position wird nicht mehr berechnet
-    # def _calculate_insert_position(self, new_key):
-        # """
-        # Berechnet die korrekte Insert-Position basierend auf genomischer Sortierung.
-        
-        # FIXES:
-        # - Verhindert "end"-Chaos
-        # - Garantiert chromosomale Reihenfolge
-        # """
-        # try:
-            # new_chr = str(new_key[0]).replace("chr", "").upper()
-            # new_pos = int(new_key[1])
-            
-            # Numerische Chromosomen zuerst, dann X/Y/MT
-            # def chr_sort_key(c):
-                # if c.isdigit():
-                    # return (0, int(c))
-                # elif c == "X":
-                    # return (1, 23)
-                # elif c == "Y":
-                    # return (1, 24)
-                # elif c == "MT":
-                    # return (1, 25)
-                # else:
-                    # return (2, 999)
-            
-            # new_chr_key = chr_sort_key(new_chr)
-            
-            # Suche korrekte Position
-            # children = self.tree.get_children("")
-            # for i, iid in enumerate(children):
-                # try:
-                    # vals = self.tree.item(iid)["values"]
-                    # if not vals or len(vals) < 2:
-                        # continue
-                        
-                    # chr_val = str(vals[0]).replace("chr", "").upper()
-                    # pos_val = int(vals[1])
-                    
-                    # chr_key = chr_sort_key(chr_val)
-                    
-                    # Vergleich: (chr, pos)
-                    # if new_chr_key < chr_key:
-                        # return i
-                    # elif new_chr_key == chr_key and new_pos < pos_val:
-                        # return i
-                        
-                # except (ValueError, IndexError):
-                    # continue
-            
-            # Am Ende einfügen
-            # return "end"
-            
-        # except Exception:
-            # return "end"
-    
-    # Dies ist der genutzte Weg als Zugang zur GUI der Keys
-    # AKTIV
-    # WICHTIG
     def _drain_live_enqueue(self):
         # ✅ Initialisiere Lock einmalig
         if not hasattr(self, '_drain_lock'):
@@ -21492,14 +21368,6 @@ class App(ttk.Window):
         return tags
 
 
-    # [PROBABLY DEAD] Nie aufgerufen - DB-Felder werden direkt zugegriffen
-    # def _get_db_field(self, ui_col):
-        # """
-        # Helper: Nutzt zentrales Mapping der DB.
-        # """
-        # Wir fragen direkt die Datenbankklasse nach dem richtigen Feldnamen
-        # return self.db.resolve_column(ui_col)
-
     def _compute_row_values(self, key, row):
         """
         Extrahiert Werte für die Tabelle. 
@@ -21550,7 +21418,7 @@ class App(ttk.Window):
                             # DB speichert 0/1, UI zeigt Nein/Ja
                             is_cod = int(val)
                             values.append("Ja" if is_cod else "Nein")
-                        except:
+                        except (ValueError, TypeError):
                             values.append(str(val))
                 
                 # Generische Formatierung
@@ -21567,7 +21435,7 @@ class App(ttk.Window):
                         else:
                             import json
                             values.append(json.dumps(val))
-                    except:
+                    except (TypeError, ValueError):
                         values.append(str(val))
                 else:
                     values.append(str(val))
@@ -22486,23 +22354,6 @@ class App(ttk.Window):
         self.update_count_label()
 
 
-    # [PROBABLY DEAD] Nie aufgerufen - Export nutzt andere Logik
-    # def _get_visible_export_columns(self) -> List[str]:
-        # """
-        # Liefert die sichtbaren Spalten in der Reihenfolge von self.columns.
-        # """
-        # return [c for c in self.columns if c in self.visible_columns]
-
-
-    # [PROBABLY DEAD] Nie aufgerufen - Iteration wurde umgestellt
-    # def _iter_current_table_rows(self):
-        # """
-        # Generator: liefert alle Zeilen des Treeviews in aktueller Anzeige-Reihenfolge.
-        # """
-        # for iid in self.tree.get_children(""):
-            # yield iid, self.tree.item(iid)["values"]
-
-
     def _setup_events(self):
         """
         Bindet GUI-Events (z. B. Doppelklick auf Tabellenzellen).
@@ -22790,20 +22641,6 @@ class App(ttk.Window):
         
      # ---------------- Export-Methoden ----------------
 
-    # [PROBABLY DEAD] Nie aufgerufen - Export läuft synchron
-    # def _run_export_threaded(self, target, *args, **kwargs):
-        # """Hilfsfunktion: startet Export in eigenem Thread."""
-        # def worker():
-            # try:
-                # target(*args, **kwargs)
-            # except Exception as e:
-                # self.logger.log(f"[Export] ❌ Fehler im Export-Thread: {e}")
-        # threading.Thread(target=worker, daemon=True).start()
-
-    # =============================================================================
-    # HELPER-METHODE: REFERENCE-HEADER PRÜFEN UND ERGÄNZEN
-    # =============================================================================
-
     def _check_and_add_reference_header(self, outfile, original_vcf, build):
         """
         ✅ FIX: Prüfe und füge Reference-Header hinzu falls fehlend
@@ -22919,35 +22756,6 @@ class App(ttk.Window):
                 parts[7] = f"{info_str};{additional_info}"
 
         return "\t".join(parts) + "\n"
-    
-    # [PROBABLY DEAD] Nie aufgerufen - Metadata wird inline erstellt
-    # def _get_export_metadata(self) -> dict:
-        # """
-        # ✅ NEUE METHODE: Sammelt Metadaten für Export.
-        
-        # Returns:
-            # Dict mit:
-            # - total_variants: Gesamtzahl nach AF-Filter
-            # - visible_variants: Sichtbar nach Postfilter
-            # - af_threshold: Verwendeter AF-Schwellenwert
-            # - include_none: Include-None-Flag
-            # - postfilter_active: Ob Postfilter aktiv
-            # - export_timestamp: ISO-Timestamp
-        # """
-        # metadata = {
-            # "export_timestamp": datetime.datetime.now().isoformat(),
-            # "af_threshold": self.af_threshold.get() if hasattr(self, 'af_threshold') else None,
-            # "include_none": self.include_none.get() if hasattr(self, 'include_none') else False,
-            # "total_variants": len(self.distiller.display_keys) if hasattr(self.distiller, 'display_keys') else 0,
-            # "visible_variants": len(self.tree.get_children("")),
-            # "postfilter_active": False,
-        # }
-        
-        # ✅ Prüfe, ob Postfilter aktiv
-        # if metadata["visible_variants"] < metadata["total_variants"]:
-            # metadata["postfilter_active"] = True
-        
-        # return metadata
     
     def _process_events(self):
         try:
@@ -23138,10 +22946,10 @@ class App(ttk.Window):
                         if isinstance(val, str):
                             try:
                                 if val and val not in (".", ""): val = float(val)
-                            except: pass
+                            except ValueError: pass
                         ws.cell(row=row_idx, column=col_idx, value=val)
                     exported_count += 1
-                except: continue
+                except (KeyError, IndexError): continue
             
             # Auto-Width
             for col_idx in range(1, len(headers) + 1):
@@ -23229,7 +23037,7 @@ class App(ttk.Window):
                     draw_row(y, values, visible_indices)
                     y -= 10
                     exported_count += 1
-                except: continue
+                except (KeyError, IndexError, AttributeError): continue
 
             c.save()
             self.logger.log(f"[Export] ✅ PDF: {filename}")
@@ -23293,7 +23101,7 @@ class App(ttk.Window):
                     try:
                         chunk_data = self.db.get_variants_bulk(chunk)
                         if chunk_data: annotations.update(chunk_data)
-                    except: pass
+                    except (OSError, ValueError, KeyError): pass
 
                 original_vcf = self.distiller.original_vcf_path
                 if not original_vcf or not os.path.exists(original_vcf):
@@ -23318,7 +23126,7 @@ class App(ttk.Window):
                             if len(parts) < 5: continue
                             chrom, pos_str, _, ref, alt_str = parts[:5]
                             try: pos = int(pos_str)
-                            except: continue
+                            except ValueError: continue
                             
                             c_clean = chrom.replace("chr", "").replace("CHR", "").upper()
                             ref = ref.upper()
@@ -23337,7 +23145,7 @@ class App(ttk.Window):
                                 new_line = self._enrich_vcf_line(line, anno, matched_key_full)
                                 outfile.write(new_line)
                                 exported_count += 1
-                        except: continue
+                        except (ValueError, KeyError, IndexError): continue
 
                 self.logger.log(f"[VCF-Export] ✅ Fertig: {exported_count} exportiert.")
                 # ✅ FIX: Toast Notification
@@ -23631,7 +23439,7 @@ class App(ttk.Window):
             try:
                 with open(Config.SETTINGS_FILE, "r") as f:
                     data = json.load(f)
-            except: pass
+            except (json.JSONDecodeError, OSError): pass
         
         data["af_threshold"] = self.af_threshold.get()
         data["include_none"] = self.include_none.get()
