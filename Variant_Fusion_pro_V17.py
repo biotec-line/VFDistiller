@@ -317,48 +317,8 @@ if __name__ == "__main__":
     _create_early_splash()
     _splash_log("Lade Module ...")
 
-# =============================================================================
-# SINGLE INSTANCE CHECK (V17.0)
-# =============================================================================
-def cleanup_lock():
-    """Entfernt das Lock-File bei Programmende."""
-    lock_file = os.path.join(BASE_DIR, ".vf_instance.lock")
-    try:
-        if os.path.exists(lock_file):
-            os.remove(lock_file)
-    except OSError:
-        pass
-
-def check_single_instance():
-    """
-    Prüft ob bereits eine Instanz läuft (via Lock-File).
-    Returns: (success: bool, pid: int)
-    """
-    lock_file = os.path.join(BASE_DIR, ".vf_instance.lock")
-    current_pid = os.getpid()
-    
-    if os.path.exists(lock_file):
-        try:
-            with open(lock_file, "r") as f:
-                content = f.read().strip()
-                if content:
-                    old_pid = int(content)
-                    if psutil.pid_exists(old_pid):
-                        return False, old_pid
-                    else:
-                        print(f"[Startup] Stale lock found (PID {old_pid} not running). Taking over.")
-        except Exception as e:
-            print(f"[Startup] Lock file read error: {e}")
-            
-    # Create new lock
-    try:
-        with open(lock_file, "w") as f:
-            f.write(str(current_pid))
-        atexit.register(cleanup_lock)
-        return True, current_pid
-    except Exception as e:
-        print(f"[Startup] Could not write lock file: {e}")
-        return True, current_pid # Fail open if we can't write lock
+# NOTE: Single Instance Check definiert weiter unten (nach allen Imports)
+# Siehe: check_single_instance() und release_single_instance()
 
 # =============================================================================
 # IMPORT-STATUS LOGGING

@@ -65,7 +65,7 @@ def benchmark_vcf_parsing(acc: CythonAccelerator, iterations: int = 1):
             for line in VCF_LINES:
                 try:
                     record = acc.parse_vcf_line(line)
-                except:
+                except Exception:
                     pass
         cython_time = time.time() - start
         results.append(("Cython", cython_time))
@@ -89,7 +89,7 @@ def benchmark_vcf_parsing(acc: CythonAccelerator, iterations: int = 1):
                     'filter': parts[6],
                     'info': parts[7]
                 }
-            except:
+            except Exception:
                 pass
     python_time = time.time() - start
     results.append(("Python", python_time))
@@ -122,7 +122,7 @@ def benchmark_af_validation(acc: CythonAccelerator, iterations: int = 1):
             for val in AF_VALUES:
                 try:
                     is_valid = acc.validate_af(val)
-                except:
+                except Exception:
                     pass
         cython_time = time.time() - start
         results.append(("Cython", cython_time))
@@ -140,7 +140,7 @@ def benchmark_af_validation(acc: CythonAccelerator, iterations: int = 1):
                     and isinstance(val, (int, float)) 
                     and 0.0 <= val <= 1.0
                 )
-            except:
+            except Exception:
                 pass
     python_time = time.time() - start
     results.append(("Python", python_time))
@@ -173,7 +173,7 @@ def benchmark_key_normalization(acc: CythonAccelerator, iterations: int = 1):
             for chrom, pos, ref, alt, build in KEYS:
                 try:
                     key = acc.normalize_key(chrom, pos, ref, alt, build)
-                except:
+                except Exception:
                     pass
         cython_time = time.time() - start
         results.append(("Cython", cython_time))
@@ -192,7 +192,7 @@ def benchmark_key_normalization(acc: CythonAccelerator, iterations: int = 1):
                 alt = alt.upper()
                 build = build.lower()
                 key = (chrom, pos, ref, alt, build)
-            except:
+            except Exception:
                 pass
     python_time = time.time() - start
     results.append(("Python", python_time))
