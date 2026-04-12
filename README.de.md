@@ -1,12 +1,35 @@
 # VFDistiller — Variant Fusion Distiller
 
-Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation genetischer Variantendaten. Unterstuetzt VCF, gVCF, 23andMe-Rohdaten und FASTA — ohne pysam/bcftools/samtools (Windows-kompatibel).
+> ⚠️ **Research Use Only / Nicht für klinische Diagnostik / Not for Clinical Use**
+>
+> VFDistiller ist ein **Forschungs- und Bioinformatik-Werkzeug** für die Analyse
+> von VCF-Dateien aus genetischen Tests. Es ist:
+>
+> - **Kein IVD-Medizinprodukt** im Sinne der IVDR (EU) 2017/746
+> - **Nicht CE-IVD-zertifiziert**, nicht durch BfArM oder eine Benannte Stelle geprueft
+> - **Nicht für klinische Diagnostik** oder die Interpretation klinischer
+>   Testergebnisse (auch nicht im Consumer-Genomik-Kontext)
+> - **Keine Gesundheitsempfehlung**, keine Diagnose, keine Prognose, keine
+>   Therapieempfehlung
+> - Die angezeigten `ClinSig`-Werte (ClinVar) und Variant-Impact-Werte (VEP,
+>   AlphaGenome) sind **Datenbank-Annotationen zur Forschungsorientierung**,
+>   keine klinische Bewertung
+>
+> Nutzung ausschliesslich für **Bioinformatik-Lehre, -Forschung und -Software-
+> Entwicklung**. Für klinische Interpretation genetischer Befunde konsultieren
+> Sie bitte qualifizierte humangenetische Fachstellen.
+>
+> Unentgeltliche Open-Source-Schenkung (§§ 516 ff. BGB). Haftung auf Vorsatz
+> und grobe Fahrlaessigkeit beschraenkt (§ 521 BGB, AGPL-3.0 §§ 15–17).
+> Nutzung auf eigenes Risiko.
+
+Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation forschungsbezogener genetischer Variantendaten aus beliebigen Sequenzierungsquellen. Unterstuetzt VCF, gVCF, 23andMe-Rohformat und FASTA — ohne pysam/bcftools/samtools (Windows-kompatibel).
 
 ![Variant Fusion - Hauptansicht](README/screenshots/main_view.png)
 
 ## Features
 
-- **Multi-Format-Import** — VCF, gVCF, 23andMe (.txt), FASTA (.fa/.fasta)
+- **Multi-Format-Import** — VCF, gVCF, 23andMe-Rohformat (.txt), FASTA (.fa/.fasta)
 - **Automatische Build-Erkennung** — GRCh37 / GRCh38 aus Header, Contigs oder RSID-Positionen
 - **Multi-Source-Annotation** — gnomAD, MyVariant.info, Ensembl VEP, ALFA, TOPMed, AlphaGenome
 - **INFO-Recycling** — Vorhandene VCF-Annotationen werden wiederverwendet
@@ -185,19 +208,35 @@ VFDistiller/
 
 ## Lizenz
 
-**VFDistiller License v1.0** — Kostenlos nutzbar, Modifikation erlaubt, kein Weiterverkauf. Siehe [LICENSE](LICENSE) fuer Details.
+**[AGPL-3.0-or-later](LICENSE)** (GNU Affero General Public License, Version 3
+oder jede neuere Version). **Kostenlos. Dauerhaft.**
 
-- Nutzung fuer Forschung, Bildung und persoenliche Zwecke: **erlaubt**
-- Anpassung und Modifikation des Quellcodes: **erlaubt**
-- Weitergabe innerhalb der eigenen Organisation: **erlaubt**
-- Weiterverkauf oder kommerzielle Weiterverbreitung: **verboten**
-- Diese Lizenz gilt fuer V17.x — Nachfolgeversionen koennen andere Bedingungen haben
+- Copyright (C) 2026 Lukas Geiger (c/o Um:bruch Think Tank)
+- Volltext: [LICENSE](LICENSE), Haftungshinweise: [NOTICE](NOTICE)
+- Vorgaengerlizenz: Die fruehere „VFDistiller License v1.0" wurde abgeloest
+  und liegt zur Nachvollziehbarkeit in
+  [`docs/archive/`](docs/archive/VFDistiller_License_v1_legacy.md).
 
-Die Software ist nicht medizinisch validiert und darf nicht fuer klinische Diagnosen oder therapeutische Entscheidungen verwendet werden.
+Kurz gefasst:
 
-Third-Party-Bibliotheken unterliegen ihren jeweiligen Lizenzen (MIT, BSD, Apache 2.0). Siehe `README/licenses/THIRD_PARTY_LICENSES.txt`.
+- Nutzen, studieren, modifizieren, weitergeben: **erlaubt**, kostenlos.
+- Weitergabe (einschliesslich Forks, Re-Packaging, kostenpflichtiger Support):
+  **erlaubt**, aber abgeleitete Werke muessen unter AGPL-3.0-or-later bleiben.
+- **Network-/SaaS-Nutzung (AGPL § 13):** Wer eine modifizierte Version auf
+  einem Server betreibt, mit dem Nutzer ueber ein Netzwerk interagieren,
+  muss diesen Nutzern den Quellcode zugaenglich machen.
+- **Kein Weiterverkauf dieses Codes als Closed-Source-Produkt.** Jede
+  abgeleitete Arbeit bleibt AGPL.
+- Die Software ist **nicht medizinisch validiert** und darf nicht fuer
+  klinische Diagnosen oder Therapieentscheidungen verwendet werden
+  (siehe RUO-Banner oben und [NOTICE](NOTICE)).
 
-> **Windows Store:** Eine vorpaketierte Version mit zusaetzlichen Features (Cython-Beschleunigung, Offline-Datenbank) wird in Kuerze im Microsoft Store verfuegbar sein.
+Third-Party-Bibliotheken behalten ihre jeweiligen Lizenzen (MIT, BSD,
+Apache 2.0, PIL License, Biopython License). Siehe
+[`README/licenses/THIRD_PARTY_LICENSES.txt`](README/licenses/THIRD_PARTY_LICENSES.txt).
+
+> **Windows Store:** Eine kostenlose, vorpaketierte Version (Cython-Beschleunigung,
+> Offline-Datenbank) ist im Microsoft Store verfuegbar.
 
 ## Version
 

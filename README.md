@@ -1,12 +1,46 @@
 # VFDistiller — Variant Fusion Distiller
 
-A bioinformatics desktop tool for processing, converting, and annotating genetic variant data. Supports VCF, gVCF, 23andMe raw data, and FASTA — without pysam/bcftools/samtools (Windows-compatible).
+> ⚠️ **Research Use Only / Nicht für klinische Diagnostik / Not for Clinical Use**
+>
+> VFDistiller ist ein **Forschungs- und Bioinformatik-Werkzeug** für die Analyse
+> von VCF-Dateien aus genetischen Tests. Es ist:
+>
+> - **Kein IVD-Medizinprodukt** im Sinne der IVDR (EU) 2017/746
+> - **Nicht CE-IVD-zertifiziert**, nicht durch BfArM oder eine Benannte Stelle geprüft
+> - **Nicht für klinische Diagnostik** oder die Interpretation klinischer
+>   Testergebnisse (auch nicht im Consumer-Genomik-Kontext)
+> - **Keine Gesundheitsempfehlung**, keine Diagnose, keine Prognose, keine
+>   Therapieempfehlung
+> - Die angezeigten `ClinSig`-Werte (ClinVar) und Variant-Impact-Werte (VEP,
+>   AlphaGenome) sind **Datenbank-Annotationen zur Forschungsorientierung**,
+>   keine klinische Bewertung
+>
+> Nutzung ausschließlich für **Bioinformatik-Lehre, -Forschung und -Software-
+> Entwicklung**. Für klinische Interpretation genetischer Befunde konsultieren
+> Sie bitte qualifizierte humangenetische Fachstellen.
+>
+> Unentgeltliche Open-Source-Schenkung (§§ 516 ff. BGB). Haftung auf Vorsatz
+> und grobe Fahrlässigkeit beschränkt (§ 521 BGB, AGPL-3.0 §§ 15–17).
+> Nutzung auf eigenes Risiko.
+>
+> ---
+>
+> **English summary:** VFDistiller is a bioinformatics research tool. It is
+> NOT an in-vitro diagnostic medical device (IVDR (EU) 2017/746), NOT
+> CE-marked, NOT reviewed by BfArM or any notified body and NOT intended for
+> clinical diagnosis, prognosis or therapy decisions. ClinSig / variant-impact
+> values shown are third-party research database annotations, not medical
+> assessments. Use for bioinformatics research, teaching and software
+> development only. Free open-source donation; liability limited to intent
+> and gross negligence (§ 521 BGB, AGPL-3.0 §§ 15–17). Use at your own risk.
+
+A bioinformatics desktop tool for processing, converting, and annotating research-grade genetic variant data from any sequencing source. Supports VCF, gVCF, 23andMe raw format, and FASTA — without pysam/bcftools/samtools (Windows-compatible).
 
 ![Variant Fusion - Main View](README/screenshots/main_view.png)
 
 ## Features
 
-- **Multi-Format Import** — VCF, gVCF, 23andMe (.txt), FASTA (.fa/.fasta)
+- **Multi-Format Import** — VCF, gVCF, 23andMe raw text format (.txt), FASTA (.fa/.fasta)
 - **Automatic Build Detection** — GRCh37 / GRCh38 from header, contigs, or RSID positions
 - **Multi-Source Annotation** — gnomAD, MyVariant.info, Ensembl VEP, ALFA, TOPMed, AlphaGenome
 - **INFO Recycling** — Existing VCF annotations are reused
@@ -185,19 +219,35 @@ VFDistiller/
 
 ## License
 
-**VFDistiller License v1.0** — Free to use, modification allowed, no resale. See [LICENSE](LICENSE) for details.
+**[AGPL-3.0-or-later](LICENSE)** (GNU Affero General Public License, version 3
+or any later version). **Free of charge. Forever.**
 
-- Use for research, education, and personal purposes: **allowed**
-- Modification and adaptation of source code: **allowed**
-- Redistribution within your own organization: **allowed**
-- Resale or commercial redistribution: **prohibited**
-- This license applies to V17.x — successor versions may have different terms
+- Copyright (C) 2026 Lukas Geiger (c/o Um:bruch Think Tank)
+- Full text: [LICENSE](LICENSE), disclaimers: [NOTICE](NOTICE)
+- Superseded license: the former "VFDistiller License v1.0" has been retired
+  and is kept for reference in
+  [`docs/archive/`](docs/archive/VFDistiller_License_v1_legacy.md).
 
-The software is not medically validated and must not be used for clinical diagnoses or therapeutic decisions.
+In short:
 
-Third-party libraries are subject to their respective licenses (MIT, BSD, Apache 2.0). See `README/licenses/THIRD_PARTY_LICENSES.txt`.
+- Use, study, modify, share: **allowed**, at no cost.
+- Redistribution (including forks, re-packaging, paid support): **allowed**,
+  but derivative works must remain under AGPL-3.0-or-later.
+- **Network / SaaS use (AGPL § 13):** If you run a modified version on a
+  server that users interact with over a network, you must make the
+  corresponding source code available to those users.
+- **No resale of this code as a closed-source product.** Any downstream
+  work must stay AGPL.
+- The software is **not medically validated** and must not be used for
+  clinical diagnoses or therapeutic decisions. See the RUO banner above
+  and [NOTICE](NOTICE).
 
-> **Windows Store:** A pre-packaged version with additional features (Cython acceleration, offline database) will be available in the Microsoft Store soon.
+Third-party libraries retain their own licenses (MIT, BSD, Apache 2.0,
+PIL License, Biopython License). See
+[`README/licenses/THIRD_PARTY_LICENSES.txt`](README/licenses/THIRD_PARTY_LICENSES.txt).
+
+> **Windows Store:** A free, pre-packaged version (Cython acceleration,
+> offline database) is available in the Microsoft Store.
 
 ## Version
 
