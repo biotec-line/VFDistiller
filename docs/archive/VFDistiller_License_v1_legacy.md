@@ -1,0 +1,70 @@
+> **ARCHIVED / SUPERSEDED — DO NOT USE.**
+>
+> This file documents the historical "VFDistiller License v1.0" that was
+> in force from 2024 up to and including 2026-04-11. On 2026-04-12 the
+> project was re-licensed under **AGPL-3.0-or-later** (see `/LICENSE`
+> and `/NOTICE` in the repository root).
+>
+> This file is kept purely for historical reference and legal
+> transparency. The clauses below — in particular the
+> "INTERNAL DISTRIBUTION ONLY" clause — are **no longer in effect**.
+> The current license is the GNU Affero General Public License,
+> version 3 or later.
+
+---
+
+VFDistiller License v1.0
+
+Copyright (c) 2024-2026 Lukas Geiger. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person or organization
+obtaining a copy of this software and associated documentation files (the
+"Software"), to use, copy, and modify the Software, subject to the following
+conditions:
+
+1. PERMITTED USE
+   - The Software may be used for any purpose, including research, education,
+     and personal use.
+   - The source code may be modified and adapted to suit internal needs.
+
+2. INTERNAL DISTRIBUTION ONLY
+   - Copies or modifications of the Software may be shared within the
+     licensee's own organization (e.g., institute, university, company).
+   - Distribution to external third parties outside the organization is
+     not permitted without written consent from the author.
+
+3. NO RESALE
+   - The Software, whether in original or modified form, may NOT be sold,
+     sublicensed, or commercially redistributed.
+   - Offering the Software or derivative works as a paid product or service
+     is prohibited.
+
+4. VERSION SCOPE
+   - This license applies to the specific major version of the Software
+     with which it was distributed (e.g., V17.x).
+   - Successor products or new major versions may be released under
+     different terms.
+
+5. THIRD-PARTY LIBRARIES
+   - The Software includes third-party libraries under MIT, BSD, and
+     Apache 2.0 licenses. Their respective license terms apply unchanged.
+   - See THIRD_PARTY_LICENSES.txt for details.
+
+6. MEDICAL DISCLAIMER
+   - The Software is intended for research and educational purposes only.
+   - It is NOT medically validated and MUST NOT be used for clinical
+     diagnosis or therapeutic decisions.
+   - Results must always be verified using medically validated procedures.
+
+7. NO WARRANTY
+   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+   - IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR
+     OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
+
+8. UPDATES
+   - There is no obligation to provide updates or support.
+   - Updates may be provided at the author's discretion.
+
+For licensing inquiries: https://github.com/lukisch/VFDistiller

@@ -1,0 +1,84 @@
+VFDistiller — Variant Fusion Distiller
+========================================
+
+Copyright (C) 2026 Lukas Geiger (c/o Um:bruch Think Tank)
+Licensed under the GNU Affero General Public License v3.0 or later
+(AGPL-3.0-or-later). See LICENSE for the full text.
+
+This NOTICE file is provided for informational purposes alongside the
+license and must be preserved in redistributions of the source code
+and in substantial portions of the software.
+
+--------------------------------------------------------------------
+1. Research Use Only / Not for Clinical Use
+--------------------------------------------------------------------
+
+VFDistiller is a bioinformatics research and teaching tool for the
+processing, conversion and annotation of genetic variant files (VCF,
+gVCF, 23andMe raw format, FASTA). It is explicitly:
+
+  * NOT a CE-marked in-vitro diagnostic medical device (IVD) within
+    the meaning of Regulation (EU) 2017/746 (IVDR).
+  * NOT certified by BfArM, a notified body or any other regulator.
+  * NOT intended for clinical diagnosis, prognosis, therapeutic
+    decision-making, or the interpretation of clinical test results
+    (including in the consumer-genomics context).
+  * NOT a medical opinion, diagnosis or recommendation.
+
+The ClinSig values (from ClinVar), variant-impact predictions (from
+Ensembl VEP, AlphaGenome) and allele-frequency annotations (from
+gnomAD, ALFA, TOPMed) that VFDistiller displays are database
+annotations reproduced from third-party research sources. They are
+for scientific orientation only and must not be used as a basis for
+clinical decisions.
+
+Any person using VFDistiller to interpret real human genetic data must
+consult qualified human-genetics professionals.
+
+--------------------------------------------------------------------
+2. No Medical Device / Kein Medizinprodukt
+--------------------------------------------------------------------
+
+Zweckbestimmung (German, binding for the European market):
+
+  VFDistiller ist ein bioinformatisches Desktop-Tool zur technischen
+  Verarbeitung, Format-Konvertierung und Annotation genetischer
+  Variantendaten. Die Software ist ausschließlich für Forschung,
+  Lehre und Software-Entwicklung bestimmt. Sie ist KEIN
+  In-vitro-Diagnostikum, KEIN Medizinprodukt und darf weder für die
+  klinische Diagnose noch für therapeutische Entscheidungen
+  verwendet werden.
+
+--------------------------------------------------------------------
+3. Liability / Haftung (Schenkungshaftung)
+--------------------------------------------------------------------
+
+VFDistiller is distributed free of charge as an unentgeltliche
+Open-Source-Schenkung (§§ 516 ff. BGB). Liability is limited to
+intent and gross negligence in accordance with § 521 BGB and
+§§ 15–17 AGPL-3.0. Liability for damage to life, body and health
+remains unaffected under German mandatory law.
+
+The Product Liability Directive (EU) 2024/2853 contains an
+open-source exception (Art. 4 (3)); its applicability to software
+distributed via commercial app stores is legally disputed and not
+guaranteed here.
+
+USE AT YOUR OWN RISK.
+
+--------------------------------------------------------------------
+4. Third-Party Components
+--------------------------------------------------------------------
+
+VFDistiller bundles or depends on third-party libraries licensed
+under MIT, BSD, Apache-2.0, PIL License, Biopython License and
+compatible permissive licenses. See README/licenses/THIRD_PARTY_LICENSES.txt
+for the full list and license texts.
+
+--------------------------------------------------------------------
+5. Contact
+--------------------------------------------------------------------
+
+Source repository: https://github.com/biotec-line/VFDistiller
+Author / Maintainer: Lukas Geiger, c/o Um:bruch Think Tank
+ORCID: https://orcid.org/0009-0005-7296-1534
