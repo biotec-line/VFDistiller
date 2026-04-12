@@ -27,6 +27,26 @@ Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation fo
 
 ![Variant Fusion - Hauptansicht](README/screenshots/main_view.png)
 
+## Vertriebsänderung (2026-04-12)
+
+VFDistiller wurde am 2026-04-12 aus dem Microsoft Store entfernt und wird
+seitdem **ausschließlich über GitHub** als reines Open-Source-Forschungs-
+Tool unter AGPL-3.0-or-later vertrieben.
+
+**Hintergrund:** Bei erneuter Prüfung gegen die IVDR (EU) 2017/746 (In-vitro-
+Diagnostika-Verordnung) hätte die Kombination aus Store-Vertrieb und
+Consumer-Genomik-nahen Features die App in die Nähe einer IVD-MDSW-
+Einstufung gerückt. Der Projektverantwortliche hat sich für die sauberste
+Lösung entschieden — vollständige Entfernung des Store-Listings — statt
+für ein BfArM-Abgrenzungsverfahren (§ 6 MPDG) oder eine aufwendige
+CE-IVD-Zertifizierung.
+
+**Konsequenzen:**
+- Bereits installierte Store-Versionen laufen lokal weiter; es gibt keine weiteren Updates über den Store.
+- Neue Nutzer: Repository klonen, über PyInstaller/uv bauen oder das GitHub-Releases-Archiv verwenden.
+- Die Lizenz bleibt unverändert (AGPL-3.0-or-later, eingeführt am 2026-04-12).
+- Zweckbestimmung bleibt: **Research Use Only — Bioinformatik-Tool für VCF-Analyse. Kein Medizinprodukt.**
+
 ## Features
 
 - **Multi-Format-Import** — VCF, gVCF, 23andMe-Rohformat (.txt), FASTA (.fa/.fasta)
@@ -47,7 +67,17 @@ Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation fo
 
 ### Installation
 
+VFDistiller wird **ausschließlich über GitHub** vertrieben (kein Microsoft
+Store, kein Paketmanager). Empfohlene Installationswege:
+
+1. **GitHub-Releases** — neuestes Paket-Archiv (falls verfuegbar) unter
+   [Releases](https://github.com/biotec-line/VFDistiller/releases) herunterladen.
+2. **Source-Build** — Repository klonen und Abhaengigkeiten installieren:
+
 ```bash
+git clone https://github.com/biotec-line/VFDistiller.git
+cd VFDistiller
+
 # Abhaengigkeiten installieren
 pip install -r requirements.txt
 
@@ -57,6 +87,9 @@ cd cython_hotpath
 python setup.py build_ext --inplace
 cd ..
 ```
+
+3. **PyInstaller / uv** — fuer einen Standalone-`.exe`-Build siehe
+   `VFDistiller.spec` (PyInstaller-Konfiguration im Repo enthalten).
 
 ### Genomreferenzen (optional, fuer FASTA-Validierung)
 
@@ -235,8 +268,9 @@ Third-Party-Bibliotheken behalten ihre jeweiligen Lizenzen (MIT, BSD,
 Apache 2.0, PIL License, Biopython License). Siehe
 [`README/licenses/THIRD_PARTY_LICENSES.txt`](README/licenses/THIRD_PARTY_LICENSES.txt).
 
-> **Windows Store:** Eine kostenlose, vorpaketierte Version (Cython-Beschleunigung,
-> Offline-Datenbank) ist im Microsoft Store verfuegbar.
+> **Vertrieb:** VFDistiller wird ausschliesslich ueber GitHub vertrieben
+> (siehe [Vertriebsaenderung (2026-04-12)](#vertriebsaenderung-2026-04-12)
+> oben). Das frühere Microsoft-Store-Listing wurde zurueckgezogen.
 
 ## Version
 

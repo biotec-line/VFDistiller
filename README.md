@@ -38,6 +38,25 @@ A bioinformatics desktop tool for processing, converting, and annotating researc
 
 ![Variant Fusion - Main View](README/screenshots/main_view.png)
 
+## Distribution Change (2026-04-12)
+
+VFDistiller was removed from the Microsoft Store on 2026-04-12 and is now
+distributed **exclusively via GitHub** as a pure open-source research tool
+under AGPL-3.0-or-later.
+
+**Why:** On re-evaluation against the IVDR (EU) 2017/746 (in-vitro diagnostic
+regulation), the combination of Store distribution + consumer-genomics-
+adjacent features would have placed the app close to IVD-MDSW classification.
+The project lead chose the cleanest mitigation — removing the Store listing
+entirely — rather than pursuing a BfArM delimitation procedure (§ 6 MPDG)
+or expensive CE-IVD certification.
+
+**Consequences:**
+- Existing Store installations keep working locally; no further updates via Store.
+- New users: clone the repo, build via PyInstaller/uv, or use the GitHub Releases archive.
+- No change to the license (AGPL-3.0-or-later, as introduced on 2026-04-12).
+- Zweckbestimmung / Intended purpose remains: **Research Use Only — Bioinformatics tool for VCF analysis. Not a medical device.**
+
 ## Features
 
 - **Multi-Format Import** — VCF, gVCF, 23andMe raw text format (.txt), FASTA (.fa/.fasta)
@@ -58,7 +77,17 @@ A bioinformatics desktop tool for processing, converting, and annotating researc
 
 ### Installation
 
+VFDistiller is distributed **exclusively via GitHub** (no Microsoft Store,
+no package manager). Recommended paths:
+
+1. **GitHub Releases** — download the latest packaged archive (if available)
+   from [Releases](https://github.com/biotec-line/VFDistiller/releases).
+2. **Source build** — clone the repository and install dependencies:
+
 ```bash
+git clone https://github.com/biotec-line/VFDistiller.git
+cd VFDistiller
+
 # Install dependencies
 pip install -r requirements.txt
 
@@ -68,6 +97,9 @@ cd cython_hotpath
 python setup.py build_ext --inplace
 cd ..
 ```
+
+3. **PyInstaller / uv** — for a standalone `.exe` build, see
+   `VFDistiller.spec` (PyInstaller configuration shipped with the repo).
 
 ### Genome References (optional, for FASTA validation)
 
@@ -246,8 +278,9 @@ Third-party libraries retain their own licenses (MIT, BSD, Apache 2.0,
 PIL License, Biopython License). See
 [`README/licenses/THIRD_PARTY_LICENSES.txt`](README/licenses/THIRD_PARTY_LICENSES.txt).
 
-> **Windows Store:** A free, pre-packaged version (Cython acceleration,
-> offline database) is available in the Microsoft Store.
+> **Distribution:** VFDistiller is distributed exclusively via GitHub
+> (see [Distribution Change (2026-04-12)](#distribution-change-2026-04-12)
+> above). The former Microsoft Store listing has been retired.
 
 ## Version
 

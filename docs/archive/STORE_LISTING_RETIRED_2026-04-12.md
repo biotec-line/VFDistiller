@@ -1,3 +1,15 @@
+# STORE LISTING — RETIRED / AUSSER BETRIEB (2026-04-12)
+
+> **Status:** Diese Store-Listing-Beschreibung war vorbereitet, wurde aber
+> nach dem IVDR-Nachtragsgutachten vom 2026-04-12 **nicht verwendet**.
+> Die App wurde stattdessen komplett aus dem Microsoft Store entfernt.
+> Grund: Variante A aus dem IVDR-Gutachten (reine GitHub-OSS-Distribution)
+> wurde der Variante B (Store + BfArM-Abgrenzungsantrag) vorgezogen.
+>
+> Historisches Dokument — nur zur Archivierung. NICHT NEU VERWENDEN.
+
+---
+
 # Store Listing — VFDistiller
 
 > **Kopfnotiz für den Partner-Center-Upload:**
