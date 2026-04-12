@@ -40,14 +40,17 @@ A bioinformatics desktop tool for processing, converting, and annotating researc
 
 ## Distribution Change (2026-04-12)
 
-VFDistiller was removed from the Microsoft Store on 2026-04-12 and is now
-distributed **exclusively via GitHub** as a pure open-source research tool
-under AGPL-3.0-or-later.
+VFDistiller was **withdrawn from the Microsoft Store** on 2026-04-12 (listing set
+to "unavailable" — Microsoft Partner Center does not support hard delete) and is
+now distributed **exclusively via GitHub** as a pure open-source research tool
+under AGPL-3.0-or-later. The Store listing is no longer publicly searchable and
+no new installations can be acquired through the Store. Existing local
+installations continue to run but will receive no further updates.
 
 **Why:** On re-evaluation against the IVDR (EU) 2017/746 (in-vitro diagnostic
 regulation), the combination of Store distribution + consumer-genomics-
 adjacent features would have placed the app close to IVD-MDSW classification.
-The project lead chose the cleanest mitigation — removing the Store listing
+The project lead chose the cleanest mitigation — withdrawing the Store listing
 entirely — rather than pursuing a BfArM delimitation procedure (§ 6 MPDG)
 or expensive CE-IVD certification.
 

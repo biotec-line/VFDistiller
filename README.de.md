@@ -29,15 +29,19 @@ Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation fo
 
 ## Vertriebsänderung (2026-04-12)
 
-VFDistiller wurde am 2026-04-12 aus dem Microsoft Store entfernt und wird
-seitdem **ausschließlich über GitHub** als reines Open-Source-Forschungs-
-Tool unter AGPL-3.0-or-later vertrieben.
+VFDistiller wurde am 2026-04-12 im Microsoft Store **zurückgezogen** (Listing
+auf "nicht verfügbar" gesetzt — echtes Löschen ist im Partner Center nicht
+vorgesehen) und wird seitdem **ausschließlich über GitHub** als reines Open-
+Source-Forschungs-Tool unter AGPL-3.0-or-later vertrieben. Das Store-Listing
+ist nicht mehr öffentlich auffindbar, neue Installationen über den Store sind
+nicht mehr möglich. Bereits installierte Kopien laufen lokal weiter, erhalten
+aber keine weiteren Updates.
 
 **Hintergrund:** Bei erneuter Prüfung gegen die IVDR (EU) 2017/746 (In-vitro-
 Diagnostika-Verordnung) hätte die Kombination aus Store-Vertrieb und
 Consumer-Genomik-nahen Features die App in die Nähe einer IVD-MDSW-
 Einstufung gerückt. Der Projektverantwortliche hat sich für die sauberste
-Lösung entschieden — vollständige Entfernung des Store-Listings — statt
+Lösung entschieden — den Rückzug des Store-Listings — statt
 für ein BfArM-Abgrenzungsverfahren (§ 6 MPDG) oder eine aufwendige
 CE-IVD-Zertifizierung.
 
