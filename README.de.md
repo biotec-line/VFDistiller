@@ -51,6 +51,11 @@ CE-IVD-Zertifizierung.
 - Die Lizenz bleibt unverändert (AGPL-3.0-or-later, eingeführt am 2026-04-12).
 - Zweckbestimmung bleibt: **Research Use Only — Bioinformatik-Tool für VCF-Analyse. Kein Medizinprodukt.**
 
+**Repository-Status (2026-04-30):**
+- In Git liegen Quellcode, Dokumentation, Tests, Workflow-Metadaten, Packaging-Vorlagen und das App-Icon.
+- Genomreferenzen, lokale Einstellungen, SQLite-Caches/-Datenbanken, Logs, Build-Ausgaben, Release-Archive und Store-Binaries werden per `.gitignore` ausgeschlossen und bleiben lokal.
+- API-Keys werden nicht committed; dafür die generierte `variant_fusion_settings.json` oder lokale Umgebungskonfiguration verwenden.
+
 ## Features
 
 - **Multi-Format-Import** — VCF, gVCF, 23andMe-Rohformat (.txt), FASTA (.fa/.fasta)

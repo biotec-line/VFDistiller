@@ -1,16 +1,16 @@
-# Privacy Policy — Variant Fusion (VFDistiller)
+# Privacy Policy — VFDistiller
 
-**Last updated:** March 9, 2026
+**Last updated:** April 30, 2026
 **Publisher:** Lukas Geiger
-**Product ID:** 9MWRG32ZLDRM
+**Distribution:** GitHub only; the former Microsoft Store listing was withdrawn on April 12, 2026.
 
 ## Overview
 
-Variant Fusion (VFDistiller) is a desktop application for genetic variant analysis. This privacy policy explains how the application handles your data.
+VFDistiller is a desktop application for research-grade genetic variant analysis. This privacy policy explains how the application handles your data.
 
 ## Data Collection
 
-**Variant Fusion does not collect, store, or transmit any personal data to the developer.**
+**VFDistiller does not collect, store, or transmit any personal data to the developer.**
 
 All data processing happens locally on your device. The application does not include analytics, telemetry, crash reporting, or any form of data collection.
 
@@ -20,7 +20,7 @@ The application processes genetic data files (VCF, gVCF, 23andMe raw data, FASTA
 
 ## External Services
 
-Variant Fusion may connect to the following external services **only when you explicitly request annotation or lookup features**:
+VFDistiller may connect to the following external services **only when you explicitly request annotation or lookup features**:
 
 - **Ensembl VEP API** (ensembl.org) — for variant effect prediction
 - **gnomAD** (gnomad.broadinstitute.org) — for population allele frequencies

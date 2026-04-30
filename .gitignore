@@ -22,13 +22,21 @@
 *.db-shm
 
 # ---------------------------------------------------------------------------
-# Persoenliche Daten / Testdaten / Credentials
+# Persönliche Daten / Testdaten / Credentials
 # ---------------------------------------------------------------------------
 _persönlich/
 converted_23andme_vcfs/
+.env
+.env.*
+credentials.json
+client_secret*.json
+token.json
+*.pem
+*.key
+keyring/
 
 # ---------------------------------------------------------------------------
-# Nutzerkonfiguration (enthaelt API-Keys und lokale Pfade)
+# Nutzerkonfiguration (enthält API-Keys und lokale Pfade)
 # ---------------------------------------------------------------------------
 variant_fusion_settings.json
 resources_config.json
@@ -88,6 +96,13 @@ _WARTUNG/
 # Interne Entwicklungs-Dateien
 # ---------------------------------------------------------------------------
 AUFGABEN.txt
+TEST.txt
+TESTS.txt
+TESTERGEBNISSE.txt
+BUGREPORT.md
+DIAGNOSE_REPORT.md
+SKILL.md
+tmpclaude-*
 classes.txt
 RELEASE_PLAN.md
 _persönlich/
@@ -111,6 +126,8 @@ desktop.ini
 *.swo
 *~
 
-# Build-Artefakte (zu gross fuer GitHub)
+# Build-Artefakte (zu groß für GitHub)
 store_package/*.exe
 *.exe
+*.msi
+*.msix

@@ -55,7 +55,7 @@ for security reports:
   HTTPS, TLS downgrade, unsafe handling of API responses.
 - **Cython hot-path modules** — buffer overflows, out-of-bounds reads,
   use-after-free.
-- **Store-packaging / AppxManifest** — capability requests that exceed
+- **Packaging / AppxManifest templates** — capability requests that exceed
   what the documentation claims; path-escalation out of the sandbox.
 - **Update / background workers** — privilege escalation, arbitrary file
   writes outside the user-data directory.
@@ -91,8 +91,7 @@ triggers an annotation or lookup feature.
 Once a fix is available, we will:
 
 1. Publish a GitHub Security Advisory with a CVE request where applicable.
-2. Ship a patched release to the Microsoft Store and update the
-   `CHANGELOG.md`.
+2. Ship a patched GitHub release or source update and update `CHANGELOG.md`.
 3. Credit the reporter (unless anonymity was requested).
 
 Thank you for responsible disclosure.
