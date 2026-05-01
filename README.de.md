@@ -117,6 +117,10 @@ python test_performance.py
 python cython_hotpath/test_performance.py
 ```
 
+Diese Trennung hält CI auf deterministische Regressionsabdeckung fokussiert,
+während die Benchmark-Skripte für manuelle Performance-Prüfungen verfügbar
+bleiben.
+
 ### Genomreferenzen (optional, fuer FASTA-Validierung)
 
 Die Genomreferenzen (GRCh37/GRCh38) muessen separat heruntergeladen werden (~3 GB pro Build):

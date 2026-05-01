@@ -11,6 +11,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ### Geändert / Changed
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
+- README test instructions now clarify the split between deterministic pytest coverage and manual benchmark scripts.
 - `.gitignore` now covers internal test locks, secrets, private keys, installer artifacts, and LLM control files.
 - `SECURITY.md` and `PRIVACY_POLICY.md` updated after the Microsoft Store withdrawal.
 - `pytest.ini` now limits automated test collection to the maintained `tests/` suite.
