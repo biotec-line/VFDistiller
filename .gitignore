@@ -55,6 +55,7 @@ logs/
 data/lightdb_config.json
 data/annotations/*_index.pkl
 data/annotations/*.gtf.gz
+data/annotations/*.gtf
 
 # ---------------------------------------------------------------------------
 # Cache / Bytecode

@@ -11,6 +11,13 @@ import time
 import sys
 import os
 
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(errors="replace")
+        except Exception:
+            pass
+
 # Add parent dir to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -208,7 +215,41 @@ def benchmark_key_normalization(acc: CythonAccelerator, iterations: int = 1):
     return results
 
 
-def test_correctness(acc: CythonAccelerator):
+def parse_vcf_line_python(line: str):
+    """Pure Python reference for VCF parsing correctness checks."""
+    parts = line.split('\t')
+    if len(parts) < 8:
+        raise ValueError("Invalid VCF line")
+    return {
+        'chrom': parts[0],
+        'pos': int(parts[1]),
+        'id': parts[2],
+        'ref': parts[3],
+        'alt': parts[4],
+        'qual': float(parts[5]) if parts[5] != '.' else 0.0,
+        'filter': parts[6],
+        'info': parts[7],
+    }
+
+
+def validate_af_python(value):
+    """Pure Python reference for AF validation correctness checks."""
+    return (
+        value is not None
+        and isinstance(value, (int, float))
+        and 0.0 <= value <= 1.0
+    )
+
+
+def normalize_key_python(chrom, pos, ref, alt, build):
+    """Pure Python reference for variant key normalization checks."""
+    chrom = str(chrom)
+    if chrom.startswith('chr'):
+        chrom = chrom[3:]
+    return (chrom.upper(), int(pos), str(ref).upper(), str(alt).upper(), str(build).lower())
+
+
+def run_correctness_checks(acc: CythonAccelerator):
     """Teste Korrektheit der Cython-Implementierungen"""
     print("\n" + "="*70)
     print("CORRECTNESS TESTS")
@@ -225,7 +266,7 @@ def test_correctness(acc: CythonAccelerator):
     
     if acc.available:
         cython_result = acc.parse_vcf_line(line)
-    python_result = acc._parse_vcf_line_python(line)
+    python_result = parse_vcf_line_python(line)
     
     if acc.available:
         if cython_result == python_result:
@@ -248,7 +289,7 @@ def test_correctness(acc: CythonAccelerator):
     if acc.available:
         for val in test_vals:
             cython_result = acc.validate_af(val)
-            python_result = acc._validate_af_python(val)
+            python_result = validate_af_python(val)
             
             if cython_result == python_result:
                 print(f"   ✅ PASS: {val} -> {cython_result}")
@@ -273,7 +314,7 @@ def test_correctness(acc: CythonAccelerator):
     if acc.available:
         for chrom, pos, ref, alt, build in test_keys:
             cython_result = acc.normalize_key(chrom, pos, ref, alt, build)
-            python_result = acc._normalize_key_python(chrom, pos, ref, alt, build)
+            python_result = normalize_key_python(chrom, pos, ref, alt, build)
             
             if cython_result == python_result:
                 print(f"   ✅ PASS: {chrom}:{pos} -> {cython_result}")
@@ -316,7 +357,7 @@ def main():
         print("  python setup.py build_ext --inplace")
     
     # Correctness tests
-    if not test_correctness(acc):
+    if not run_correctness_checks(acc):
         print("\n❌ CORRECTNESS TESTS FAILED!")
         return 1
     

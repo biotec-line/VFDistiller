@@ -56,6 +56,10 @@ Cython available: True
 python cython_hotpath/test_performance.py
 ```
 
+Hinweis: `pytest` sammelt nur die gepflegte Regressionssuite unter `tests/`.
+Die Performance-Skripte sind Benchmarks und Correctness-Smoke-Checks, die
+direkt gestartet werden.
+
 ---
 
 ## 📁 Dateistruktur
@@ -78,7 +82,7 @@ cython_hotpath/
 ## 🔧 Integration in Variant Fusion
 
 ### Schritt 1: Import
-Füge am Anfang von `Variant_Fusion_pro_V1_0.py` hinzu (nach Zeile ~100):
+Füge am Anfang von `Variant_Fusion_pro_V17.py` hinzu:
 
 ```python
 # =============================================================================
@@ -260,8 +264,8 @@ xcode-select --install
 ### Problem: "ImportError: No module named 'cython_hotpath'"
 **Lösung:** Python-Path prüfen
 ```bash
-# Test aus Hauptverzeichnis (nicht aus cython_hotpath/)
-cd /path/to/Variant_Fusion_pro_V1_0.py
+# Test aus dem Repository-Root (nicht aus cython_hotpath/)
+cd /path/to/VFDistiller
 python -c "from cython_hotpath import CythonAccelerator"
 ```
 

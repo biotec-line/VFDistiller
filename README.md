@@ -60,9 +60,9 @@ or expensive CE-IVD certification.
 - No change to the license (AGPL-3.0-or-later, as introduced on 2026-04-12).
 - Zweckbestimmung / Intended purpose remains: **Research Use Only — Bioinformatics tool for VCF analysis. Not a medical device.**
 
-**Repository status (2026-04-30):**
+**Repository status (2026-05-01):**
 - Git tracks source code, documentation, tests, workflow metadata, packaging templates, and the application icon.
-- Genome references, local settings, SQLite caches/databases, logs, build outputs, release archives, and Store binaries are excluded by `.gitignore` and must remain local.
+- Genome references, downloaded gene annotations, local settings, SQLite caches/databases, logs, build outputs, release archives, and Store binaries are excluded by `.gitignore` and must remain local.
 - API keys are never committed; use the generated `variant_fusion_settings.json` or environment-specific local configuration.
 
 ## Features
@@ -108,6 +108,23 @@ cd ..
 
 3. **PyInstaller / uv** — for a standalone `.exe` build, see
    `VFDistiller.spec` (PyInstaller configuration shipped with the repo).
+
+### Tests
+
+Run the maintained regression suite from the repository root:
+
+```bash
+python -m pytest -q
+```
+
+`pytest.ini` limits automated collection to `tests/`. The two
+`test_performance.py` files are executable benchmark/correctness scripts and
+are intentionally run directly:
+
+```bash
+python test_performance.py
+python cython_hotpath/test_performance.py
+```
 
 ### Genome References (optional, for FASTA validation)
 
@@ -233,9 +250,7 @@ VFDistiller/
 │   ├── setup.py ................. Build script
 │   └── test_performance.py ...... Benchmarks
 │
-├── data/annotations/ ............ Gene annotation data
-│   ├── GRCh37.gtf.gz ........... Ensembl gene annotations
-│   └── GRCh38.gtf.gz
+├── data/annotations/ ............ Runtime/downloaded gene annotation cache (ignored)
 │
 ├── locales/
 │   └── translations.json ........ Translations (de/en)

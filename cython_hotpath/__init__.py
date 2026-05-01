@@ -88,7 +88,12 @@ class CythonAccelerator:
         if self.logger:
             self.logger.log(msg)
         else:
-            print(msg)
+            try:
+                print(msg)
+            except UnicodeEncodeError:
+                encoding = sys.stdout.encoding or "utf-8"
+                safe_msg = msg.encode(encoding, errors="replace").decode(encoding, errors="replace")
+                print(safe_msg)
 
     # --- WRAPPER METHODEN ---
 

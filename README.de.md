@@ -51,9 +51,9 @@ CE-IVD-Zertifizierung.
 - Die Lizenz bleibt unverändert (AGPL-3.0-or-later, eingeführt am 2026-04-12).
 - Zweckbestimmung bleibt: **Research Use Only — Bioinformatik-Tool für VCF-Analyse. Kein Medizinprodukt.**
 
-**Repository-Status (2026-04-30):**
+**Repository-Status (2026-05-01):**
 - In Git liegen Quellcode, Dokumentation, Tests, Workflow-Metadaten, Packaging-Vorlagen und das App-Icon.
-- Genomreferenzen, lokale Einstellungen, SQLite-Caches/-Datenbanken, Logs, Build-Ausgaben, Release-Archive und Store-Binaries werden per `.gitignore` ausgeschlossen und bleiben lokal.
+- Genomreferenzen, heruntergeladene Gen-Annotationen, lokale Einstellungen, SQLite-Caches/-Datenbanken, Logs, Build-Ausgaben, Release-Archive und Store-Binaries werden per `.gitignore` ausgeschlossen und bleiben lokal.
 - API-Keys werden nicht committed; dafür die generierte `variant_fusion_settings.json` oder lokale Umgebungskonfiguration verwenden.
 
 ## Features
@@ -99,6 +99,23 @@ cd ..
 
 3. **PyInstaller / uv** — fuer einen Standalone-`.exe`-Build siehe
    `VFDistiller.spec` (PyInstaller-Konfiguration im Repo enthalten).
+
+### Tests
+
+Die gepflegte Regressionssuite aus dem Repository-Root starten:
+
+```bash
+python -m pytest -q
+```
+
+`pytest.ini` beschränkt die automatische Sammlung auf `tests/`. Die beiden
+`test_performance.py`-Dateien sind ausführbare Benchmark-/Correctness-Skripte
+und werden bewusst direkt gestartet:
+
+```bash
+python test_performance.py
+python cython_hotpath/test_performance.py
+```
 
 ### Genomreferenzen (optional, fuer FASTA-Validierung)
 
@@ -224,9 +241,7 @@ VFDistiller/
 │   ├── setup.py ................. Build-Script
 │   └── test_performance.py ...... Benchmarks
 │
-├── data/annotations/ ............ Gen-Annotationsdaten
-│   ├── GRCh37.gtf.gz ........... Ensembl Gene-Annotationen
-│   └── GRCh38.gtf.gz
+├── data/annotations/ ............ Laufzeit-/Download-Cache für Gen-Annotationen (ignoriert)
 │
 ├── locales/
 │   └── translations.json ........ Uebersetzungen (de/en)

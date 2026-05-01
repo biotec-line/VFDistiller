@@ -13,9 +13,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
 - `.gitignore` now covers internal test locks, secrets, private keys, installer artifacts, and LLM control files.
 - `SECURITY.md` and `PRIVACY_POLICY.md` updated after the Microsoft Store withdrawal.
+- `pytest.ini` now limits automated test collection to the maintained `tests/` suite.
+- Downloaded Ensembl GTF annotation archives are no longer tracked and remain local via `.gitignore`.
 
 ### Behoben / Fixed
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.
+- Performance benchmark scripts no longer expose a `test_correctness()` function that pytest can miscollect as a fixture-based test.
+- Cython accelerator console logging no longer crashes benchmark scripts on Windows cp1252 terminals.
+- Performance benchmark scripts now tolerate Windows console encodings for their own status output.
 
 ## [1.0.0] - YYYY-MM-DD
 
