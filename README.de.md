@@ -6,7 +6,7 @@
 > von VCF-Dateien aus genetischen Tests. Es ist:
 >
 > - **Kein IVD-Medizinprodukt** im Sinne der IVDR (EU) 2017/746
-> - **Nicht CE-IVD-zertifiziert**, nicht durch BfArM oder eine Benannte Stelle geprueft
+> - **Nicht CE-IVD-zertifiziert**, nicht durch BfArM oder eine Benannte Stelle geprüft
 > - **Nicht für klinische Diagnostik** oder die Interpretation klinischer
 >   Testergebnisse (auch nicht im Consumer-Genomik-Kontext)
 > - **Keine Gesundheitsempfehlung**, keine Diagnose, keine Prognose, keine
@@ -20,10 +20,10 @@
 > Sie bitte qualifizierte humangenetische Fachstellen.
 >
 > Unentgeltliche Open-Source-Schenkung (§§ 516 ff. BGB). Haftung auf Vorsatz
-> und grobe Fahrlaessigkeit beschraenkt (§ 521 BGB, AGPL-3.0 §§ 15–17).
+> und grobe Fahrlässigkeit beschränkt (§ 521 BGB, AGPL-3.0 §§ 15–17).
 > Nutzung auf eigenes Risiko.
 
-Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation forschungsbezogener genetischer Variantendaten aus beliebigen Sequenzierungsquellen. Unterstuetzt VCF, gVCF, 23andMe-Rohformat und FASTA — ohne pysam/bcftools/samtools (Windows-kompatibel).
+Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation forschungsbezogener genetischer Variantendaten aus beliebigen Sequenzierungsquellen. Unterstützt VCF, gVCF, 23andMe-Rohformat und FASTA — ohne pysam/bcftools/samtools (Windows-kompatibel).
 
 ![Variant Fusion - Hauptansicht](README/screenshots/main_view.png)
 
@@ -56,6 +56,11 @@ CE-IVD-Zertifizierung.
 - Genomreferenzen, heruntergeladene Gen-Annotationen, lokale Einstellungen, SQLite-Caches/-Datenbanken, Logs, Build-Ausgaben, Release-Archive und Store-Binaries werden per `.gitignore` ausgeschlossen und bleiben lokal.
 - API-Keys werden nicht committed; dafür die generierte `variant_fusion_settings.json` oder lokale Umgebungskonfiguration verwenden.
 
+**Wartungsstand (2026-05-23):**
+- `START.bat` startet eine lokale `dist\VFDistiller.exe`, wenn sie vorhanden ist, und fällt sonst auf den Python-Quellcode zurück.
+- LightDB-SQLite-Lookups schließen ihre Verbindung jetzt über einen defensiven `finally`-Block, auch bei Cursor- oder Setup-Fehlern.
+- Die gepflegte Regressionssuite ist `python -m pytest -q`.
+
 ## Features
 
 - **Multi-Format-Import** — VCF, gVCF, 23andMe-Rohformat (.txt), FASTA (.fa/.fasta)
@@ -63,31 +68,31 @@ CE-IVD-Zertifizierung.
 - **Multi-Source-Annotation** — gnomAD, MyVariant.info, Ensembl VEP, ALFA, TOPMed, AlphaGenome
 - **INFO-Recycling** — Vorhandene VCF-Annotationen werden wiederverwendet
 - **Filterung** — AF-Schwelle, CADD-Score, Variant Impact, ClinSig, Genlisten, FILTER=PASS, Read Depth
-- **Export** — CSV, Excel, PDF, annotiertes VCF (gefiltert oder vollstaendig)
-- **GUI** — ttkbootstrap-Oberflaeche mit System-Tray, Fortschrittsanzeige, Themes
+- **Export** — CSV, Excel, PDF, annotiertes VCF (gefiltert oder vollständig)
+- **GUI** — ttkbootstrap-Oberfläche mit System-Tray, Fortschrittsanzeige, Themes
 - **Performance** — Optionaler Cython-Hotpath (5x Gesamt-Speedup), SQLite-Batch-Writes, async HTTP via aiohttp
 - **Hintergrund-Wartung** — Automatisches Nachladen fehlender Annotationen im Leerlauf
-- **Mehrsprachig** — Deutsch und Englisch (JSON-basierte Uebersetzungen)
+- **Mehrsprachig** — Deutsch und Englisch (JSON-basierte Übersetzungen)
 
 ## Voraussetzungen
 
 - Python 3.10+
-- Windows 10/11 (primaer getestet), Linux/macOS experimentell
+- Windows 10/11 (primär getestet), Linux/macOS experimentell
 
 ### Installation
 
 VFDistiller wird **ausschließlich über GitHub** vertrieben (kein Microsoft
 Store, kein Paketmanager). Empfohlene Installationswege:
 
-1. **GitHub-Releases** — neuestes Paket-Archiv (falls verfuegbar) unter
+1. **GitHub-Releases** — neuestes Paket-Archiv (falls verfügbar) unter
    [Releases](https://github.com/biotec-line/VFDistiller/releases) herunterladen.
-2. **Source-Build** — Repository klonen und Abhaengigkeiten installieren:
+2. **Source-Build** — Repository klonen und Abhängigkeiten installieren:
 
 ```bash
 git clone https://github.com/biotec-line/VFDistiller.git
 cd VFDistiller
 
-# Abhaengigkeiten installieren
+# Abhängigkeiten installieren
 pip install -r requirements.txt
 
 # Optional: Cython-Beschleunigung (erfordert C-Compiler)
@@ -97,7 +102,7 @@ python setup.py build_ext --inplace
 cd ..
 ```
 
-3. **PyInstaller / uv** — fuer einen Standalone-`.exe`-Build siehe
+3. **PyInstaller / uv** — für einen Standalone-`.exe`-Build siehe
    `VFDistiller.spec` (PyInstaller-Konfiguration im Repo enthalten).
 
 ### Tests
@@ -121,9 +126,9 @@ Diese Trennung hält CI auf deterministische Regressionsabdeckung fokussiert,
 während die Benchmark-Skripte für manuelle Performance-Prüfungen verfügbar
 bleiben.
 
-### Genomreferenzen (optional, fuer FASTA-Validierung)
+### Genomreferenzen (optional, für FASTA-Validierung)
 
-Die Genomreferenzen (GRCh37/GRCh38) muessen separat heruntergeladen werden (~3 GB pro Build):
+Die Genomreferenzen (GRCh37/GRCh38) müssen separat heruntergeladen werden (~3 GB pro Build):
 
 ```bash
 # GRCh37
@@ -139,7 +144,7 @@ Die Dateien ins Projektverzeichnis legen. Beim ersten Start wird automatisch ein
 
 ### gnomAD LightDB (optional)
 
-Fuer schnelle Offline-AF-Lookups kann die gnomAD LightDB heruntergeladen werden. Das Tool bietet beim ersten Start einen Download-Dialog an. Alternativ:
+Für schnelle Offline-AF-Lookups kann die gnomAD LightDB heruntergeladen werden. Das Tool bietet beim ersten Start einen Download-Dialog an. Alternativ:
 
 ```bash
 python "Get gnomAD DB light.py"
@@ -161,10 +166,10 @@ START.bat
 
 ### Workflow
 
-1. **Datei oeffnen** — VCF, gVCF, 23andMe-Textdatei oder FASTA waehlen
-2. **Build pruefen** — Wird automatisch erkannt, kann manuell ueberschrieben werden
-3. **Pipeline laeuft** — Varianten werden geparst, annotiert und gefiltert
-4. **Ergebnisse** — Tabellenansicht mit sortierbaren Spalten, Doppelklick oeffnet externe Datenbanken
+1. **Datei öffnen** — VCF, gVCF, 23andMe-Textdatei oder FASTA wählen
+2. **Build prüfen** — Wird automatisch erkannt, kann manuell überschrieben werden
+3. **Pipeline läuft** — Varianten werden geparst, annotiert und gefiltert
+4. **Ergebnisse** — Tabellenansicht mit sortierbaren Spalten, Doppelklick öffnet externe Datenbanken
 5. **Export** — CSV, Excel, PDF oder annotiertes VCF exportieren
 
 ### Konfiguration
@@ -183,7 +188,7 @@ Beim ersten Start wird `variant_fusion_settings.json` aus der Vorlage `variant_f
 ### API-Keys
 
 - **AlphaGenome**: Erfordert einen Google AI API-Key. In `variant_fusion_settings.json` unter `alphagenom_key` und `api_settings.phase6_ag.alphagenom.api_key` eintragen.
-- **NCBI**: Optional fuer hoehere Rate-Limits. Unter `api_settings.global.ncbi_api_key` eintragen.
+- **NCBI**: Optional für höhere Rate-Limits. Unter `api_settings.global.ncbi_api_key` eintragen.
 
 ## Dependencies
 
@@ -213,7 +218,7 @@ Beim ersten Start wird `variant_fusion_settings.json` aus der Vorlage `variant_f
 
 ## Cython-Beschleunigung
 
-Optionale C-kompilierte Hot-Paths fuer kritische Operationen:
+Optionale C-kompilierte Hot-Paths für kritische Operationen:
 
 | Modul | Speedup | Funktion |
 |---|---|---|
@@ -231,7 +236,7 @@ Wenn Cython nicht installiert ist, werden automatisch Python-Fallbacks verwendet
 ```
 VFDistiller/
 ├── Variant_Fusion_pro_V17.py .... Hauptprogramm (GUI + Pipeline)
-├── requirements.txt ............. Python-Abhaengigkeiten
+├── requirements.txt ............. Python-Abhängigkeiten
 ├── variant_fusion_settings.json.example . Konfigurations-Vorlage
 ├── VFDistiller.spec ............. PyInstaller Build-Konfiguration
 ├── START.bat .................... Windows-Schnellstart
@@ -248,14 +253,14 @@ VFDistiller/
 ├── data/annotations/ ............ Laufzeit-/Download-Cache für Gen-Annotationen (ignoriert)
 │
 ├── locales/
-│   └── translations.json ........ Uebersetzungen (de/en)
+│   └── translations.json ........ Übersetzungen (de/en)
 │
 ├── ICO/ICO.ico .................. App-Icon
 │
 ├── lightdb_index_worker.py ...... gnomAD LightDB Hintergrund-Indexierung
-├── translator.py ................ Uebersetzungs-Engine
-├── translator_patch.py .......... Uebersetzungs-Patches
-├── manage_translations.py ....... Uebersetzungs-Verwaltung
+├── translator.py ................ Übersetzungs-Engine
+├── translator_patch.py .......... Übersetzungs-Patches
+├── manage_translations.py ....... Übersetzungs-Verwaltung
 ├── Get gnomAD DB light.py ....... gnomAD Download-Tool
 ├── test_performance.py .......... Performance-Tests
 │
@@ -274,21 +279,21 @@ oder jede neuere Version). **Kostenlos. Dauerhaft.**
 
 - Copyright (C) 2026 Lukas Geiger (c/o Um:bruch Think Tank)
 - Volltext: [LICENSE](LICENSE), Haftungshinweise: [NOTICE](NOTICE)
-- Vorgaengerlizenz: Die fruehere „VFDistiller License v1.0" wurde abgeloest
+- Vorgängerlizenz: Die frühere „VFDistiller License v1.0" wurde abgelöst
   und liegt zur Nachvollziehbarkeit in
   [`docs/archive/`](docs/archive/VFDistiller_License_v1_legacy.md).
 
 Kurz gefasst:
 
 - Nutzen, studieren, modifizieren, weitergeben: **erlaubt**, kostenlos.
-- Weitergabe (einschliesslich Forks, Re-Packaging, kostenpflichtiger Support):
-  **erlaubt**, aber abgeleitete Werke muessen unter AGPL-3.0-or-later bleiben.
+- Weitergabe (einschließlich Forks, Re-Packaging, kostenpflichtiger Support):
+  **erlaubt**, aber abgeleitete Werke müssen unter AGPL-3.0-or-later bleiben.
 - **Network-/SaaS-Nutzung (AGPL § 13):** Wer eine modifizierte Version auf
-  einem Server betreibt, mit dem Nutzer ueber ein Netzwerk interagieren,
-  muss diesen Nutzern den Quellcode zugaenglich machen.
+  einem Server betreibt, mit dem Nutzer über ein Netzwerk interagieren,
+  muss diesen Nutzern den Quellcode zugänglich machen.
 - **Kein Weiterverkauf dieses Codes als Closed-Source-Produkt.** Jede
   abgeleitete Arbeit bleibt AGPL.
-- Die Software ist **nicht medizinisch validiert** und darf nicht fuer
+- Die Software ist **nicht medizinisch validiert** und darf nicht für
   klinische Diagnosen oder Therapieentscheidungen verwendet werden
   (siehe RUO-Banner oben und [NOTICE](NOTICE)).
 
@@ -296,13 +301,13 @@ Third-Party-Bibliotheken behalten ihre jeweiligen Lizenzen (MIT, BSD,
 Apache 2.0, PIL License, Biopython License). Siehe
 [`README/licenses/THIRD_PARTY_LICENSES.txt`](README/licenses/THIRD_PARTY_LICENSES.txt).
 
-> **Vertrieb:** VFDistiller wird ausschliesslich ueber GitHub vertrieben
+> **Vertrieb:** VFDistiller wird ausschließlich über GitHub vertrieben
 > (siehe [Vertriebsaenderung (2026-04-12)](#vertriebsaenderung-2026-04-12)
-> oben). Das frühere Microsoft-Store-Listing wurde zurueckgezogen.
+> oben). Das frühere Microsoft-Store-Listing wurde zurückgezogen.
 
 ## Version
 
-V17.0 — Aktuelle Produktionsversion (Maerz 2026).
+V17.0 — Aktuelle Produktionsversion (März 2026).
 
 ---
 

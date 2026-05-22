@@ -1,6 +1,8 @@
 # VFDistiller -- Known Issues & TODOs
 
-> Dieses Projekt ist im Windows Store veröffentlicht. Änderungen nur nach sorgfältiger Prüfung!
+> Update 2026-05-09: Der Connection-Leak in `_lookup_lightdb` wurde behoben.
+
+> Dieses Projekt wurde aus dem Microsoft Store zurückgezogen und wird über GitHub gepflegt. Änderungen nur nach sorgfältiger Prüfung!
 
 ## Bekannte Architektur-Schulden (vom Entwickler dokumentiert)
 1. FLAG_AND_OPTIONS_MANAGER nicht vollständig integriert
@@ -9,10 +11,10 @@
 
 ## Bugs
 
-### [MITTEL] Connection-Leak in `_lookup_lightdb` (AfFetcher, Zeile 7475)
+### [BEHOBEN 2026-05-09] Connection-Leak in `_lookup_lightdb` (AfFetcher, Zeile 7475)
 - **Datei:** Variant_Fusion_pro_V17.py, Zeilen 7500-7567
 - **Klasse:** AfFetcher (NICHT Distiller -- die Distiller-Kopie ab Zeile 16637 hat bereits ein korrektes `finally`-Pattern)
-- **Problem:** `conn.close()` steht auf Zeile 7565 innerhalb des `try`-Blocks. Wenn eine Exception auftritt die nicht vom inneren `except` (Zeile 7562) gefangen wird, springt die Ausfuehrung zum aeusseren `except` (Zeile 7566) -- `conn.close()` wird uebersprungen. Es gibt keinen `finally`-Block.
+- **Problem:** `conn.close()` stand innerhalb des `try`-Blocks. Wenn eine Exception auftrat, die nicht vom inneren `except` gefangen wurde, sprang die Ausführung zum äußeren `except` und `conn.close()` wurde übersprungen.
 - **Praxis-Risiko:** Moderat. SQLite-Connections werden vom GC irgendwann geschlossen, aber auf Windows halten offene Connections ein File-Lock auf die DB, was andere Zugriffe blockieren kann.
 - **Fix-Vorschlag:** Identisches Pattern wie in der Distiller-Kopie (Zeile 16674-16761) einbauen:
   ```python

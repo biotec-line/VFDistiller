@@ -65,6 +65,11 @@ or expensive CE-IVD certification.
 - Genome references, downloaded gene annotations, local settings, SQLite caches/databases, logs, build outputs, release archives, and Store binaries are excluded by `.gitignore` and must remain local.
 - API keys are never committed; use the generated `variant_fusion_settings.json` or environment-specific local configuration.
 
+**Maintenance status (2026-05-23):**
+- `START.bat` prefers a local `dist\VFDistiller.exe` when present and falls back to the Python source entry point.
+- LightDB SQLite lookups close their connection through a defensive `finally` block, including cursor/setup failure paths.
+- The maintained regression suite is `python -m pytest -q`.
+
 ## Features
 
 - **Multi-Format Import** — VCF, gVCF, 23andMe raw text format (.txt), FASTA (.fa/.fasta)

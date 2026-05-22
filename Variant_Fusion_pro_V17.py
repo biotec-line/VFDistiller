@@ -7470,6 +7470,7 @@ class AFFetchController:
             - still_uncached_list: Keys ohne Treffer in Light-DB
         """
         results = {}
+        conn = None
 
         if not db_path:
             self.logger.log("[LightDB] ⚠️ Kein Light-DB Pfad – Lookup übersprungen.")
@@ -7540,9 +7541,14 @@ class AFFetchController:
                 except Exception as e:
                     self.logger.log(f"[LightDB] ⚠️ SQL-Fehler im Block {i//chunk_size+1}: {e}")
 
-            conn.close()
         except Exception as e:
             self.logger.log(f"[LightDB] ⚠️ Fehler beim Lookup: {e}")
+        finally:
+            if conn:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
         still_uncached = [k for k in uncached if k not in results]
         self.logger.log(
@@ -20474,7 +20480,7 @@ def _build_single_resource_card(parent, key, info, is_ok, rm, logger_inst, card_
             dl_btn.pack(side=LEFT, padx=(0, 5))
             widgets["dl_btn"] = dl_btn
 
-        browse_btn = ttk.Button(btn_frame, text="Pfad waehlen...", bootstyle="secondary-outline",
+        browse_btn = ttk.Button(btn_frame, text="Pfad wählen...", bootstyle="secondary-outline",
                                 command=lambda k=key, w=widgets: _on_browse_click(k, w, rm, logger_inst))
         browse_btn.pack(side=LEFT, padx=5)
         widgets["browse_btn"] = browse_btn
@@ -20728,8 +20734,8 @@ class ResourceSetupDialog:
         header.pack(fill=X)
         ttk.Label(header, text="Willkommen! Einige optionale Ressourcen fehlen.",
                   font=("", 12, "bold")).pack(anchor="w")
-        ttk.Label(header, text="Diese verbessern Geschwindigkeit und Offline-Faehigkeit.\n"
-                  "Alles kann spaeter unter Optionen > Einstellungen > Ressourcen nachgeholt werden.",
+        ttk.Label(header, text="Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\n"
+                  "Alles kann später unter Optionen > Einstellungen > Ressourcen nachgeholt werden.",
                   wraplength=700).pack(anchor="w", pady=(5, 0))
 
         # Scrollable Content
@@ -20746,9 +20752,9 @@ class ResourceSetupDialog:
         ttk.Checkbutton(footer, text="Diesen Dialog nicht mehr anzeigen",
                         variable=self.suppress_var).pack(side=LEFT)
 
-        ttk.Button(footer, text="Schliessen", command=self._on_close,
+        ttk.Button(footer, text="Schließen", command=self._on_close,
                    bootstyle="success").pack(side=RIGHT, padx=5)
-        ttk.Button(footer, text="Spaeter", command=self._on_later,
+        ttk.Button(footer, text="Später", command=self._on_later,
                    bootstyle="secondary").pack(side=RIGHT, padx=5)
 
     def _on_later(self):
@@ -24006,7 +24012,7 @@ class App(ttk.Window):
 
         api_reset_frame = ttk.Frame(api_inner)
         api_reset_frame.pack(fill=X, pady=10)
-        ttk.Button(api_reset_frame, text="Auf Standard zuruecksetzen",
+        ttk.Button(api_reset_frame, text="Auf Standard zurücksetzen",
                    command=_reset_api_defaults, bootstyle="warning-outline").pack(anchor="center")
 
         btn_main = ttk.Frame(settings_window, padding=10)

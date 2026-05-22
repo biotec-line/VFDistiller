@@ -145,3 +145,45 @@ class TestFmtEta:
     def test_seconds_over_one_hour(self):
         result = fmt_eta(3661)  # 1 Stunde, 1 Minute, 1 Sekunde
         assert "01:01:01" in result
+
+
+def test_lookup_lightdb_closes_connection_on_cursor_failure(monkeypatch):
+    fetcher = _vf.AFFetchController.__new__(_vf.AFFetchController)
+    fetcher.logger = MagicMock()
+
+    class FakeConnection:
+        def __init__(self):
+            self.closed = False
+
+        def cursor(self):
+            raise RuntimeError("cursor failed")
+
+        def close(self):
+            self.closed = True
+
+    fake_conn = FakeConnection()
+    monkeypatch.setattr(_vf.sqlite3, "connect", lambda _db_path: fake_conn)
+
+    uncached = [("1", 123, "A", "C", "GRCh37")]
+    results, still_uncached = fetcher._lookup_lightdb(uncached, db_path="lightdb.sqlite")
+
+    assert results == {}
+    assert still_uncached == uncached
+    assert fake_conn.closed is True
+
+
+def test_lookup_lightdb_tolerates_connect_failure(monkeypatch):
+    fetcher = _vf.AFFetchController.__new__(_vf.AFFetchController)
+    fetcher.logger = MagicMock()
+
+    def fail_connect(_db_path):
+        raise RuntimeError("connect failed")
+
+    monkeypatch.setattr(_vf.sqlite3, "connect", fail_connect)
+
+    uncached = [("1", 123, "A", "C", "GRCh37")]
+    results, still_uncached = fetcher._lookup_lightdb(uncached, db_path="lightdb.sqlite")
+
+    assert results == {}
+    assert still_uncached == uncached
+    fetcher.logger.log.assert_any_call("[LightDB] ⚠️ Fehler beim Lookup: connect failed")

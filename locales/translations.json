@@ -139,8 +139,8 @@
     "de": "Deutsch",
     "en": "Deutsch"
   },
-  "Diese verbessern Geschwindigkeit und Offline-Faehigkeit.\nAlles kann spaeter unter Optionen > Einstellungen > Ressourcen nachgeholt werden.": {
-    "de": "Diese verbessern Geschwindigkeit und Offline-Faehigkeit.\nAlles kann spaeter unter Optionen > Einstellungen > Ressourcen nachgeholt werden.",
+  "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\nAlles kann später unter Optionen > Einstellungen > Ressourcen nachgeholt werden.": {
+    "de": "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\nAlles kann später unter Optionen > Einstellungen > Ressourcen nachgeholt werden.",
     "en": "These improve speed and offline capability.\nEverything can be set up later under Options > Settings > Resources."
   },
   "Diesen Dialog nicht mehr anzeigen": {
@@ -291,8 +291,8 @@
     "de": "PDF exportieren",
     "en": "Export PDF"
   },
-  "Pfad waehlen...": {
-    "de": "Pfad waehlen...",
+  "Pfad wählen...": {
+    "de": "Pfad wählen...",
     "en": "Choose path..."
   },
   "Phase: –": {
@@ -331,8 +331,8 @@
     "de": "Ressourcen neu suchen",
     "en": "Re-scan resources"
   },
-  "Schliessen": {
-    "de": "Schliessen",
+  "Schließen": {
+    "de": "Schließen",
     "en": "Close"
   },
   "Spalte": {
