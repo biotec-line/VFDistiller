@@ -7224,7 +7224,7 @@ class LightDBGnomADManager:
         # FIX: Connection mit finally-Block
         conn = None
         try:
-            conn = sqlite3.connect(db_path)
+            conn = sqlite3.connect(db_path, check_same_thread=False)
             cur = conn.cursor()
 
             chunk_size = 5000
@@ -7477,7 +7477,7 @@ class AFFetchController:
             return results, uncached
 
         try:
-            conn = sqlite3.connect(db_path)
+            conn = sqlite3.connect(db_path, check_same_thread=False)
             cur = conn.cursor()
 
             chunk_size = 5000
@@ -10236,7 +10236,7 @@ class VCFMigrationsdienst(multiprocessing.Process):
 
         # DB-Connection
         try:
-            conn = sqlite3.connect(self.db_path)
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
             cur = conn.cursor()
         except Exception as e:
             self.logger.log(
@@ -10413,7 +10413,7 @@ class VCFMigrationsdienst(multiprocessing.Process):
         # FIX: Connection mit try-finally
         conn = None
         try:
-            conn = sqlite3.connect(self.db_path)
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
             cur = conn.cursor()
         except Exception as e:
             self.logger.log(
@@ -16649,7 +16649,7 @@ class Distiller:
         # FIX: Connection mit finally-Block
         conn = None
         try:
-            conn = sqlite3.connect(db_path)
+            conn = sqlite3.connect(db_path, check_same_thread=False)
             cur = conn.cursor()
 
             chunk_size = 5000

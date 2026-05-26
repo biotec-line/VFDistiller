@@ -1,5 +1,7 @@
 # VFDistiller -- Known Issues & TODOs
 
+> Update 2026-05-23: Die worker-sicheren SQLite-Verbindungen in den LightDB-/Migrationspfaden nutzen jetzt `check_same_thread=False`.
+
 > Update 2026-05-09: Der Connection-Leak in `_lookup_lightdb` wurde behoben.
 
 > Dieses Projekt wurde aus dem Microsoft Store zurückgezogen und wird über GitHub gepflegt. Änderungen nur nach sorgfältiger Prüfung!
@@ -32,10 +34,10 @@
               pass
   ```
 
-### [MITTEL] SQLite-Verbindungen ohne check_same_thread=False
+### [BEHOBEN 2026-05-23] SQLite-Verbindungen ohne check_same_thread=False
 - **Datei:** Variant_Fusion_pro_V17.py, Zeilen 7249, 10263, 16676
 - **Problem:** sqlite3.connect() ohne check_same_thread=False in Methoden die aus Worker-Threads aufgerufen werden können
-- **Fix-Vorschlag:** check_same_thread=False setzen oder sicherstellen dass Aufrufe immer im gleichen Thread erfolgen
+- **Fix:** Die betroffenen Background-/Worker-Pfade setzen jetzt `check_same_thread=False` beim Erzeugen der SQLite-Verbindungen.
 
 ### [NIEDRIG] Bare except: an 5 Stellen
 - **Zeilen:** 329, 8315, 10338, 14419, 21589, 21606

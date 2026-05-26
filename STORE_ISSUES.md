@@ -19,22 +19,22 @@
 
 ## Aktuelle Store-Version: 17.0.1.0
 
-Veroeffentlicht: 2026-03-10 (ca.)
+Veröffentlicht: 2026-03-10 (ca.)
 
 ---
 
-## Offene Issues
+## Issue-Register
 
 | # | Severity | Beschreibung | Datei:Zeile | Gefunden | Status |
 |---|----------|-------------|-------------|----------|--------|
-| 1 | P2 | Connection-Leak in `_lookup_lightdb` (AfFetcher) -- kein `finally`-Block, `conn.close()` wird bei Exception uebersprungen. Auf Windows haelt offene Connection File-Lock auf DB. | V17.py:7500-7567 | 2026-03-13 | OFFEN |
-| 2 | P2 | SQLite-Verbindungen ohne `check_same_thread=False` in Methoden die aus Worker-Threads aufgerufen werden koennen | V17.py:7249,10263,16676 | 2026-03-13 | OFFEN |
-| 3 | P3 | Bare `except:` an 6 Stellen -- faengt auch SystemExit und KeyboardInterrupt | V17.py:329,8315,10338,14419,21589,21606 | 2026-03-13 | OFFEN |
+| 1 | P2 | Connection-Leak in `_lookup_lightdb` (AfFetcher) -- kein `finally`-Block, `conn.close()` wird bei Exception übersprungen. Auf Windows hält offene Connection File-Lock auf DB. | V17.py:7500-7567 | 2026-03-13 | BEHOBEN 2026-05-23 |
+| 2 | P2 | SQLite-Verbindungen ohne `check_same_thread=False` in Methoden die aus Worker-Threads aufgerufen werden können | V17.py:7249,10263,16676 | 2026-03-13 | BEHOBEN 2026-05-23 |
+| 3 | P3 | Bare `except:` an 6 Stellen -- fängt auch SystemExit und KeyboardInterrupt | V17.py:329,8315,10338,14419,21589,21606 | 2026-03-13 | OFFEN |
 | 4 | P3 | TODO: `stale_days` Parameter im BackgroundMaintainer-Konstruktor aufteilen (semantisch erledigt, Signatur nicht aktualisiert) | V17.py:10910 | 2026-03-13 | OFFEN |
 | 5 | P3 | Doppelter Alias HAVE_AIOHTTP / AIOHTTP_AVAILABLE (bewusster Compat-Alias) | V17.py:107 | 2026-03-13 | WONTFIX |
-| 6 | P3 | Irrefuehrender Kommentar bei pickle-Import | V17.py:66 | 2026-03-13 | OFFEN |
+| 6 | P3 | Irreführender Kommentar bei pickle-Import | V17.py:66 | 2026-03-13 | OFFEN |
 
-**Release-Trigger-Status:** 0x P0, 0x P1, 2x P2, 4x P3 → Kein Release-Trigger (P0 oder 3x P1 noetig, P2/P3 sammeln bis 10+)
+**Release-Trigger-Status:** 0x P0, 0x P1, 0x P2, 3x P3 → Kein Release-Trigger (P0 oder 3x P1 nötig, P3 sammeln bis 10+)
 
 ---
 

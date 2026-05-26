@@ -4,7 +4,11 @@ Funktionstests fuer VFDistiller (Variant_Fusion_pro_V17.py)
 Testet reine Business-Logik-Funktionen ohne GUI.
 Alle GUI- und externe Abhaengigkeiten werden gemockt.
 """
+import itertools
+import json
+import queue
 import sys
+import threading
 import importlib
 import importlib.util
 from pathlib import Path
@@ -53,6 +57,44 @@ is_gzipped = _vf.is_gzipped
 is_vcf = _vf.is_vcf
 _normalize_chrom_vcf = _vf._normalize_chrom_vcf
 fmt_eta = _vf.fmt_eta
+
+
+class _FakeCursor:
+    def execute(self, *args, **kwargs):
+        return None
+
+    def executemany(self, *args, **kwargs):
+        return None
+
+    def fetchall(self):
+        return []
+
+
+class _FakeConnection:
+    def __init__(self):
+        self.closed = False
+        self.committed = False
+        self.cursor_obj = _FakeCursor()
+
+    def cursor(self):
+        return self.cursor_obj
+
+    def commit(self):
+        self.committed = True
+
+    def close(self):
+        self.closed = True
+
+
+def _install_connect_spy(monkeypatch, fake_conn):
+    calls = []
+
+    def fake_connect(*args, **kwargs):
+        calls.append((args, kwargs))
+        return fake_conn
+
+    monkeypatch.setattr(_vf.sqlite3, "connect", fake_connect)
+    return calls
 
 
 # ---------------------------------------------------------------------------
@@ -151,18 +193,12 @@ def test_lookup_lightdb_closes_connection_on_cursor_failure(monkeypatch):
     fetcher = _vf.AFFetchController.__new__(_vf.AFFetchController)
     fetcher.logger = MagicMock()
 
-    class FakeConnection:
-        def __init__(self):
-            self.closed = False
-
+    class CursorFailConnection(_FakeConnection):
         def cursor(self):
             raise RuntimeError("cursor failed")
 
-        def close(self):
-            self.closed = True
-
-    fake_conn = FakeConnection()
-    monkeypatch.setattr(_vf.sqlite3, "connect", lambda _db_path: fake_conn)
+    fake_conn = CursorFailConnection()
+    calls = _install_connect_spy(monkeypatch, fake_conn)
 
     uncached = [("1", 123, "A", "C", "GRCh37")]
     results, still_uncached = fetcher._lookup_lightdb(uncached, db_path="lightdb.sqlite")
@@ -170,13 +206,16 @@ def test_lookup_lightdb_closes_connection_on_cursor_failure(monkeypatch):
     assert results == {}
     assert still_uncached == uncached
     assert fake_conn.closed is True
+    assert calls[0][1]["check_same_thread"] is False
 
 
 def test_lookup_lightdb_tolerates_connect_failure(monkeypatch):
     fetcher = _vf.AFFetchController.__new__(_vf.AFFetchController)
     fetcher.logger = MagicMock()
+    calls = []
 
-    def fail_connect(_db_path):
+    def fail_connect(*args, **kwargs):
+        calls.append((args, kwargs))
         raise RuntimeError("connect failed")
 
     monkeypatch.setattr(_vf.sqlite3, "connect", fail_connect)
@@ -187,3 +226,90 @@ def test_lookup_lightdb_tolerates_connect_failure(monkeypatch):
     assert results == {}
     assert still_uncached == uncached
     fetcher.logger.log.assert_any_call("[LightDB] ⚠️ Fehler beim Lookup: connect failed")
+    assert calls[0][1]["check_same_thread"] is False
+
+
+def test_lookup_variants_bulk_uses_worker_safe_connection(tmp_path, monkeypatch):
+    manager = _vf.LightDBGnomADManager.__new__(_vf.LightDBGnomADManager)
+    manager.logger = MagicMock()
+
+    db_path = tmp_path / "lightdb.sqlite"
+    db_path.write_text("", encoding="utf-8")
+    manager.OUT_DB = str(db_path)
+
+    fake_conn = _FakeConnection()
+    calls = _install_connect_spy(monkeypatch, fake_conn)
+
+    results, still_uncached = manager.lookup_variants_bulk([
+        ("1", 123, "A", "C", "GRCh37"),
+    ])
+
+    assert results == {}
+    assert still_uncached == [("1", 123, "A", "C", "GRCh37")]
+    assert fake_conn.closed is True
+    assert calls[0][1]["check_same_thread"] is False
+
+
+def test_vcf_migrate_loop_uses_worker_safe_connection(tmp_path, monkeypatch):
+    proc = _vf.VCFMigrationsdienst.__new__(_vf.VCFMigrationsdienst)
+    proc.cache_path = str(tmp_path / "cache.json")
+    proc.db_path = str(tmp_path / "variants.sqlite")
+    proc.batch_size = 1
+    proc.logger = MagicMock()
+    proc._stop_event = threading.Event()
+    proc.pidfile = str(tmp_path / "vcf.pid")
+    time_values = itertools.count(start=100.0, step=1.0)
+    monkeypatch.setattr(_vf.time, "time", lambda: next(time_values))
+
+    Path(proc.cache_path).write_text(
+        json.dumps([["variant-1", {"af": 0.123}]]),
+        encoding="utf-8",
+    )
+
+    fake_conn = _FakeConnection()
+    calls = _install_connect_spy(monkeypatch, fake_conn)
+    monkeypatch.setattr(proc, "_commit_batch", lambda _cur, _buffer: 0)
+
+    assert proc._migrate_loop() is True
+    assert fake_conn.closed is True
+    assert calls[0][1]["check_same_thread"] is False
+
+
+def test_vcf_migrate_to_db_uses_worker_safe_connection(tmp_path, monkeypatch):
+    proc = _vf.VCFMigrationsdienst.__new__(_vf.VCFMigrationsdienst)
+    proc._record_queue = queue.Queue()
+    proc._record_queue.put(("variant-1", {"af": 0.123}))
+    proc.db_path = str(tmp_path / "variants.sqlite")
+    proc.batch_size = 1
+    proc.logger = MagicMock()
+    proc._stop_event = threading.Event()
+    proc.pidfile = str(tmp_path / "vcf.pid")
+    time_values = itertools.count(start=200.0, step=1.0)
+    monkeypatch.setattr(_vf.time, "time", lambda: next(time_values))
+
+    fake_conn = _FakeConnection()
+    calls = _install_connect_spy(monkeypatch, fake_conn)
+    monkeypatch.setattr(proc, "_commit_batch", lambda _cur, _buffer: 0)
+
+    assert proc.migrate_to_db() is True
+    assert fake_conn.closed is True
+    assert fake_conn.committed is True
+    assert calls[0][1]["check_same_thread"] is False
+
+
+def test_distiller_lookup_lightdb_uses_worker_safe_connection(tmp_path, monkeypatch):
+    distiller = _vf.Distiller.__new__(_vf.Distiller)
+    distiller.logger = MagicMock()
+
+    fake_conn = _FakeConnection()
+    calls = _install_connect_spy(monkeypatch, fake_conn)
+
+    results, still_uncached = distiller._lookup_lightdb(
+        [("1", 123, "A", "C", "GRCh37")],
+        db_path=str(tmp_path / "lightdb.sqlite"),
+    )
+
+    assert results == {}
+    assert still_uncached == [("1", 123, "A", "C", "GRCh37")]
+    assert fake_conn.closed is True
+    assert calls[0][1]["check_same_thread"] is False
