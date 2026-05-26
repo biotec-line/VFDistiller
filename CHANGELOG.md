@@ -8,6 +8,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ### Hinzugefügt / Added
 - `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` added as repository community files.
 - Root application icon added for packaging and repository metadata.
+- `PORTIERUNGSPLAN.md`, `EXPORTFORMAT.md` and `web_companion/README.md` added for the GitHub-only cross-platform viewer strategy.
 
 ### Geändert / Changed
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
