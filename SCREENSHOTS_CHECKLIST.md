@@ -1,12 +1,13 @@
-# Screenshots Checkliste - VFDistiller (Windows Store)
+# Screenshots Checkliste - VFDistiller
 
 Stand: 2026-03-14
-Store-ID: 9MWRG32ZLDRM
-Aktuelle Situation: **3 Screenshots vorhanden** (Ziel: min. 4 pro Geräteklasse)
+Früheres Store-Listing: 9MWRG32ZLDRM (seit 2026-04-12 zurückgezogen)
+Aktuelle Situation: **2 README-Screenshots vorhanden**; GitHub ist der aktive
+Vertriebskanal, Store-Screenshots sind nur noch historisch relevant.
 
 ---
 
-## Anforderungen (Windows Store)
+## Anforderungen (historisch: Windows Store)
 
 | Anforderung         | Wert                              |
 |---------------------|-----------------------------------|
@@ -23,22 +24,20 @@ Aktuelle Situation: **3 Screenshots vorhanden** (Ziel: min. 4 pro Geräteklasse)
 ## Geräteklasse: Desktop (PC / Laptop) ← Primärziel
 
 ### Vorhandene Screenshots
-*(Kein `store_assets/` oder `screenshots/` Ordner gefunden – Screenshots müssen noch angelegt werden)*
 
-Bitte prüfe: `README/screenshots/` – dort wurde `main_view.png` eingebettet (Commit 663c376).
+Aktiv für GitHub eingebunden: `README/screenshots/`.
 
 | # | Dateiname              | Auflösung   | Status       |
 |---|------------------------|-------------|--------------|
-| 1 | main_view.png          | ?           | ✅ Vorhanden |
-| 2 | (unbekannt)            | ?           | ✅ Vorhanden |
-| 3 | (unbekannt)            | ?           | ✅ Vorhanden |
-| 4 | **FEHLT**              | 1920x1080   | ❌ Fehlt     |
+| 1 | `README/screenshots/main_view.png` | 1920×1080 | ✅ In README eingebunden |
+| 2 | `README/screenshots/main.png` | 1397×1025 | ✅ In README eingebunden |
 
 ### Fehlende Screenshots (Desktop)
 
 | # | Szene                              | Empfohlene Auflösung | Priorität |
 |---|------------------------------------|----------------------|-----------|
-| 4 | Varianten-Tabelle mit Ergebnissen  | 1920 × 1080 px       | HOCH      |
+| 3 | Varianten-Tabelle mit Beispieldaten | 1920 × 1080 px       | Mittel |
+| 4 | Export-Dialog oder fertiger PDF-Bericht | 1920 × 1080 px       | Mittel |
 
 ---
 
@@ -90,8 +89,7 @@ Folgende Szenen sollten für alle fehlenden Screenshots aufgenommen werden:
 
 ## To-Do Zusammenfassung
 
-- [ ] `store_assets/` Ordner anlegen
-- [ ] Screenshot 4 (Desktop): Varianten-Tabelle mit Ergebnissen (1920×1080)
-- [ ] Optional: Screenshots für Surface Hub (4 Stück, 1920×1080)
-- [ ] Alle Screenshots in `store_assets/desktop/` ablegen
-- [ ] Store-Submission mit 4+ Desktop-Screenshots aktualisieren
+- [x] Vorhandene GitHub-Screenshots in README/README.de sichtbar einbinden
+- [ ] Optional: Beispieldaten-Screenshot der gefüllten Varianten-Tabelle erzeugen
+- [ ] Optional: Export-Screenshot mit synthetischen Daten erzeugen
+- [ ] Keine Store-Submission aktualisieren, solange die GitHub-only-Entscheidung gilt

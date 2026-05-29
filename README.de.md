@@ -1,4 +1,11 @@
-# VFDistiller — Variant Fusion Distiller
+# VFDistiller — lokales Desktop-Tool für VCF- und Variantenannotation
+
+VFDistiller, auch Variant Fusion Distiller genannt, ist eine lokale
+Bioinformatik-Desktop-Anwendung für forschungsbezogene genetische
+Variantendateien. Das Tool konvertiert, filtert, annotiert und exportiert VCF,
+gVCF, 23andMe-Rohdaten und FASTA-Dateien auf dem eigenen Rechner, mit
+Windows-first-GUI und optionalen Offline-Ressourcen für Allelfrequenz-Lookups
+und Referenzgenom-Prüfungen.
 
 > ⚠️ **Research Use Only / Nicht für klinische Diagnostik / Not for Clinical Use**
 >
@@ -15,7 +22,7 @@
 >   AlphaGenome) sind **Datenbank-Annotationen zur Forschungsorientierung**,
 >   keine klinische Bewertung
 >
-> Nutzung ausschliesslich für **Bioinformatik-Lehre, -Forschung und -Software-
+> Nutzung ausschließlich für **Bioinformatik-Lehre, -Forschung und -Software-
 > Entwicklung**. Für klinische Interpretation genetischer Befunde konsultieren
 > Sie bitte qualifizierte humangenetische Fachstellen.
 >
@@ -23,9 +30,34 @@
 > und grobe Fahrlässigkeit beschränkt (§ 521 BGB, AGPL-3.0 §§ 15–17).
 > Nutzung auf eigenes Risiko.
 
-Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation forschungsbezogener genetischer Variantendaten aus beliebigen Sequenzierungsquellen. Unterstützt VCF, gVCF, 23andMe-Rohformat und FASTA — ohne pysam/bcftools/samtools (Windows-kompatibel).
+Bioinformatisches Desktop-Tool zur Verarbeitung, Konvertierung und Annotation
+forschungsbezogener genetischer Variantendaten aus beliebigen
+Sequenzierungsquellen. Unterstützt VCF, gVCF, 23andMe-Rohformat und FASTA ohne
+harte Abhängigkeit von pysam, bcftools oder samtools und bleibt dadurch auf
+Windows-Workstations praktikabel.
 
-![Variant Fusion - Hauptansicht](README/screenshots/main_view.png)
+![VFDistiller-Windows-GUI mit VCF-Filtern, Ressourcen-Setup und Exportsteuerung](README/screenshots/main_view.png)
+
+## Warum VFDistiller?
+
+- **VCF- und gVCF-Desktop-Workflow** für Forschung, Lehre und
+  Bioinformatik-Softwareentwicklung, wenn eine GUI praktischer ist als eine
+  reine Shell-Pipeline.
+- **Lokales Datenschutzmodell** für sensible genetische Dateien: Rohdaten,
+  erzeugte VCFs, SQLite-Caches, Genomreferenzen und API-Keys bleiben lokal.
+- **Windows-kompatible Variantenannotation** ohne harte Abhängigkeit von
+  Unix-Bioinformatikwerkzeugen wie `bcftools`, `samtools` oder `pysam`.
+- **Multi-Source-Annotation** kombiniert wiederverwendete INFO-Felder mit
+  gnomAD, MyVariant.info, Ensembl VEP, ALFA, TOPMed, ClinVar-orientierten
+  Feldern und optionalen AlphaGenome-Daten.
+- **Research-Use-Only-Grenze** ist im Projekt klar markiert: kein
+  Diagnoseprodukt, kein Medizinprodukt, keine klinische Zweckbestimmung.
+
+## Screenshot-Galerie
+
+| Hauptarbeitsbereich | Filter- und Exportbereich |
+|---|---|
+| ![VFDistiller-Ressourcen-Setup im Variantenanalyse-Arbeitsbereich](README/screenshots/main_view.png) | ![VFDistiller-Ergebnisfilter und Exportsteuerung in der Windows-Desktop-UI](README/screenshots/main.png) |
 
 ## Vertriebsänderung (2026-04-12)
 
@@ -73,6 +105,17 @@ CE-IVD-Zertifizierung.
 - **Performance** — Optionaler Cython-Hotpath (5x Gesamt-Speedup), SQLite-Batch-Writes, async HTTP via aiohttp
 - **Hintergrund-Wartung** — Automatisches Nachladen fehlender Annotationen im Leerlauf
 - **Mehrsprachig** — Deutsch und Englisch (JSON-basierte Übersetzungen)
+
+## Suchbegriffe
+
+- VCF-Annotation Desktop-App
+- gVCF-Filter-GUI
+- 23andMe-Rohdaten zu annotiertem VCF
+- lokale genetische Variantenanalyse
+- Windows-Bioinformatik-Desktop-Tool
+- Offline-gnomAD-Allelfrequenz-Lookup
+- FASTA-Referenzprüfung mit GUI
+- Research-Use-Only-Software für Variantenannotation
 
 ## Voraussetzungen
 
@@ -302,7 +345,7 @@ Apache 2.0, PIL License, Biopython License). Siehe
 [`README/licenses/THIRD_PARTY_LICENSES.txt`](README/licenses/THIRD_PARTY_LICENSES.txt).
 
 > **Vertrieb:** VFDistiller wird ausschließlich über GitHub vertrieben
-> (siehe [Vertriebsaenderung (2026-04-12)](#vertriebsaenderung-2026-04-12)
+> (siehe [Vertriebsänderung (2026-04-12)](#vertriebsänderung-2026-04-12)
 > oben). Das frühere Microsoft-Store-Listing wurde zurückgezogen.
 
 ## Version

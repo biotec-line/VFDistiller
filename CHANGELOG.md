@@ -9,12 +9,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` added as repository community files.
 - Root application icon added for packaging and repository metadata.
 - `PORTIERUNGSPLAN.md` added for the GitHub-only Linux/macOS desktop portability strategy.
+- `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
 
 ### Entfernt / Removed
 - Removed the planned Web/PWA companion track from the active porting strategy.
 
 ### Geändert / Changed
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
+- README files now lead with clearer VCF/gVCF/23andMe/FASTA discoverability language, screenshot gallery entries, and local-first bioinformatics search phrases.
 - README test instructions now clarify the split between deterministic pytest coverage and manual benchmark scripts.
 - `.gitignore` now covers internal test locks, secrets, private keys, installer artifacts, and LLM control files.
 - `SECURITY.md` and `PRIVACY_POLICY.md` updated after the Microsoft Store withdrawal.
@@ -23,6 +25,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `START.bat` now prefers the local `dist\VFDistiller.exe` and falls back to the Python source entry point.
 - German README/UI wording now uses real umlauts for touched end-user text.
 - `.gitattributes` added for stable line endings and binary asset handling.
+- Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.

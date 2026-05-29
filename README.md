@@ -1,4 +1,10 @@
-# VFDistiller — Variant Fusion Distiller
+# VFDistiller — local-first VCF and genetic variant annotation desktop tool
+
+VFDistiller, also known as Variant Fusion Distiller, is a local-first
+bioinformatics desktop application for research-grade genetic variant files.
+It converts, filters, annotates, and exports VCF, gVCF, 23andMe raw text, and
+FASTA data on the user's own machine, with a Windows-first GUI and optional
+offline resources for allele-frequency lookup and reference-genome validation.
 
 > ⚠️ **Research Use Only / Nicht für klinische Diagnostik / Not for Clinical Use**
 >
@@ -34,9 +40,33 @@
 > development only. Free open-source donation; liability limited to intent
 > and gross negligence (§ 521 BGB, AGPL-3.0 §§ 15–17). Use at your own risk.
 
-A bioinformatics desktop tool for processing, converting, and annotating research-grade genetic variant data from any sequencing source. Supports VCF, gVCF, 23andMe raw format, and FASTA — without pysam/bcftools/samtools (Windows-compatible).
+A bioinformatics desktop tool for processing, converting, and annotating
+research-grade genetic variant data from any sequencing source. Supports VCF,
+gVCF, 23andMe raw format, and FASTA without requiring pysam, bcftools, or
+samtools, making the workflow practical on Windows workstations.
 
-![Variant Fusion - Main View](README/screenshots/main_view.png)
+![VFDistiller Windows desktop GUI with VCF filters, reference-resource setup and export controls](README/screenshots/main_view.png)
+
+## Why VFDistiller?
+
+- **VCF and gVCF desktop workflow** for researchers, teaching labs, and
+  bioinformatics software development where a GUI is easier than a shell-only
+  pipeline.
+- **Local-first privacy model** for sensitive genetic files: raw input,
+  generated VCFs, SQLite caches, genome references, and API keys stay local.
+- **Windows-compatible variant annotation** without a hard dependency on Unix
+  bioinformatics tools such as `bcftools`, `samtools`, or `pysam`.
+- **Multi-source annotation** combines reusable INFO fields with gnomAD,
+  MyVariant.info, Ensembl VEP, ALFA, TOPMed, ClinVar-oriented fields, and
+  optional AlphaGenome data.
+- **Research Use Only boundary** is explicit throughout the project: this is
+  not a clinical diagnostic product and not a medical device.
+
+## Screenshot Gallery
+
+| Main workspace | Filter and export workspace |
+|---|---|
+| ![VFDistiller resource setup dialog in the main variant analysis workspace](README/screenshots/main_view.png) | ![VFDistiller result filter and export controls in the Windows desktop UI](README/screenshots/main.png) |
 
 ## Distribution Change (2026-04-12)
 
@@ -82,6 +112,17 @@ or expensive CE-IVD certification.
 - **Performance** — Optional Cython hot-path (5x overall speedup), SQLite batch writes, async HTTP via aiohttp
 - **Background Maintenance** — Automatic re-fetching of missing annotations during idle
 - **Multilingual** — German and English (JSON-based translations)
+
+## Search Phrases
+
+- VCF annotation desktop app
+- gVCF filtering GUI
+- 23andMe raw data to annotated VCF
+- local-first genetic variant analysis
+- Windows bioinformatics desktop tool
+- offline gnomAD allele frequency lookup
+- FASTA reference validation GUI
+- Research Use Only variant annotation software
 
 ## Prerequisites
 

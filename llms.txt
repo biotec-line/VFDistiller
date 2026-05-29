@@ -1,0 +1,52 @@
+# VFDistiller
+
+Canonical repository: https://github.com/biotec-line/VFDistiller
+Organization: https://github.com/biotec-line
+License: AGPL-3.0-or-later
+Primary language: Python
+UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, optional PyInstaller build
+Also known as: Variant Fusion Distiller
+
+## Summary
+
+VFDistiller is a local-first bioinformatics desktop application for
+research-grade genetic variant data. It imports, converts, filters, annotates,
+and exports VCF, gVCF, 23andMe raw text, and FASTA files on the user's own
+machine. The project is intended for bioinformatics research, teaching, and
+software development only.
+
+VFDistiller is not a medical device, not CE-IVD certified, and not intended for
+clinical diagnosis, prognosis, therapy recommendations, or consumer health
+decisions. ClinSig and variant-impact values shown in the application are
+third-party database annotations for research orientation, not clinical
+assessments.
+
+## Search Phrases
+
+- VCF annotation desktop app
+- gVCF filtering GUI
+- 23andMe raw data to annotated VCF
+- local-first genetic variant analysis
+- Windows bioinformatics desktop tool
+- offline gnomAD allele frequency lookup
+- FASTA reference validation GUI
+- Research Use Only variant annotation software
+
+## Important Files
+
+- `README.md`: English public documentation
+- `README.de.md`: German public documentation
+- `Variant_Fusion_pro_V17.py`: main desktop application and pipeline
+- `variant_fusion_settings.json.example`: configuration template
+- `cython_hotpath/`: optional Cython acceleration modules
+- `README/screenshots/main_view.png`: 1920x1080 main UI screenshot
+- `README/screenshots/main.png`: additional filter/export workspace screenshot
+- `PORTIERUNGSPLAN.md`: Linux/macOS desktop portability plan
+- `SECURITY.md`, `PRIVACY_POLICY.md`, `NOTICE`: safety, privacy, and legal boundaries
+
+## Privacy Notes
+
+The app is local-first. Raw genetic files, converted VCFs, genome references,
+SQLite caches, local settings, logs, API keys, and downloaded annotation
+databases are excluded from the public repository and should remain on the
+user's machine.
