@@ -8,17 +8,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ### Hinzugefügt / Added
 - `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` added as repository community files.
 - Root application icon added for packaging and repository metadata.
-- `PORTIERUNGSPLAN.md` added for the GitHub-only Linux/macOS desktop portability strategy.
 - `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
-
-### Entfernt / Removed
-- Removed the planned Web/PWA companion track from the active porting strategy.
 
 ### Geändert / Changed
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
 - README files now lead with clearer VCF/gVCF/23andMe/FASTA discoverability language, screenshot gallery entries, and local-first bioinformatics search phrases.
 - README test instructions now clarify the split between deterministic pytest coverage and manual benchmark scripts.
 - `.gitignore` now covers internal test locks, secrets, private keys, installer artifacts, and LLM control files.
+- Internal planning files such as `PORTIERUNGSPLAN.md`, `DECISIONS.md`, `TODO.md`, and `DONE.md` now stay local-only.
 - `SECURITY.md` and `PRIVACY_POLICY.md` updated after the Microsoft Store withdrawal.
 - `pytest.ini` now limits automated test collection to the maintained `tests/` suite.
 - Downloaded Ensembl GTF annotation archives are no longer tracked and remain local via `.gitignore`.
@@ -36,6 +33,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - LightDB lookup setup also handles `sqlite3.connect()` failures without masking the original fallback result.
 
 ### Entfernt / Removed
+- Removed `PORTIERUNGSPLAN.md` from the public repository index; the Linux/macOS desktop portability plan remains a local planning file.
+- Removed the planned Web/PWA companion track from the active porting strategy.
 - Removed stale internal cleanup concept notes from the public README documentation tree.
 
 ## [1.0.0] - YYYY-MM-DD

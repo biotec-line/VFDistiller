@@ -41,7 +41,6 @@ assessments.
 - `cython_hotpath/`: optional Cython acceleration modules
 - `README/screenshots/main_view.png`: 1920x1080 main UI screenshot
 - `README/screenshots/main.png`: additional filter/export workspace screenshot
-- `PORTIERUNGSPLAN.md`: Linux/macOS desktop portability plan
 - `SECURITY.md`, `PRIVACY_POLICY.md`, `NOTICE`: safety, privacy, and legal boundaries
 
 ## Privacy Notes

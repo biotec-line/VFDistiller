@@ -132,3 +132,10 @@ store_package/*.exe
 *.exe
 *.msi
 *.msix
+# ---------------------------------------------------------------------------
+# Interne Steuerungsdateien
+# ---------------------------------------------------------------------------
+DECISIONS.md
+PORTIERUNGSPLAN.md
+TODO.md
+DONE.md
