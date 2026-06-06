@@ -6,6 +6,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- `tests/source_platform_smoke.py`: Plattform-Smoke für Linux und macOS — 7 Checks (Python-Version, Pflicht-Deps real importierbar, tkinter headless-safe, ttkbootstrap headless-tolerant, Hauptmodul mit Mocks ladbar, safe_float-Logik, VCF-Erkennung mit Fixture).
+- `.github/workflows/source-platform-smoke.yml`: CI-Workflow für ubuntu-latest und macos-latest; installiert Kern-Deps (pip) und python3-tk (apt); führt Smoke explizit aus.
 - `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` added as repository community files.
 - Root application icon added for packaging and repository metadata.
 - `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
