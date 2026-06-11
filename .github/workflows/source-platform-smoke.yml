@@ -17,23 +17,23 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Python 3.11 einrichten
-        uses: actions/setup-python@v5
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
-      - name: Tkinter installieren (Linux)
+      - name: Install Tkinter on Linux
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y python3-tk
 
-      - name: Kern-Abhängigkeiten installieren
+      - name: Install core dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests psutil Pillow intervaltree ttkbootstrap aiohttp scipy pytest
 
-      - name: Plattform-Smoke ausführen
+      - name: Run platform smoke
         env:
           PYTHONIOENCODING: utf-8
         run: python -m pytest tests/source_platform_smoke.py -v

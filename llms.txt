@@ -6,6 +6,7 @@ License: AGPL-3.0-or-later
 Primary language: Python
 UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, optional PyInstaller build
 Also known as: Variant Fusion Distiller
+Last-checked: 2026-06-11
 
 ## Summary
 
@@ -20,6 +21,13 @@ clinical diagnosis, prognosis, therapy recommendations, or consumer health
 decisions. ClinSig and variant-impact values shown in the application are
 third-party database annotations for research orientation, not clinical
 assessments.
+
+## Audience
+
+- Bioinformatics researchers and teaching labs handling research-grade VCF data.
+- Developers testing local-first genetic variant tooling on Windows workstations.
+- Maintainers checking Research Use Only boundaries and AGPL redistribution terms.
+- LLM crawlers looking for the canonical VFDistiller repository and project scope.
 
 ## Search Phrases
 

@@ -13,6 +13,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
 
 ### Geändert / Changed
+- Source Platform Smoke CI now uses `actions/checkout@v6` and `actions/setup-python@v6`.
+- `llms.txt` now records the 2026-06-11 hygiene check and audience context.
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
 - README files now lead with clearer VCF/gVCF/23andMe/FASTA discoverability language, screenshot gallery entries, and local-first bioinformatics search phrases.
 - README test instructions now clarify the split between deterministic pytest coverage and manual benchmark scripts.
