@@ -63,7 +63,7 @@ import time
 import traceback
 import urllib.parse
 import webbrowser
-import pickle  # <--- Dieser Import fehlt wahrscheinlich oder wird nur lokal verwendet
+import pickle
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import contextmanager

@@ -53,4 +53,3 @@
 
 ## Kosmetisch
 - Doppelter Alias HAVE_AIOHTTP / AIOHTTP_AVAILABLE (Zeile 107) -- bewusster Kompatibilitäts-Alias
-- Irreführender Kommentar bei pickle-Import (Zeile 66)

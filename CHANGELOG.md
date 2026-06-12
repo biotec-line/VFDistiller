@@ -29,6 +29,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
+- Removed a stale inline comment that incorrectly suggested the top-level `pickle` import was missing or only local-only, even though cache serialization uses it.
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.
 - Performance benchmark scripts no longer expose a `test_correctness()` function that pytest can miscollect as a fixture-based test.
 - Cython accelerator console logging no longer crashes benchmark scripts on Windows cp1252 terminals.
