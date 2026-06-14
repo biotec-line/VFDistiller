@@ -6,6 +6,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- `make_source_zip.py`: Source-ZIP-Builder für Linux und macOS. Erstellt ein portables Quellcode-Archiv mit allen Python-Quellen, Übersetzungen, optionalem Cython-Hotpath (.pyx), Tests und Dokumentation. Schließt Windows-Binaries (.pyd, .exe), generierte Caches und FASTA-Referenzgenome aus.
+- `PACKAGING.md`: Vollständige Packaging-Dokumentation mit Optionen-Matrix (Windows EXE vs. Source-ZIP), Schritt-für-Schritt-Installationsanleitung für Linux/macOS, Cython-Fallback-Erläuterung und Hinweisen zu Annotationsdaten.
+- `tests/test_source_packaging.py`: 14 automatisierte Tests für `make_source_zip.py` — Ausschlusslogik (.pyd/.exe/_index.pkl), Inklusionslogik (.pyx/.py/.json/.md), Versionslesung, ZIP-Erzeugung und ZIP-Inhalt.
 - `tests/source_platform_smoke.py`: Plattform-Smoke für Linux und macOS — 7 Checks (Python-Version, Pflicht-Deps real importierbar, tkinter headless-safe, ttkbootstrap headless-tolerant, Hauptmodul mit Mocks ladbar, safe_float-Logik, VCF-Erkennung mit Fixture).
 - `.github/workflows/source-platform-smoke.yml`: CI-Workflow für ubuntu-latest und macos-latest; installiert Kern-Deps (pip) und python3-tk (apt); führt Smoke explizit aus.
 - `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` added as repository community files.
