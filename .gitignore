@@ -92,6 +92,7 @@ store_settings.json
 _archive/
 _alt/
 _WARTUNG/
+docs/superpowers/
 
 # ---------------------------------------------------------------------------
 # Interne Entwicklungs-Dateien
@@ -100,6 +101,8 @@ AUFGABEN.txt
 TEST.txt
 TESTS.txt
 TESTERGEBNISSE.txt
+LOCK.txt
+LOCK.*.txt
 BUGREPORT.md
 DIAGNOSE_REPORT.md
 SKILL.md

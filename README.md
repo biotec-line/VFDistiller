@@ -90,9 +90,10 @@ or expensive CE-IVD certification.
 - No change to the license (AGPL-3.0-or-later, as introduced on 2026-04-12).
 - Zweckbestimmung / Intended purpose remains: **Research Use Only — Bioinformatics tool for VCF analysis. Not a medical device.**
 
-**Repository status (2026-05-01):**
+**Repository status (2026-06-18):**
 - Git tracks source code, documentation, tests, workflow metadata, packaging templates, and the application icon.
 - Genome references, downloaded gene annotations, local settings, SQLite caches/databases, logs, build outputs, release archives, and Store binaries are excluded by `.gitignore` and must remain local.
+- Project locks and agent-internal implementation plans are excluded by `.gitignore` and must remain local-only.
 - API keys are never committed; use the generated `variant_fusion_settings.json` or environment-specific local configuration.
 
 **Maintenance status (2026-05-23):**

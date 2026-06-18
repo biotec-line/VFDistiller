@@ -22,6 +22,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - README files now lead with clearer VCF/gVCF/23andMe/FASTA discoverability language, screenshot gallery entries, and local-first bioinformatics search phrases.
 - README test instructions now clarify the split between deterministic pytest coverage and manual benchmark scripts.
 - `.gitignore` now covers internal test locks, secrets, private keys, installer artifacts, and LLM control files.
+- `.gitignore` now also covers active `LOCK*.txt` files and agent-internal `docs/superpowers/` implementation plans so coordination files stay local.
 - Internal planning files such as `PORTIERUNGSPLAN.md`, `DECISIONS.md`, `TODO.md`, and `DONE.md` now stay local-only.
 - `SECURITY.md` and `PRIVACY_POLICY.md` updated after the Microsoft Store withdrawal.
 - `pytest.ini` now limits automated test collection to the maintained `tests/` suite.
