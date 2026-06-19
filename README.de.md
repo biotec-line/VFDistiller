@@ -146,8 +146,11 @@ python setup.py build_ext --inplace
 cd ..
 ```
 
-3. **PyInstaller / uv** — für einen Standalone-`.exe`-Build siehe
-   `VFDistiller.spec` (PyInstaller-Konfiguration im Repo enthalten).
+3. **Lokaler Windows-Build** — `build_exe.bat` oder `python build_release.py`
+   ausführen. Der Build folgt `.SOFTWARE/BUILD-VERFAHREN.md`, nutzt das lokale
+   Arbeitsverzeichnis `C:\_Local_DEV\codex_build\vfdistiller\`, spiegelt die
+   fertige `dist\VFDistiller.exe` zurück ins Projekt und erstellt ein
+   versioniertes Release-ZIP in `releases/`.
 
 ### Tests
 
@@ -311,8 +314,7 @@ VFDistiller/
 ├── ARCHITECTURE.md .............. Entwickler-Dokumentation
 └── README/ ...................... Erweiterte Dokumentation & Lizenzen
     └── licenses/
-        ├── LICENSE.txt .......... Hauptlizenz (Englisch)
-        ├── LICENSE.de.txt ....... Hauptlizenz (Deutsch)
+        ├── LICENSE.txt .......... Hauptlizenz
         └── THIRD_PARTY_LICENSES.txt . Third-Party-Lizenzen
 ```
 

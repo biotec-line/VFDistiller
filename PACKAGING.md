@@ -6,12 +6,18 @@ Dieses Dokument beschreibt alle Build- und Packaging-Optionen für VFDistiller.
 
 ## Windows — EXE-Release (Empfohlen für Endnutzer)
 
-**Script:** `build_release.py`
+**Skripte:** `build_exe.bat` oder `build_release.py`
 
 Erstellt eine selbstständige Windows-EXE via PyInstaller und verpackt sie als Release-ZIP.
+Der Build folgt dem `.SOFTWARE`-Standard: gebaut wird lokal unter
+`C:\_Local_DEV\codex_build\vfdistiller\`, die fertige EXE wird danach nach
+`dist\VFDistiller.exe` zurückgespiegelt und von dort ins Release-ZIP übernommen.
 
 ```bash
 # Vollständiger Build (EXE + ZIP)
+build_exe.bat
+
+# Oder direkt per Python
 python build_release.py
 
 # Nur ZIP aus bestehendem dist/

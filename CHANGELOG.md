@@ -16,6 +16,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
 
 ### Geändert / Changed
+- `build_release.py` now builds via PyInstaller in `C:\_Local_DEV\codex_build\vfdistiller`, mirrors the finished EXE back to `dist\VFDistiller.exe`, and produces the versioned release ZIP from that local artifact.
+- `build_exe.bat` added as a Windows build entrypoint so the project follows the current `.SOFTWARE` local-build workflow more directly.
 - Source Platform Smoke CI now uses `actions/checkout@v6` and `actions/setup-python@v6`.
 - `llms.txt` now records the 2026-06-11 hygiene check and audience context.
 - README files now document the current GitHub-only distribution and repository privacy/ignore policy.
@@ -33,6 +35,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
+- Release packaging no longer references a non-existent `README/licenses/LICENSE.de.txt`; the documented license tree now matches the shipped files.
 - Removed a stale inline comment that incorrectly suggested the top-level `pickle` import was missing or only local-only, even though cache serialization uses it.
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.
 - Performance benchmark scripts no longer expose a `test_correctness()` function that pytest can miscollect as a fixture-based test.

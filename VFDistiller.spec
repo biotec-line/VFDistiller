@@ -1,6 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
 import os
-
 BASE = SPECPATH
 
 a = Analysis(
