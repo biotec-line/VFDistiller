@@ -17445,8 +17445,10 @@ class Distiller:
 
                 pending_writes.clear()
             except Exception as e:
-                self.logger.log(f"[Full-Anno] ⚠️ Batch-Write fehlgeschlagen: {e}")
-                pending_writes.clear()
+                # Buffer NICHT leeren: die Keys stehen schon in processed_keys und würden nicht
+                # neu eingereiht -> sonst stiller Verlust von bis zu BATCH_WRITE_SIZE Annotationen.
+                # Behalten -> nächster flush_pending_writes-Aufruf wiederholt den Write.
+                self.logger.log(f"[Full-Anno] ⚠️ Batch-Write fehlgeschlagen (Buffer behalten, Retry): {e}")
 
         while True:
             if self.stopflag.is_set():
@@ -18200,6 +18202,9 @@ class Distiller:
         # Warte auf Full-Anno-Done
         while not pipeline_state["full_done"].is_set():
             if self.stopflag.is_set():
+                # missing_done IMMER setzen, sonst hängt _phase_alphagenome_streaming
+                # ewig auf missing_done.wait() (Deadlock auf dem normalen Stop-Pfad).
+                pipeline_state["missing_done"].set()
                 return
             time.sleep(0.5)
 
@@ -18209,6 +18214,7 @@ class Distiller:
         processed_keys = set()
         idle_rounds = 0
         max_idle_rounds = 3
+        db_errors = 0  # bounded Retry für get_variants_bulk (kein Endlos-Spin)
 
         # ✅ Circuit-Breaker für APIs (mit Settings-Check)
         clinvar_errors = 0
@@ -18269,7 +18275,19 @@ class Distiller:
 
             # ✅ Filtere nach fehlenden Feldern
             to_annotate = []
-            rows = self.db.get_variants_bulk(new_keys)
+            try:
+                rows = self.db.get_variants_bulk(new_keys)
+            except Exception as e:
+                # NICHT ungeguardet lassen: sonst stirbt der Thread, missing_done bleibt
+                # ungesetzt -> AlphaGenome-Deadlock. Bounded Retry, dann sauber beenden
+                # (break fällt in den Post-Loop-Abschluss, der missing_done setzt).
+                db_errors += 1
+                self.logger.log(f"[Missing-Fill] ⚠️ get_variants_bulk fehlgeschlagen, retry: {e}")
+                if db_errors >= 5:
+                    self.logger.log("[Missing-Fill] ⚠️ Zu viele DB-Fehler → Phase beenden.")
+                    break
+                time.sleep(2)
+                continue
             
             for key in new_keys:
                 row = rows.get(key) or {}
@@ -18660,11 +18678,16 @@ class Distiller:
                         self.progress.mark_fully_processed(1)
                         self.progress.update_phase("ag_score", 1)
 
-        # ✅ Warte auf alle anderen Phasen
+        # ✅ Warte auf alle anderen Phasen — MIT StopFlag-Check + Timeout (wie die Warteschleife
+        # in Fall 1), sonst Deadlock falls eine Phase ihr Event nie setzt (event.wait() ohne
+        # Timeout/Stop-Check hing ewig).
         for event_name in ["af_done", "full_done", "gene_done", "rsid_done", "missing_done"]:
             event = pipeline_state.get(event_name)
             if event:
-                event.wait()
+                while not event.is_set():
+                    if self.stopflag.is_set():
+                        break
+                    event.wait(timeout=1.0)
 
         # ✅ Finaler Pass: Alle display_keys als processed markieren
         final_keys = self.display_keys.copy()
@@ -18844,9 +18867,10 @@ class Distiller:
                 self.logger.log(f"[FASTA] Small file ({file_size_mb:.1f} MB), creating gVCF...")
                 conv.convert_streaming_gvcf(path, None, tmp_vcf)
                 filtered_vcf = tmp_vcf.replace(".vcf", "_variants.vcf")
-                with open(tmp_vcf, "r") as fin, open(filtered_vcf, "w") as fout:
+                with open(tmp_vcf, "r", encoding="utf-8") as fin, open(filtered_vcf, "w", encoding="utf-8") as fout:
                     for line in fin:
-                        if line.startswith("#") or line.split("\t")[4] != ".":
+                        parts = line.split("\t")
+                        if line.startswith("#") or (len(parts) > 4 and parts[4] != "."):
                             fout.write(line)
                 vcf_for_pipeline = filtered_vcf
             else:
@@ -18892,9 +18916,12 @@ class Distiller:
                 .replace(".gvcf", "_variants.vcf")
         )
         
-        with open_text_maybe_gzip(path) as fin, open(filtered_vcf, "w") as fout:
+        with open_text_maybe_gzip(path) as fin, open(filtered_vcf, "w", encoding="utf-8") as fout:
             for line in fin:
-                if line.startswith("#") or (line and line.split("\t")[4] != "."):
+                parts = line.split("\t")
+                # Guard gegen <5-Spalten-Zeilen: '(line and ...)' war wirkungslos (Iteration
+                # liefert nie "", Leerzeile = "\n" ist truthy -> ["\n"][4] = IndexError).
+                if line.startswith("#") or (len(parts) > 4 and parts[4] != "."):
                     fout.write(line)
         
         self.logger.log(f"[gVCF] Filtered to: {filtered_vcf}")
