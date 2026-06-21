@@ -14527,6 +14527,11 @@ class Distiller:
     
     def invalidate_cache_bulk(self, keys: List[Tuple]):
         """Leitet Cache-Invalidierung an die App weiter."""
+        # Zuerst den EIGENEN _bulk_cache leeren (wie invalidate_cache für Einzel-Keys) —
+        # sonst liefert _get_variants_bulk_cached nach einem Batch-Write weiterhin veraltete
+        # Pre-Update-Zeilen (Cache-Inkohärenz; genau der vom V15-Fix adressierte Pfad).
+        for k in keys:
+            self._bulk_cache.pop(k, None)
         if self.app:
             self.app.invalidate_cache_bulk(keys)
     
