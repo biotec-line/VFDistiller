@@ -58,6 +58,7 @@ import socket
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import traceback
@@ -4801,10 +4802,15 @@ class convert_23andme_to_vcf:
                         continue
                     if hit_by_build["chrom"] != chrom or hit_by_build["pos"] != pos:
                         continue
-                    ref_seq, alt_seq = indel_ref_alt_from_spdi(
+                    _spdi = indel_ref_alt_from_spdi(
                         chrom, pos, hit_by_build["ref"], hit_by_build.get("alt", ""),
                         lambda c, p: get_ref_base(c, p, fasta_path, fai_index, cache, build)
                     )
+                    if not _spdi:
+                        # indel_ref_alt_from_spdi gibt bei ungültiger Ankerbase None zurück
+                        # → kein Tuple-Unpack (sonst TypeError, bricht VCF-Erzeugung ab).
+                        continue
+                    ref_seq, alt_seq = _spdi
                     if not ref_seq or not alt_seq:
                         continue
                     g = genotype.upper()
@@ -5093,17 +5099,36 @@ class convert_23andme_to_vcf:
         if not rs_pos:
             return None
 
-        # rsIDs parallel bei dbSNP abfragen
+        # rsIDs parallel bei dbSNP abfragen.
+        # WICHTIG: adaptive_parallel_fetch persistiert über cache_upsert nach self.cache_file
+        # (= CACHE_FILE). Während der Build-Erkennung self.cache_file auf eine Wegwerf-Temp-Datei
+        # umlenken, sonst wird der persistente rsID-Cache durch das ~50-Einträge-Detektions-Dict
+        # überschrieben (Datenverlust).
         cache = {}
-        self.adaptive_parallel_fetch([r for r, _ in rs_pos], cache)
+        _orig_cache_file = self.cache_file
+        _tmp_fd, _tmp_cache = tempfile.mkstemp(suffix=".json", prefix="vfd_buildcheck_")
+        os.close(_tmp_fd)
+        self.cache_file = _tmp_cache
+        try:
+            self.adaptive_parallel_fetch([r for r, _ in rs_pos], cache)
+        finally:
+            self.cache_file = _orig_cache_file
+            try:
+                os.remove(_tmp_cache)
+            except OSError:
+                pass
 
         tol = 5
         m37 = 0
         m38 = 0
 
         for rsid, pos_file in rs_pos:
-            rec37 = cache.get((rsid, "GRCh37"))
-            rec38 = cache.get((rsid, "GRCh38"))
+            # adaptive_parallel_fetch/cache_upsert schreiben String-Keys cache[rsid] =
+            # {"assemblies": {build: {...}}} — NICHT Tupel-Keys (rsid, build). Falscher
+            # Lookup ließ die Build-Erkennung immer ins Leere laufen (GRCh37-Default).
+            _asm = (cache.get(rsid, {}).get("assemblies") or {})
+            rec37 = _asm.get("GRCh37")
+            rec38 = _asm.get("GRCh38")
 
             if rec37 and abs(rec37["pos"] - pos_file) <= tol:
                 m37 += 1
@@ -6963,8 +6988,11 @@ class LightDBGnomADManager:
             try:
                 with open(self.PID_FILE) as f:
                     pid = int(f.read().strip())
-                # Prozess noch aktiv?
-                os.kill(pid, 0)  # nur Testsignal
+                # Prozess noch aktiv? psutil statt os.kill(pid, 0): auf Windows
+                # TERMINIERT os.kill mit Signal 0 den Prozess (TerminateProcess) statt
+                # ihn nur zu prüfen → würde den laufenden Index-Worker killen.
+                if not psutil.pid_exists(pid):
+                    raise ProcessLookupError(pid)
                 self.logger.log(f"[LightDB] Index-Worker läuft bereits (PID {pid}).")
                 return
             except Exception:
