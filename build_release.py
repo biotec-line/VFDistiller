@@ -102,7 +102,7 @@ def build_exe(args):
     try:
         subprocess.run(
             [sys.executable, "-m", "PyInstaller", "--version"],
-            capture_output=True, check=True
+            capture_output=True, check=True, timeout=30
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
         print("FEHLER: PyInstaller nicht installiert!")

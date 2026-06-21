@@ -1661,7 +1661,11 @@ class ResourceManager:
             if path and (os.path.exists(path) or RESOURCE_DEFINITIONS.get(key, {}).get("is_directory")):
                 return path
         else:
-            return self._paths.get(key)
+            rel = self._paths.get(key)
+            # Symmetrisch zum absolute-Zweig: vorhandenen relativen Pfad direkt
+            # zurückgeben, sonst (stale/fehlend) unten Re-Discovery wie bei absolute.
+            if rel and (os.path.exists(os.path.join(BASE_DIR, rel)) or RESOURCE_DEFINITIONS.get(key, {}).get("is_directory")):
+                return rel
 
         # Pfad existiert nicht mehr → neu suchen
         definition = RESOURCE_DEFINITIONS.get(key)
@@ -3166,9 +3170,12 @@ def get_robust_session(retries=Config.MAX_RETRIES, backoff_factor=0.5, status_fo
 
 def load_fai_index(fai_path):
     idx = {}
-    with open(fai_path, "r") as f:
+    with open(fai_path, "r", encoding="ascii") as f:
         for line in f:
-            chrom, length, offset, line_bases, line_width = line.strip().split("\t")
+            parts = line.strip().split("\t")
+            if len(parts) != 5:
+                continue  # leere/abweichende .fai-Zeile überspringen statt ValueError
+            chrom, length, offset, line_bases, line_width = parts
             idx[chrom] = (int(length), int(offset), int(line_bases), int(line_width))
     return idx
 
@@ -4378,11 +4385,14 @@ async def gnomad_fetch_async(keys, build, logger=None):
                         return None
 
                     data = await resp.json()
-                    v = data.get("data", {}).get("variant")
+                    # gnomAD liefert bei Query-Fehlern {"data": null, ...} (HTTP 200) und
+                    # genome/exome=null für Varianten nur eines Datasets -> 'or {}' statt
+                    # .get(k, {}), sonst None.get(...) -> AttributeError -> stiller AF-Verlust.
+                    v = (data.get("data") or {}).get("variant")
                     if not v:
                         return None
-                    g_af = v.get("genome", {}).get("af")
-                    e_af = v.get("exome", {}).get("af")
+                    g_af = (v.get("genome") or {}).get("af")
+                    e_af = (v.get("exome") or {}).get("af")
                     return {"ggn": g_af, "gex": e_af}
 
             except (asyncio.TimeoutError, aiohttp.ClientError) as e:
@@ -6751,7 +6761,7 @@ class LightDBGnomADManager:
     def load_config(self) -> dict:
         if os.path.exists(self.CONFIG_FILE):
             try:
-                with open(self.CONFIG_FILE, "r") as f:
+                with open(self.CONFIG_FILE, "r", encoding="utf-8") as f:
                     cfg = json.load(f)
                     # ✅ Validierung
                     if not isinstance(cfg, dict):
@@ -6762,7 +6772,7 @@ class LightDBGnomADManager:
         return {}
 
     def save_config(self, cfg: dict) -> None:
-        with open(self.CONFIG_FILE, "w") as f:
+        with open(self.CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(cfg, f, indent=2)
             
     def are_builds_missing_or_outdated(self, cfg: dict) -> list[str]:
@@ -20913,7 +20923,7 @@ class App(ttk.Window):
         self.saved_theme = Config.DEFAULT_THEME
         if os.path.exists(Config.SETTINGS_FILE):
             try:
-                with open(Config.SETTINGS_FILE, "r") as f:
+                with open(Config.SETTINGS_FILE, "r", encoding="utf-8") as f:
                     d = json.load(f)
                     self.saved_theme = d.get("theme", Config.DEFAULT_THEME)
             except (OSError, ValueError): pass
@@ -23403,7 +23413,7 @@ class App(ttk.Window):
         data = {}
         if os.path.exists(Config.SETTINGS_FILE):
             try:
-                with open(Config.SETTINGS_FILE, "r") as f:
+                with open(Config.SETTINGS_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
             except (json.JSONDecodeError, OSError): pass
         
@@ -23450,7 +23460,7 @@ class App(ttk.Window):
         _runtime_api_settings = self.api_settings
 
         try:
-            with open(Config.SETTINGS_FILE, "w") as f:
+            with open(Config.SETTINGS_FILE, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
             logger.log(f"Settings save error: {e}")
