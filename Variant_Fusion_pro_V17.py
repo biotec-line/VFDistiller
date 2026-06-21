@@ -1968,6 +1968,19 @@ class MultiSinkLogger:
         self.q = ui_queue
         self.logfile_path = logfile_path
         self._lock = threading.Lock()
+
+    def __getstate__(self):
+        # multiprocessing-spawn (Windows) pickelt das Process-Objekt inkl. logger.
+        # threading.Lock und die UI-queue.Queue sind NICHT picklebar -> hier entfernen,
+        # sonst wirft migrator.start() TypeError und die Migration läuft nie (still).
+        state = self.__dict__.copy()
+        state["_lock"] = None
+        state["q"] = None  # UI-Queue gilt nur im Hauptprozess; Kind loggt in die Datei
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._lock = threading.Lock()
         
         if self.logfile_path:
             dirpath = os.path.dirname(self.logfile_path)
@@ -12823,8 +12836,11 @@ def does_user_want_to_use_fasta(build: str, logger, app=None) -> str | None:
             logger.log(f"[FASTA] Fehler beim Dialog-Aufruf: {e}")
             return None
     else:
-        # Fallback (unsicher, aber besser als Crash)
-        decision = ask_dialog()
+        # KEIN tk-Dialog ohne erreichbaren Main-Loop: messagebox aus einem (Hintergrund-)Thread
+        # ist mit tk/ttkbootstrap nicht thread-safe -> Freeze/Crash. Konservativ unbeantwortet
+        # lassen (None), statt im Thread einen Dialog zu öffnen.
+        logger.log("[FASTA] Kein app/Main-Loop für Dialog → unbeantwortet (kein Thread-Dialog).")
+        return None
 
     if not decision:
         logger.log("[FASTA] Download abgelehnt – Fallback auf MyVariant.")
@@ -13163,8 +13179,10 @@ class FastaValidator:
         - LRU-Cache für Regionen und Direktzugriffe
         """
         try:
-            # Lazy Initialization
-            if self._fasta_index is None: self._load_fasta_index()
+            # Lazy Initialization — _fasta_index startet als {} (nie None), daher 'not' statt
+            # 'is None': sonst feuert der Lazy-FAI-Load nie und Mode-2-Validierung ohne
+            # vorheriges Mode-1 sieht einen leeren Index -> jede Variante scheitert (lookup_fail).
+            if not self._fasta_index: self._load_fasta_index()
             if self._fasta_file is None: self._open_fasta_mmap()
             
             if chrom not in self._fasta_index:
