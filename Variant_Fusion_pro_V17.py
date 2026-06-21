@@ -7981,8 +7981,11 @@ class AFFetchController:
                         af_sources["exac"] = val
                 
                 if "gnomad" in hit:
-                    exomes = safe_float(hit.get("gnomad", {}).get("exomes", {}).get("af"))
-                    genomes = safe_float(hit.get("gnomad", {}).get("genomes", {}).get("af"))
+                    # gnomad/exomes/genomes können JSON-null sein -> 'or {}' (wie exac oben),
+                    # sonst None.get(...) -> AttributeError (Aufruf läuft außerhalb try/except).
+                    _gnomad = hit.get("gnomad") or {}
+                    exomes = safe_float((_gnomad.get("exomes") or {}).get("af"))
+                    genomes = safe_float((_gnomad.get("genomes") or {}).get("af"))
                     
                     if self._validate_af(exomes, k, "gnomAD-Exomes"):
                         af_sources["gnomad_exomes"] = exomes
@@ -8212,10 +8215,11 @@ class AFFetchController:
             buffer_copy = dict(self.result_buffer)
             self.db.upsert_variants_bulk(buffer_copy)
             self.logger.log(f"[AF-Controller] Flushed {len(buffer_copy)} results to DB.")
-        except Exception as e:
-            self.logger.log(f"[AF-Controller] ❌ DB flush error: {e}")
-        finally:
+            # Nur bei Erfolg leeren: bei DB-Fehler Buffer behalten -> nächster Flush
+            # versucht erneut, statt bis zu flush_size Ergebnisse still zu verwerfen.
             self.result_buffer.clear()
+        except Exception as e:
+            self.logger.log(f"[AF-Controller] ❌ DB flush error (Buffer behalten, Retry beim nächsten Flush): {e}")
 
 
     def finalize(self):
@@ -8439,7 +8443,7 @@ class GeneAnnotator:
             self._log(f"[GeneAnnotator] URL: {url}")
             self._log(f"[GeneAnnotator] Ziel: {gtf_path}")
             
-            r = requests.get(url, stream=True)
+            r = requests.get(url, stream=True, timeout=(10, 60))
             r.raise_for_status()
             
             total_size = int(r.headers.get('content-length', 0))
@@ -9759,16 +9763,19 @@ class VariantDB:
             cur = con.cursor()
             for key, data in updates:
                 data = self._normalize_for_db(data or {})
-                cur.execute("""
+                if not data:
+                    continue
+                # Nur tatsächlich übergebene Felder setzen (wie update_variant_fields).
+                # Vorher hardcoded SET ...conservation=? -> der Live-Aufrufer
+                # flush_annotation_cache (nur gene_symbol/is_coding) überschrieb
+                # conservation bei JEDEM Flush mit NULL (Datenverlust).
+                sets = ", ".join([f"{field}=?" for field in data.keys()])
+                values = list(data.values()) + list(key)
+                cur.execute(f"""
                     UPDATE variants
-                    SET gene_symbol=?, is_coding=?, conservation=?
+                    SET {sets}
                     WHERE chr=? AND pos=? AND ref=? AND alt=? AND build=?
-                """, (
-                    data.get("gene_symbol"),
-                    data.get("is_coding"),
-                    data.get("conservation"),
-                    key[0], key[1], key[2], key[3], key[4]
-                ))
+                """, values)
             con.commit()
 
     def upsert_variants_bulk(self, records: dict):
