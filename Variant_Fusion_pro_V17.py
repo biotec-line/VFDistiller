@@ -19744,7 +19744,22 @@ class QualityManager:
                 has_qual = qv >= self.settings["qual_threshold"]
             except (ValueError, TypeError):
                 has_qual = False
-            
+
+            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, BEWUSST NICHT geändert) ──────────────
+            # Beobachtung: An dieser Stelle ist `has_pass` durch den Kontrollfluss oben
+            # IMMER True (filter_pass_only=True → non-PASS wurde in der FILTER-Stufe bereits
+            # mit `return False` verworfen; filter_pass_only=False → has_pass=True gesetzt).
+            # Folge: `not has_pass and not has_qual` kann nie True werden — qual_threshold
+            # (Presets 20/30/50) wirkt damit als KOMBINIERTES "PASS ODER QUAL"-Gate, NICHT
+            # als eigenständiges QUAL-Mindest-Gate (QUAL allein verwirft keine Variante).
+            # Das ist möglicherweise BEABSICHTIGT (FILTER=PASS impliziert ausreichende
+            # Qualität). NICHT durch den automatischen Bugsweep geändert, weil:
+            #   (a) jede Änderung das KLINISCHE Filterverhalten verschiebt, und
+            #   (b) diese Logik in früheren Reviews mehrfach als "falsch" markiert wurde
+            #       und sich dann als korrekt/beabsichtigt herausstellte.
+            # Falls QUAL ein eigenständiges Gate sein SOLL: `if not has_qual: return False`.
+            # → Fachliche Entscheidung des Maintainers (Lukas), bewusst offen gelassen.
+            # ───────────────────────────────────────────────────────────────────────────
             if not has_pass and not has_qual:
                 # Weder PASS noch ausreichendes QUAL
                 self.stats["failed_qual"] += 1
@@ -22624,6 +22639,17 @@ class App(ttk.Window):
                         pass
             
             # Clinical significance (checked = keep, missing = keep)
+            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, BEWUSST NICHT geändert) ──────────────
+            # Beobachtung: Die Klassifikation per Substring-`in` kann bei ClinVar-MEHRFACH-
+            # werten mehrdeutig sein (z. B. "Pathogenic/Likely_pathogenic", "Benign/Likely_
+            # benign"). Je nach exaktem DB-Stringformat (Trenner "/", "_" vs. Leerzeichen)
+            # greift evtl. der falsche Zweig (eine pathogen klassifizierte Variante könnte
+            # bei allow_likely_path=an / allow_path=aus durchrutschen). EIN möglicher robuster
+            # Ansatz: clin_sig an [/,|] tokenisieren und jedes Token exakt gegen die
+            # Allow-Flags prüfen. NICHT durch den automatischen Bugsweep geändert: hängt vom
+            # tatsächlichen clin_sig-Format der DB ab und verschiebt das KLINISCHE/Anzeige-
+            # Filterverhalten — fachliche Prüfung durch den Maintainer (Lukas) nötig.
+            # ───────────────────────────────────────────────────────────────────────────
             sig = row.get("clin_sig")
             if sig and not is_missing(sig):
                 s = sig.lower()
@@ -22834,7 +22860,7 @@ class App(ttk.Window):
 
         # rsID Update (Spalte 3), falls in DB vorhanden und im VCF fehlt
         db_rsid = annotations.get("rsid")
-        if db_rsid and db_rsid.startswith("rs") and parts[2] == ".":
+        if isinstance(db_rsid, str) and db_rsid.startswith("rs") and parts[2] == ".":
             parts[2] = db_rsid
 
         # INFO zusammenbauen
@@ -23316,7 +23342,10 @@ class App(ttk.Window):
                                 header_written = True
                             outfile.write(line)
                             if line.startswith("##fileformat"):
-                                self._check_and_add_reference_header(outfile, original_vcf, self.distiller.build)
+                                # current_build (mit GRCh37-Fallback) statt ungeguardetem
+                                # self.distiller.build -> sonst '##reference=None' im Header,
+                                # wenn build None ist (filtered-Export nutzt ebenfalls current_build).
+                                self._check_and_add_reference_header(outfile, original_vcf, current_build)
                             continue
 
                         # ✅ V14 FIX: Vollständige Enrichment-Logik wie in filtered export
@@ -23456,9 +23485,14 @@ class App(ttk.Window):
             # ✅ NEU: DB-Viewer Pfad laden
             self.external_db_viewer.set(data.get("external_db_viewer", ""))
             
-            # ✅ NEU: Column Links laden
-            if "column_links" in data:
-                self.column_links = data["column_links"]
+            # ✅ NEU: Column Links laden — mit Typ-/Schema-Guard + Merge:
+            # korrupte/alte settings.json darf keinen Nicht-Dict-Eintrag einschleusen
+            # (sonst AttributeError in _handle_column_click/open_general_settings), und
+            # neu hinzugekommene Default-Links sollen erhalten bleiben (kein Vollersatz).
+            if isinstance(data.get("column_links"), dict):
+                for _ck, _cv in data["column_links"].items():
+                    if isinstance(_cv, dict):
+                        self.column_links[_ck] = _cv
 
             # API-Settings: Deep-Merge (gespeicherte Werte ueberschreiben Defaults)
             if "api_settings" in data:
