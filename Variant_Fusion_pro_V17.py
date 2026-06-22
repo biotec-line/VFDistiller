@@ -20529,12 +20529,12 @@ def build_resource_cards(parent, rm, logger_inst, card_widgets=None, _t=None):
         for key, info in items:
             st = status.get(key, "missing")
             is_ok = st in ("found", "registered", "created")
-            _build_single_resource_card(lf, key, info, is_ok, rm, logger_inst, card_widgets)
+            _build_single_resource_card(lf, key, info, is_ok, rm, logger_inst, card_widgets, _t=_t)
 
     return card_widgets
 
 
-def _build_single_resource_card(parent, key, info, is_ok, rm, logger_inst, card_widgets):
+def _build_single_resource_card(parent, key, info, is_ok, rm, logger_inst, card_widgets, _t=None):
     """Einzelne Resource-Card mit Status, Beschreibung, Buttons und Progressbar."""
     card = ttk.Frame(parent, padding=5)
     card.pack(fill=X, pady=3)
@@ -21223,12 +21223,16 @@ class App(ttk.Window):
         if cache_size >= Config.CACHE_MAX_SIZE:
             evict_count = max(1, int(cache_size * 0.1))
             try:
-                for _ in range(evict_count):
-                    try:
-                        first_key = next(iter(self.rows_cache))
-                        del self.rows_cache[first_key]
-                    except (StopIteration, KeyError):
-                        break
+                # _table_lock (RLock): rows_cache wird auch aus _fetch_row_async-Workern
+                # geschrieben -> Eviction (next(iter)/del) ohne Lock riskiert
+                # "dictionary changed size during iteration" / inkonsistenten Cache.
+                with self._table_lock:
+                    for _ in range(evict_count):
+                        try:
+                            first_key = next(iter(self.rows_cache))
+                            del self.rows_cache[first_key]
+                        except (StopIteration, KeyError):
+                            break
                 
                 if not hasattr(self, '_evict_count'):
                     self._evict_count = 0
@@ -21276,7 +21280,10 @@ class App(ttk.Window):
         try:
             row = self.db.get_variant(key)
             if row:
-                self.rows_cache[key] = row
+                # Worker-Thread-Schreibzugriff auf rows_cache unter _table_lock
+                # (gleicher Lock wie Eviction/Invalidierung) -> kein Race.
+                with self._table_lock:
+                    self.rows_cache[key] = row
                 # Trigger re-drain (row ist jetzt im Cache)
                 try:
                     self.live_queue.put_nowait(key)
@@ -21700,9 +21707,11 @@ class App(ttk.Window):
         
         # Reset UI if finished
         if self.progress.phase_name == "Abgeschlossen":
-             self.after(2000, lambda: self.progress_bar.configure(value=0))
-             self.after(2000, lambda: self.perc_label.config(text=self._t("Fertig")))
-             self.after(2000, lambda: self.eta_label.config(text=""))
+             # winfo_exists-Guard: Fenster kann innerhalb der 2s geschlossen werden ->
+             # sonst feuern die Lambdas auf zerstörte Widgets (TclError "invalid command").
+             self.after(2000, lambda: self.winfo_exists() and self.progress_bar.configure(value=0))
+             self.after(2000, lambda: self.winfo_exists() and self.perc_label.config(text=self._t("Fertig")))
+             self.after(2000, lambda: self.winfo_exists() and self.eta_label.config(text=""))
         
     def on_close(self):
         """
@@ -21725,13 +21734,19 @@ class App(ttk.Window):
         - Gene-Annotator & AF-Fetcher an Crawler übergeben
         - Cache-Path-Ermittlung für Migration
         """
+        # Reentrancy-Guard: WM_DELETE_WINDOW / erneuter Close-Trigger während eines
+        # hängenden Cleanups würde sonst einen zweiten BackofficeCrawler-Thread + ein
+        # zweites destroy() auslösen.
+        if getattr(self, "_closing", False):
+            return
+        self._closing = True
         cache_path = None
         db_path = None
         gene_annotator = None
         af_fetcher = None
         distiller = None
         stopflag = None
-        
+
         try:
             logger.log("[App] 🛑 Beende Anwendung...")
             
@@ -22036,6 +22051,12 @@ class App(ttk.Window):
         V17: Start-Klick triggert immer erst Stop/Reset (Legacy compatibility).
         Sorgt für konsistenten Status bei Mehrfachklicks auf Start.
         """
+        # Doppelstart-Guard: zuverlässiger als die (2-Ebenen-)Text-Heuristik-Button-Deaktivierung.
+        # Wird in _on_start_continue auf ALLEN Exit-Pfaden wieder freigegeben.
+        if getattr(self, "_starting", False):
+            self.logger.log("[App] ℹ Start läuft bereits — Klick ignoriert.")
+            return
+        self._starting = True
         # ✅ V17: Start -> Stop -> Startmechanik
         self.on_stop()
         # ✅ 1. Stopflag initialisieren falls nicht vorhanden
@@ -22191,6 +22212,7 @@ class App(ttk.Window):
         path = self.selected_file.get()
         if not path:
             Messagebox.show_error("Bitte eine Eingabe-Datei auswählen.", "Fehlende Datei")
+            self._starting = False
             return
 
         # ✅ 9. AlphaGenome-Key aktualisieren
@@ -22200,16 +22222,22 @@ class App(ttk.Window):
         except Exception as e:
             self.logger.log(f"[App] ⚠️ AlphaGenome-Update fehlgeschlagen: {e}")
 
-        # ✅ 10. Filter-Parameter sammeln
-        kwargs = {
-            "af_threshold": float(self.af_threshold.get()),
-            "include_none": bool(self.include_none.get()),
-            "filter_pass_only": bool(self.filter_pass_only.get()),
-            "cadd_highlight_threshold": float(self.cadd_highlight_threshold.get()),
-            "stale_days": int(self.stale_days.get()),
-            "qual_threshold": float(self.qual_threshold.get()),
-            "skip_info_recycling": bool(self.skip_info_recycling.get())
-        }
+        # ✅ 10. Filter-Parameter sammeln (mit Validierung: leeres/ungültiges Entry-Feld darf
+        # nicht ungefangen aus dem after-Callback fliegen -> User-Feedback statt Tk-Traceback)
+        try:
+            kwargs = {
+                "af_threshold": float(self.af_threshold.get()),
+                "include_none": bool(self.include_none.get()),
+                "filter_pass_only": bool(self.filter_pass_only.get()),
+                "cadd_highlight_threshold": float(self.cadd_highlight_threshold.get()),
+                "stale_days": int(self.stale_days.get()),
+                "qual_threshold": float(self.qual_threshold.get()),
+                "skip_info_recycling": bool(self.skip_info_recycling.get())
+            }
+        except (ValueError, TypeError) as e:
+            Messagebox.show_error(f"Ungültiger Filterwert: {e}", "Ungültige Eingabe")
+            self._starting = False
+            return
 
         # ✅ 11. Pipeline starten
         # V15: Härteres Pausieren des Maintainers, um DB-Lock-Contention zu vermeiden
@@ -22233,6 +22261,7 @@ class App(ttk.Window):
             f"[App] ✅ Pipeline gestartet: {path} | "
             f"Filter: AF≤{kwargs['af_threshold']}, include_none={kwargs['include_none']}"
         )
+        self._starting = False  # Start-Sequenz abgeschlossen -> Guard freigeben
 
     def on_stop(self):
         """Signalisiert den sofortigen Abbruch der Pipeline."""
