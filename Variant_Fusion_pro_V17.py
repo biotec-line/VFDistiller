@@ -5198,7 +5198,7 @@ class FASTQmap:
     def load_fasta(self, fasta_path: str) -> Dict[str, str]:
         seqs: Dict[str, List[str]] = {}
         chrom: Optional[str] = None
-        with open(fasta_path, "r") as f:
+        with open(fasta_path, "r", encoding="utf-8") as f:
             for line in f:
                 if line.startswith(">"):
                     chrom = line[1:].strip().split()[0]
@@ -5909,7 +5909,7 @@ class StreamingFastaToGVCF:
     def detect_build_from_fasta(self, fasta_path):
         """Versucht, den Build aus den ersten Headerzeilen der FASTA zu erkennen."""
         try:
-            with open(fasta_path, "r") as f:
+            with open(fasta_path, "r", encoding="utf-8") as f:
                 for _ in range(200):
                     line = f.readline()
                     if not line:
@@ -5966,7 +5966,7 @@ class StreamingFastaToGVCF:
         ref_fasta = self.ensure_fasta(build)
         fai_index = load_fai_index(ref_fasta + ".fai")
 
-        with open(sample_fasta, "r") as sf, open(out_vcf, "w") as vcf:
+        with open(sample_fasta, "r", encoding="utf-8") as sf, open(out_vcf, "w", encoding="utf-8") as vcf:
             vcf.write("##fileformat=VCFv4.2\n")
             vcf.write(f"##reference={build}\n")
             vcf.write(f"##source=StreamingFastaToGVCF\n")
@@ -6026,7 +6026,7 @@ class StreamingFastaToGVCF:
         ref_fasta = self.ensure_fasta(build)
         fai_index = load_fai_index(ref_fasta + ".fai")
 
-        with open(sample_fasta, "r") as sf, open(out_vcf, "w") as vcf:
+        with open(sample_fasta, "r", encoding="utf-8") as sf, open(out_vcf, "w", encoding="utf-8") as vcf:
             vcf.write("##fileformat=VCFv4.2\n")
             vcf.write(f"##reference={build}\n")
             vcf.write(f"##source=StreamingFastaToVCF\n")

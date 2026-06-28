@@ -39,10 +39,10 @@
 - **Problem:** sqlite3.connect() ohne check_same_thread=False in Methoden die aus Worker-Threads aufgerufen werden können
 - **Fix:** Die betroffenen Background-/Worker-Pfade setzen jetzt `check_same_thread=False` beim Erzeugen der SQLite-Verbindungen.
 
-### [NIEDRIG] Bare except: an 5 Stellen
-- **Zeilen:** 329, 8315, 10338, 14419, 21589, 21606
+### [BEHOBEN 2026-06-28] Bare except: an 5 Stellen
+- **Zeilen:** 329, 8315, 10338, 14419, 21589, 21606 (ursprünglich dokumentiert)
 - **Problem:** Fängt auch SystemExit und KeyboardInterrupt
-- **Fix-Vorschlag:** except Exception: statt except:
+- **Fix:** Grep-Befund vom 2026-06-28 — `except:` kommt im Quelltext nicht mehr vor; alle Stellen wurden in früheren Bugsweep-Runden auf `except Exception:` migriert. Eintrag als behoben markiert.
 
 ## TODOs
 

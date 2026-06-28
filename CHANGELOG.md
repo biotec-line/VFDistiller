@@ -35,6 +35,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
+- `StreamingFastaToGVCF.convert_streaming_gvcf` und `convert_streaming_variants_only`: Fehlende `encoding="utf-8"`-Parameter beim Öffnen von FASTA-Eingabe und VCF-Ausgabe. Auf Windows wurde der cp1252-Standard verwendet, was zu `UnicodeDecodeError` führte, wenn Dateipfade oder `##reference`-Header Nicht-ASCII-Zeichen (z.B. Umlaute) enthielten. Betroffen war die Write-Seite eines Lese/Schreib-Paars, dessen Read-Seite bereits in Block 5b auf `encoding="utf-8"` gesichert wurde.
+- `StreamingFastaToGVCF.detect_build_from_fasta` und `load_fasta`: Fehlende `encoding="utf-8"`-Parameter beim Lesen von FASTA-Dateien auf denselben Codepfaden.
+- `KNOWN_ISSUES.md`: Eintrag „Bare except" als behoben markiert — Grep-Befund vom 2026-06-28 bestätigt, dass kein `except:` mehr im Quelltext vorhanden ist.
 - Release packaging no longer references a non-existent `README/licenses/LICENSE.de.txt`; the documented license tree now matches the shipped files.
 - Removed a stale inline comment that incorrectly suggested the top-level `pickle` import was missing or only local-only, even though cache serialization uses it.
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.
