@@ -23632,6 +23632,76 @@ class App(ttk.Window):
             import traceback
             logger.log(traceback.format_exc())
 
+    def _attach_tooltip(self, widget, text: str, delay_ms: int = 350):
+        """Ergaenzt kompakten Symbolbuttons einen fokussierbaren Hilfetext."""
+        if not widget or not text:
+            return
+
+        widget._vf_tooltip_text = text
+        state = {"after_id": None, "window": None}
+
+        def hide_tooltip(*_args):
+            after_id = state.get("after_id")
+            if after_id is not None:
+                try:
+                    widget.after_cancel(after_id)
+                except Exception:
+                    pass
+                state["after_id"] = None
+
+            window = state.get("window")
+            if window is not None:
+                try:
+                    window.destroy()
+                except Exception:
+                    pass
+                state["window"] = None
+
+        def show_tooltip():
+            if state.get("window") is not None:
+                return
+            try:
+                if not widget.winfo_exists():
+                    return
+                x = widget.winfo_rootx() + max(8, widget.winfo_width() // 2)
+                y = widget.winfo_rooty() + widget.winfo_height() + 8
+                tooltip = tk.Toplevel(widget)
+                tooltip.wm_overrideredirect(True)
+                tooltip.wm_geometry(f"+{x}+{y}")
+                label = tk.Label(
+                    tooltip,
+                    text=text,
+                    bg="#1f1f1f",
+                    fg="#ffffff",
+                    bd=1,
+                    relief="solid",
+                    padx=8,
+                    pady=4,
+                )
+                label.pack()
+                state["window"] = tooltip
+            except Exception:
+                hide_tooltip()
+
+        def schedule_tooltip(*_args):
+            hide_tooltip()
+            try:
+                state["after_id"] = widget.after(delay_ms, show_tooltip)
+            except Exception:
+                state["after_id"] = None
+
+        for event, handler in (
+            ("<Enter>", schedule_tooltip),
+            ("<FocusIn>", schedule_tooltip),
+            ("<Leave>", hide_tooltip),
+            ("<FocusOut>", hide_tooltip),
+            ("<ButtonPress>", hide_tooltip),
+            ("<Escape>", hide_tooltip),
+        ):
+            widget.bind(event, handler, add="+")
+
+        widget._vf_tooltip_state = state
+
     def _build_gui(self):
         # --- MENÜ ---
         menubar = tk.Menu(self)
@@ -23710,7 +23780,9 @@ class App(ttk.Window):
         
         ttk.Button(act_box, text="START PIPELINE", command=self.on_start, bootstyle="success", width=18).pack(side=LEFT, padx=5)
         ttk.Button(act_box, text="STOP", command=self.on_stop, bootstyle="danger").pack(side=LEFT, padx=5)
-        ttk.Button(act_box, text="⟳", command=self.on_refresh, bootstyle="info-outline", width=3).pack(side=LEFT, padx=5)
+        refresh_btn = ttk.Button(act_box, text="⟳", command=self.on_refresh, bootstyle="info-outline", width=3)
+        refresh_btn.pack(side=LEFT, padx=5)
+        self._attach_tooltip(refresh_btn, self._t("Ergebnisse neu laden"))
         
         # CADD Highlight
         ttk.Separator(act_box, orient=VERTICAL).pack(side=LEFT, fill=Y, padx=15)
@@ -23840,7 +23912,9 @@ class App(ttk.Window):
         wl = ttk.Frame(col3)
         wl.pack(fill=X)
         ttk.Entry(wl, textvariable=self.gen_whitelist, width=15).pack(side=LEFT, fill=X, expand=True)
-        ttk.Button(wl, text="📂", width=3, command=lambda: self.load_gene_list("whitelist"), style="secondary-outline").pack(side=LEFT)
+        whitelist_btn = ttk.Button(wl, text="📂", width=3, command=lambda: self.load_gene_list("whitelist"), style="secondary-outline")
+        whitelist_btn.pack(side=LEFT)
+        self._attach_tooltip(whitelist_btn, self._t("Whitelist laden"))
         
         # Blacklist - HIER WAR DER FEHLER
         # Das pady=(5,0) muss in .pack(), nicht in ttk.Label()
@@ -23849,7 +23923,9 @@ class App(ttk.Window):
         bl = ttk.Frame(col3)
         bl.pack(fill=X)
         ttk.Entry(bl, textvariable=self.gen_blacklist, width=15).pack(side=LEFT, fill=X, expand=True)
-        ttk.Button(bl, text="📂", width=3, command=lambda: self.load_gene_list("blacklist"), style="secondary-outline").pack(side=LEFT)
+        blacklist_btn = ttk.Button(bl, text="📂", width=3, command=lambda: self.load_gene_list("blacklist"), style="secondary-outline")
+        blacklist_btn.pack(side=LEFT)
+        self._attach_tooltip(blacklist_btn, self._t("Blacklist laden"))
         
         # Buttons
         ttk.Separator(col3).pack(fill=X, pady=10)

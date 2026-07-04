@@ -45,6 +45,7 @@ if "translator" not in sys.modules:
 # Hauptmodul laden
 # ---------------------------------------------------------------------------
 _MODULE_PATH = Path(__file__).parent.parent / "Variant_Fusion_pro_V17.py"
+_TRANSLATIONS_PATH = Path(__file__).parent.parent / "locales" / "translations.json"
 _spec = importlib.util.spec_from_file_location("vf_v17", str(_MODULE_PATH))
 _vf = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_vf)
@@ -313,3 +314,20 @@ def test_distiller_lookup_lightdb_uses_worker_safe_connection(tmp_path, monkeypa
     assert still_uncached == [("1", 123, "A", "C", "GRCh37")]
     assert fake_conn.closed is True
     assert calls[0][1]["check_same_thread"] is False
+
+
+def test_compact_icon_buttons_expose_tooltip_context():
+    src = _MODULE_PATH.read_text(encoding="utf-8")
+
+    assert 'self._attach_tooltip(refresh_btn, self._t("Ergebnisse neu laden"))' in src
+    assert 'self._attach_tooltip(whitelist_btn, self._t("Whitelist laden"))' in src
+    assert 'self._attach_tooltip(blacklist_btn, self._t("Blacklist laden"))' in src
+    assert 'widget._vf_tooltip_text = text' in src
+    assert '("<FocusIn>", schedule_tooltip)' in src
+
+
+def test_tooltip_translations_cover_refresh_action():
+    translations = json.loads(_TRANSLATIONS_PATH.read_text(encoding="utf-8"))
+
+    assert translations["Ergebnisse neu laden"]["de"] == "Ergebnisse neu laden"
+    assert translations["Ergebnisse neu laden"]["en"] == "Reload displayed results"
