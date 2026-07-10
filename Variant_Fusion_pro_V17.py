@@ -13865,7 +13865,8 @@ class MainFilterGate:
         self,
         key: Tuple,
         af_value: Optional[float] = None,
-        fetch_status: Optional[str] = None
+        fetch_status: Optional[str] = None,
+        last_fetch: Optional[str] = None
     ) -> Tuple[bool, str, dict]:
         """
         HAUPTMETHODE: Prüft ob Variante alle Filter besteht.
@@ -13913,7 +13914,7 @@ class MainFilterGate:
             temp_row = {
                 "af_filter_mean": af_value,
                 "meanAF_fetch_success": fetch_status,
-                "meanAF_last_fetch": None  # Nicht verfügbar in diesem Kontext
+                "meanAF_last_fetch": last_fetch
             }
             none_type = self._af_none_manager.classify_none_type(temp_row)
             
@@ -14681,6 +14682,7 @@ class Distiller:
         if val and isinstance(val, dict):
             mean_af = val.get("af_filter_mean")
             fetch_status = val.get("meanAF_fetch_success")
+            last_fetch = val.get("meanAF_last_fetch")
             
             # Konvertiere AF zu float
             if mean_af is not None:
@@ -14696,6 +14698,7 @@ class Distiller:
                 if row:
                     mean_af = row.get("af_filter_mean")
                     fetch_status = row.get("meanAF_fetch_success")
+                    last_fetch = row.get("meanAF_last_fetch")
                     if mean_af is not None:
                         try:
                             mean_af = float(mean_af)
@@ -14710,7 +14713,8 @@ class Distiller:
         passed, reason, data = self.main_filter_gate.check_variant(
             key=key,
             af_value=mean_af,
-            fetch_status=fetch_status
+            fetch_status=fetch_status,
+            last_fetch=last_fetch
         )
         
         return "emit" if passed else "reject"
@@ -17236,9 +17240,8 @@ class Distiller:
 
                     for k in chunk:
                         val = merged.get(k) if merged else None
-                        results[k] = val
-
                         if val is None:
+                            results[k] = None
                             # ✅ FIX: Verwende safe_nested_get
                             current_status = safe_nested_get(current_statuses, k, "meanAF_fetch_success")
                             new_status = FetchStatusManager.update_status(current_status, success=False)
@@ -17257,6 +17260,7 @@ class Distiller:
                                 "meanAF_last_fetch": now_iso(),
                                 "meanAF_fetch_success": status
                             })
+                            results[k] = enriched
                             self.vcf_buffer.add(k, enriched, priority=False)
 
                     success_count = len(chunk) - len(chunk_failed)

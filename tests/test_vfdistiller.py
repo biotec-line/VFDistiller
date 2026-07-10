@@ -331,3 +331,53 @@ def test_tooltip_translations_cover_refresh_action():
 
     assert translations["Ergebnisse neu laden"]["de"] == "Ergebnisse neu laden"
     assert translations["Ergebnisse neu laden"]["en"] == "Reload displayed results"
+
+
+def _make_filter_only_distiller(include_none=False):
+    logger = MagicMock()
+    flag_manager = _vf.Flag_and_Options_Manager(logger=logger)
+    flag_manager.set_include_none(include_none)
+
+    distiller = _vf.Distiller.__new__(_vf.Distiller)
+    distiller.flag_manager = flag_manager
+    distiller.main_filter_gate = _vf.MainFilterGate(
+        flag_manager=flag_manager,
+        db=MagicMock(),
+        gene_annotator=None,
+        logger=logger,
+    )
+    distiller._get_variants_bulk_cached = lambda _keys: {}
+    return distiller
+
+
+def test_af_filter_treats_successful_none_as_true_none():
+    distiller = _make_filter_only_distiller(include_none=False)
+    key = ("1", 12345, "A", "G", "GRCh37")
+
+    decision = distiller._apply_af_filter_final(
+        key,
+        {
+            "af_filter_mean": None,
+            "meanAF_fetch_success": "111",
+            "meanAF_last_fetch": _vf.now_iso(),
+        },
+    )
+
+    assert decision == "emit"
+
+
+def test_af_filter_rejects_unclassified_none_when_include_none_disabled():
+    distiller = _make_filter_only_distiller(include_none=False)
+    key = ("1", 12345, "A", "G", "GRCh37")
+
+    decision = distiller._apply_af_filter_final(key, {"af_filter_mean": None})
+
+    assert decision == "reject"
+
+
+def test_af_fetch_final_filter_receives_enriched_status():
+    src = _MODULE_PATH.read_text(encoding="utf-8")
+    marker = "status = FetchStatusManager.update_status(None, success=True)"
+    segment = src.split(marker, 1)[1][:450]
+
+    assert "results[k] = enriched" in segment
