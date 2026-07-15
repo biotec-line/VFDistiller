@@ -8,11 +8,8 @@ class Translator:
         if not os.path.isabs(file_path):
             base = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
             file_path = os.path.join(base, file_path)
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                self.translations = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            self.translations = {}
+        with open(file_path, "r", encoding="utf-8") as f:
+            self.translations = json.load(f)
         self.lang = lang
 
     def set_lang(self, lang):

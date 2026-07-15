@@ -1,8 +1,8 @@
 # VFDistiller -- Known Issues & TODOs
 
-> Update 2026-05-26: Die worker-sicheren SQLite-Verbindungen in den LightDB-/Migrationspfaden nutzen jetzt `check_same_thread=False`.
+> Update 2026-05-23: Die worker-sicheren SQLite-Verbindungen in den LightDB-/Migrationspfaden nutzen jetzt `check_same_thread=False`.
 
-> Update 2026-05-23: Der Connection-Leak in `_lookup_lightdb` ist auf GitHub behoben.
+> Update 2026-05-09: Der Connection-Leak in `_lookup_lightdb` wurde behoben.
 
 > Dieses Projekt wurde aus dem Microsoft Store zurückgezogen und wird über GitHub gepflegt. Änderungen nur nach sorgfältiger Prüfung!
 
@@ -13,16 +13,16 @@
 
 ## Bugs
 
-### [BEHOBEN AUF GITHUB 2026-05-23] Connection-Leak in `_lookup_lightdb`
-- **Datei:** `Variant_Fusion_pro_V17.py`, Zeilen 7504-7609
-- **Klasse:** AfFetcher (NICHT Distiller -- die Distiller-Kopie ab Zeile 16685 hat bereits ein korrektes `finally`-Pattern)
+### [BEHOBEN 2026-05-09] Connection-Leak in `_lookup_lightdb` (AfFetcher, Zeile 7475)
+- **Datei:** Variant_Fusion_pro_V17.py, Zeilen 7500-7567
+- **Klasse:** AfFetcher (NICHT Distiller -- die Distiller-Kopie ab Zeile 16637 hat bereits ein korrektes `finally`-Pattern)
 - **Problem:** `conn.close()` stand innerhalb des `try`-Blocks. Wenn eine Exception auftrat, die nicht vom inneren `except` gefangen wurde, sprang die Ausführung zum äußeren `except` und `conn.close()` wurde übersprungen.
 - **Praxis-Risiko:** Moderat. SQLite-Connections werden vom GC irgendwann geschlossen, aber auf Windows halten offene Connections ein File-Lock auf die DB, was andere Zugriffe blockieren kann.
-- **Umgesetztes Muster:** Connection vor dem `try` initialisieren und im `finally` schließen:
+- **Fix-Vorschlag:** Identisches Pattern wie in der Distiller-Kopie (Zeile 16674-16761) einbauen:
   ```python
   conn = None
   try:
-      conn = sqlite3.connect(db_path, check_same_thread=False)
+      conn = sqlite3.connect(db_path)
       ...
   except Exception as e:
       self.logger.log(...)
@@ -34,23 +34,22 @@
               pass
   ```
 
-### [BEHOBEN AUF GITHUB 2026-05-26] SQLite-Verbindungen ohne `check_same_thread=False`
-- **Datei:** `Variant_Fusion_pro_V17.py`, Zeilen 7278, 7531, 10297, 16724
+### [BEHOBEN 2026-05-23] SQLite-Verbindungen ohne check_same_thread=False
+- **Datei:** Variant_Fusion_pro_V17.py, Zeilen 7249, 10263, 16676
 - **Problem:** sqlite3.connect() ohne check_same_thread=False in Methoden die aus Worker-Threads aufgerufen werden können
 - **Fix:** Die betroffenen Background-/Worker-Pfade setzen jetzt `check_same_thread=False` beim Erzeugen der SQLite-Verbindungen.
 
-### [BEHOBEN AUF GITHUB 2026-03-16; VERIFIZIERT 2026-07-15] Bare `except:` an sechs Stellen im Hauptprogramm
-- **Datei:** `Variant_Fusion_pro_V17.py`; ehemalige Zeilen 329, 8315, 10338, 14419, 21589, 21606
+### [NIEDRIG] Bare except: an 5 Stellen
+- **Zeilen:** 329, 8315, 10338, 14419, 21589, 21606
 - **Problem:** Fängt auch SystemExit und KeyboardInterrupt
-- **Fix:** Commit `7665133` ersetzte die Bare-`except:`-Stellen, ist ein verifizierter Vorfahr von `origin/main`, und das Hauptprogramm enthält dort keinen Treffer mehr.
-- **Abgrenzung:** `cython_hotpath/test_performance.py` enthält weiterhin sechs Bare-`except:`-Stellen in einem optionalen Benchmarkskript. Dieser separate Befund gehörte nicht zu den in diesem Issue dokumentierten Hauptprogramm-Zeilen.
+- **Fix-Vorschlag:** except Exception: statt except:
 
 ## TODOs
 
 ### [NIEDRIG] stale_days Parameter aufteilen
-- **Datei:** `Variant_Fusion_pro_V17.py`, Zeilen 10926, 10944, 10958
+- **Datei:** Variant_Fusion_pro_V17.py, Zeile 10910
 - **Problem:** BackgroundMaintainer-Konstruktor hat noch einzelnen stale_days Parameter, obwohl intern bereits Config.STALE_DAYS_AF etc. genutzt werden
 - **Status:** Semantisch erledigt, Konstruktor-Signatur noch nicht aktualisiert
 
 ## Kosmetisch
-- Doppelter Alias `HAVE_AIOHTTP` / `AIOHTTP_AVAILABLE` (Zeilen 107-112) -- bewusster Kompatibilitäts-Alias
+- Doppelter Alias HAVE_AIOHTTP / AIOHTTP_AVAILABLE (Zeile 107) -- bewusster Kompatibilitäts-Alias

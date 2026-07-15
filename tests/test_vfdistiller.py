@@ -45,7 +45,6 @@ if "translator" not in sys.modules:
 # Hauptmodul laden
 # ---------------------------------------------------------------------------
 _MODULE_PATH = Path(__file__).parent.parent / "Variant_Fusion_pro_V17.py"
-_TRANSLATIONS_PATH = Path(__file__).parent.parent / "locales" / "translations.json"
 _spec = importlib.util.spec_from_file_location("vf_v17", str(_MODULE_PATH))
 _vf = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_vf)
@@ -314,70 +313,3 @@ def test_distiller_lookup_lightdb_uses_worker_safe_connection(tmp_path, monkeypa
     assert still_uncached == [("1", 123, "A", "C", "GRCh37")]
     assert fake_conn.closed is True
     assert calls[0][1]["check_same_thread"] is False
-
-
-def test_compact_icon_buttons_expose_tooltip_context():
-    src = _MODULE_PATH.read_text(encoding="utf-8")
-
-    assert 'self._attach_tooltip(refresh_btn, self._t("Ergebnisse neu laden"))' in src
-    assert 'self._attach_tooltip(whitelist_btn, self._t("Whitelist laden"))' in src
-    assert 'self._attach_tooltip(blacklist_btn, self._t("Blacklist laden"))' in src
-    assert 'widget._vf_tooltip_text = text' in src
-    assert '("<FocusIn>", schedule_tooltip)' in src
-
-
-def test_tooltip_translations_cover_refresh_action():
-    translations = json.loads(_TRANSLATIONS_PATH.read_text(encoding="utf-8"))
-
-    assert translations["Ergebnisse neu laden"]["de"] == "Ergebnisse neu laden"
-    assert translations["Ergebnisse neu laden"]["en"] == "Reload displayed results"
-
-
-def _make_filter_only_distiller(include_none=False):
-    logger = MagicMock()
-    flag_manager = _vf.Flag_and_Options_Manager(logger=logger)
-    flag_manager.set_include_none(include_none)
-
-    distiller = _vf.Distiller.__new__(_vf.Distiller)
-    distiller.flag_manager = flag_manager
-    distiller.main_filter_gate = _vf.MainFilterGate(
-        flag_manager=flag_manager,
-        db=MagicMock(),
-        gene_annotator=None,
-        logger=logger,
-    )
-    distiller._get_variants_bulk_cached = lambda _keys: {}
-    return distiller
-
-
-def test_af_filter_treats_successful_none_as_true_none():
-    distiller = _make_filter_only_distiller(include_none=False)
-    key = ("1", 12345, "A", "G", "GRCh37")
-
-    decision = distiller._apply_af_filter_final(
-        key,
-        {
-            "af_filter_mean": None,
-            "meanAF_fetch_success": "111",
-            "meanAF_last_fetch": _vf.now_iso(),
-        },
-    )
-
-    assert decision == "emit"
-
-
-def test_af_filter_rejects_unclassified_none_when_include_none_disabled():
-    distiller = _make_filter_only_distiller(include_none=False)
-    key = ("1", 12345, "A", "G", "GRCh37")
-
-    decision = distiller._apply_af_filter_final(key, {"af_filter_mean": None})
-
-    assert decision == "reject"
-
-
-def test_af_fetch_final_filter_receives_enriched_status():
-    src = _MODULE_PATH.read_text(encoding="utf-8")
-    marker = "status = FetchStatusManager.update_status(None, success=True)"
-    segment = src.split(marker, 1)[1][:450]
-
-    assert "results[k] = enriched" in segment

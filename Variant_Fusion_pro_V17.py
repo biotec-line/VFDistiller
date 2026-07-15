@@ -58,7 +58,6 @@ import socket
 import sqlite3
 import subprocess
 import sys
-import tempfile
 import threading
 import time
 import traceback
@@ -1662,11 +1661,7 @@ class ResourceManager:
             if path and (os.path.exists(path) or RESOURCE_DEFINITIONS.get(key, {}).get("is_directory")):
                 return path
         else:
-            rel = self._paths.get(key)
-            # Symmetrisch zum absolute-Zweig: vorhandenen relativen Pfad direkt
-            # zurückgeben, sonst (stale/fehlend) unten Re-Discovery wie bei absolute.
-            if rel and (os.path.exists(os.path.join(BASE_DIR, rel)) or RESOURCE_DEFINITIONS.get(key, {}).get("is_directory")):
-                return rel
+            return self._paths.get(key)
 
         # Pfad existiert nicht mehr → neu suchen
         definition = RESOURCE_DEFINITIONS.get(key)
@@ -1967,19 +1962,6 @@ class MultiSinkLogger:
     def __init__(self, logfile_path: Optional[str] = None, ui_queue: Optional[queue.Queue] = None):
         self.q = ui_queue
         self.logfile_path = logfile_path
-        self._lock = threading.Lock()
-
-    def __getstate__(self):
-        # multiprocessing-spawn (Windows) pickelt das Process-Objekt inkl. logger.
-        # threading.Lock und die UI-queue.Queue sind NICHT picklebar -> hier entfernen,
-        # sonst wirft migrator.start() TypeError und die Migration läuft nie (still).
-        state = self.__dict__.copy()
-        state["_lock"] = None
-        state["q"] = None  # UI-Queue gilt nur im Hauptprozess; Kind loggt in die Datei
-        return state
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
         self._lock = threading.Lock()
         
         if self.logfile_path:
@@ -3184,12 +3166,9 @@ def get_robust_session(retries=Config.MAX_RETRIES, backoff_factor=0.5, status_fo
 
 def load_fai_index(fai_path):
     idx = {}
-    with open(fai_path, "r", encoding="ascii") as f:
+    with open(fai_path, "r") as f:
         for line in f:
-            parts = line.strip().split("\t")
-            if len(parts) != 5:
-                continue  # leere/abweichende .fai-Zeile überspringen statt ValueError
-            chrom, length, offset, line_bases, line_width = parts
+            chrom, length, offset, line_bases, line_width = line.strip().split("\t")
             idx[chrom] = (int(length), int(offset), int(line_bases), int(line_width))
     return idx
 
@@ -4399,14 +4378,11 @@ async def gnomad_fetch_async(keys, build, logger=None):
                         return None
 
                     data = await resp.json()
-                    # gnomAD liefert bei Query-Fehlern {"data": null, ...} (HTTP 200) und
-                    # genome/exome=null für Varianten nur eines Datasets -> 'or {}' statt
-                    # .get(k, {}), sonst None.get(...) -> AttributeError -> stiller AF-Verlust.
-                    v = (data.get("data") or {}).get("variant")
+                    v = data.get("data", {}).get("variant")
                     if not v:
                         return None
-                    g_af = (v.get("genome") or {}).get("af")
-                    e_af = (v.get("exome") or {}).get("af")
+                    g_af = v.get("genome", {}).get("af")
+                    e_af = v.get("exome", {}).get("af")
                     return {"ggn": g_af, "gex": e_af}
 
             except (asyncio.TimeoutError, aiohttp.ClientError) as e:
@@ -4815,15 +4791,10 @@ class convert_23andme_to_vcf:
                         continue
                     if hit_by_build["chrom"] != chrom or hit_by_build["pos"] != pos:
                         continue
-                    _spdi = indel_ref_alt_from_spdi(
+                    ref_seq, alt_seq = indel_ref_alt_from_spdi(
                         chrom, pos, hit_by_build["ref"], hit_by_build.get("alt", ""),
                         lambda c, p: get_ref_base(c, p, fasta_path, fai_index, cache, build)
                     )
-                    if not _spdi:
-                        # indel_ref_alt_from_spdi gibt bei ungültiger Ankerbase None zurück
-                        # → kein Tuple-Unpack (sonst TypeError, bricht VCF-Erzeugung ab).
-                        continue
-                    ref_seq, alt_seq = _spdi
                     if not ref_seq or not alt_seq:
                         continue
                     g = genotype.upper()
@@ -5112,36 +5083,17 @@ class convert_23andme_to_vcf:
         if not rs_pos:
             return None
 
-        # rsIDs parallel bei dbSNP abfragen.
-        # WICHTIG: adaptive_parallel_fetch persistiert über cache_upsert nach self.cache_file
-        # (= CACHE_FILE). Während der Build-Erkennung self.cache_file auf eine Wegwerf-Temp-Datei
-        # umlenken, sonst wird der persistente rsID-Cache durch das ~50-Einträge-Detektions-Dict
-        # überschrieben (Datenverlust).
+        # rsIDs parallel bei dbSNP abfragen
         cache = {}
-        _orig_cache_file = self.cache_file
-        _tmp_fd, _tmp_cache = tempfile.mkstemp(suffix=".json", prefix="vfd_buildcheck_")
-        os.close(_tmp_fd)
-        self.cache_file = _tmp_cache
-        try:
-            self.adaptive_parallel_fetch([r for r, _ in rs_pos], cache)
-        finally:
-            self.cache_file = _orig_cache_file
-            try:
-                os.remove(_tmp_cache)
-            except OSError:
-                pass
+        self.adaptive_parallel_fetch([r for r, _ in rs_pos], cache)
 
         tol = 5
         m37 = 0
         m38 = 0
 
         for rsid, pos_file in rs_pos:
-            # adaptive_parallel_fetch/cache_upsert schreiben String-Keys cache[rsid] =
-            # {"assemblies": {build: {...}}} — NICHT Tupel-Keys (rsid, build). Falscher
-            # Lookup ließ die Build-Erkennung immer ins Leere laufen (GRCh37-Default).
-            _asm = (cache.get(rsid, {}).get("assemblies") or {})
-            rec37 = _asm.get("GRCh37")
-            rec38 = _asm.get("GRCh38")
+            rec37 = cache.get((rsid, "GRCh37"))
+            rec38 = cache.get((rsid, "GRCh38"))
 
             if rec37 and abs(rec37["pos"] - pos_file) <= tol:
                 m37 += 1
@@ -5198,7 +5150,7 @@ class FASTQmap:
     def load_fasta(self, fasta_path: str) -> Dict[str, str]:
         seqs: Dict[str, List[str]] = {}
         chrom: Optional[str] = None
-        with open(fasta_path, "r", encoding="utf-8") as f:
+        with open(fasta_path, "r") as f:
             for line in f:
                 if line.startswith(">"):
                     chrom = line[1:].strip().split()[0]
@@ -5909,7 +5861,7 @@ class StreamingFastaToGVCF:
     def detect_build_from_fasta(self, fasta_path):
         """Versucht, den Build aus den ersten Headerzeilen der FASTA zu erkennen."""
         try:
-            with open(fasta_path, "r", encoding="utf-8") as f:
+            with open(fasta_path, "r") as f:
                 for _ in range(200):
                     line = f.readline()
                     if not line:
@@ -5966,7 +5918,7 @@ class StreamingFastaToGVCF:
         ref_fasta = self.ensure_fasta(build)
         fai_index = load_fai_index(ref_fasta + ".fai")
 
-        with open(sample_fasta, "r", encoding="utf-8") as sf, open(out_vcf, "w", encoding="utf-8") as vcf:
+        with open(sample_fasta, "r") as sf, open(out_vcf, "w") as vcf:
             vcf.write("##fileformat=VCFv4.2\n")
             vcf.write(f"##reference={build}\n")
             vcf.write(f"##source=StreamingFastaToGVCF\n")
@@ -6026,7 +5978,7 @@ class StreamingFastaToGVCF:
         ref_fasta = self.ensure_fasta(build)
         fai_index = load_fai_index(ref_fasta + ".fai")
 
-        with open(sample_fasta, "r", encoding="utf-8") as sf, open(out_vcf, "w", encoding="utf-8") as vcf:
+        with open(sample_fasta, "r") as sf, open(out_vcf, "w") as vcf:
             vcf.write("##fileformat=VCFv4.2\n")
             vcf.write(f"##reference={build}\n")
             vcf.write(f"##source=StreamingFastaToVCF\n")
@@ -6799,7 +6751,7 @@ class LightDBGnomADManager:
     def load_config(self) -> dict:
         if os.path.exists(self.CONFIG_FILE):
             try:
-                with open(self.CONFIG_FILE, "r", encoding="utf-8") as f:
+                with open(self.CONFIG_FILE, "r") as f:
                     cfg = json.load(f)
                     # ✅ Validierung
                     if not isinstance(cfg, dict):
@@ -6810,7 +6762,7 @@ class LightDBGnomADManager:
         return {}
 
     def save_config(self, cfg: dict) -> None:
-        with open(self.CONFIG_FILE, "w", encoding="utf-8") as f:
+        with open(self.CONFIG_FILE, "w") as f:
             json.dump(cfg, f, indent=2)
             
     def are_builds_missing_or_outdated(self, cfg: dict) -> list[str]:
@@ -7001,11 +6953,8 @@ class LightDBGnomADManager:
             try:
                 with open(self.PID_FILE) as f:
                     pid = int(f.read().strip())
-                # Prozess noch aktiv? psutil statt os.kill(pid, 0): auf Windows
-                # TERMINIERT os.kill mit Signal 0 den Prozess (TerminateProcess) statt
-                # ihn nur zu prüfen → würde den laufenden Index-Worker killen.
-                if not psutil.pid_exists(pid):
-                    raise ProcessLookupError(pid)
+                # Prozess noch aktiv?
+                os.kill(pid, 0)  # nur Testsignal
                 self.logger.log(f"[LightDB] Index-Worker läuft bereits (PID {pid}).")
                 return
             except Exception:
@@ -7994,11 +7943,8 @@ class AFFetchController:
                         af_sources["exac"] = val
                 
                 if "gnomad" in hit:
-                    # gnomad/exomes/genomes können JSON-null sein -> 'or {}' (wie exac oben),
-                    # sonst None.get(...) -> AttributeError (Aufruf läuft außerhalb try/except).
-                    _gnomad = hit.get("gnomad") or {}
-                    exomes = safe_float((_gnomad.get("exomes") or {}).get("af"))
-                    genomes = safe_float((_gnomad.get("genomes") or {}).get("af"))
+                    exomes = safe_float(hit.get("gnomad", {}).get("exomes", {}).get("af"))
+                    genomes = safe_float(hit.get("gnomad", {}).get("genomes", {}).get("af"))
                     
                     if self._validate_af(exomes, k, "gnomAD-Exomes"):
                         af_sources["gnomad_exomes"] = exomes
@@ -8228,11 +8174,10 @@ class AFFetchController:
             buffer_copy = dict(self.result_buffer)
             self.db.upsert_variants_bulk(buffer_copy)
             self.logger.log(f"[AF-Controller] Flushed {len(buffer_copy)} results to DB.")
-            # Nur bei Erfolg leeren: bei DB-Fehler Buffer behalten -> nächster Flush
-            # versucht erneut, statt bis zu flush_size Ergebnisse still zu verwerfen.
-            self.result_buffer.clear()
         except Exception as e:
-            self.logger.log(f"[AF-Controller] ❌ DB flush error (Buffer behalten, Retry beim nächsten Flush): {e}")
+            self.logger.log(f"[AF-Controller] ❌ DB flush error: {e}")
+        finally:
+            self.result_buffer.clear()
 
 
     def finalize(self):
@@ -8456,7 +8401,7 @@ class GeneAnnotator:
             self._log(f"[GeneAnnotator] URL: {url}")
             self._log(f"[GeneAnnotator] Ziel: {gtf_path}")
             
-            r = requests.get(url, stream=True, timeout=(10, 60))
+            r = requests.get(url, stream=True)
             r.raise_for_status()
             
             total_size = int(r.headers.get('content-length', 0))
@@ -9776,19 +9721,16 @@ class VariantDB:
             cur = con.cursor()
             for key, data in updates:
                 data = self._normalize_for_db(data or {})
-                if not data:
-                    continue
-                # Nur tatsächlich übergebene Felder setzen (wie update_variant_fields).
-                # Vorher hardcoded SET ...conservation=? -> der Live-Aufrufer
-                # flush_annotation_cache (nur gene_symbol/is_coding) überschrieb
-                # conservation bei JEDEM Flush mit NULL (Datenverlust).
-                sets = ", ".join([f"{field}=?" for field in data.keys()])
-                values = list(data.values()) + list(key)
-                cur.execute(f"""
+                cur.execute("""
                     UPDATE variants
-                    SET {sets}
+                    SET gene_symbol=?, is_coding=?, conservation=?
                     WHERE chr=? AND pos=? AND ref=? AND alt=? AND build=?
-                """, values)
+                """, (
+                    data.get("gene_symbol"),
+                    data.get("is_coding"),
+                    data.get("conservation"),
+                    key[0], key[1], key[2], key[3], key[4]
+                ))
             con.commit()
 
     def upsert_variants_bulk(self, records: dict):
@@ -12836,11 +12778,8 @@ def does_user_want_to_use_fasta(build: str, logger, app=None) -> str | None:
             logger.log(f"[FASTA] Fehler beim Dialog-Aufruf: {e}")
             return None
     else:
-        # KEIN tk-Dialog ohne erreichbaren Main-Loop: messagebox aus einem (Hintergrund-)Thread
-        # ist mit tk/ttkbootstrap nicht thread-safe -> Freeze/Crash. Konservativ unbeantwortet
-        # lassen (None), statt im Thread einen Dialog zu öffnen.
-        logger.log("[FASTA] Kein app/Main-Loop für Dialog → unbeantwortet (kein Thread-Dialog).")
-        return None
+        # Fallback (unsicher, aber besser als Crash)
+        decision = ask_dialog()
 
     if not decision:
         logger.log("[FASTA] Download abgelehnt – Fallback auf MyVariant.")
@@ -13179,10 +13118,8 @@ class FastaValidator:
         - LRU-Cache für Regionen und Direktzugriffe
         """
         try:
-            # Lazy Initialization — _fasta_index startet als {} (nie None), daher 'not' statt
-            # 'is None': sonst feuert der Lazy-FAI-Load nie und Mode-2-Validierung ohne
-            # vorheriges Mode-1 sieht einen leeren Index -> jede Variante scheitert (lookup_fail).
-            if not self._fasta_index: self._load_fasta_index()
+            # Lazy Initialization
+            if self._fasta_index is None: self._load_fasta_index()
             if self._fasta_file is None: self._open_fasta_mmap()
             
             if chrom not in self._fasta_index:
@@ -13865,8 +13802,7 @@ class MainFilterGate:
         self,
         key: Tuple,
         af_value: Optional[float] = None,
-        fetch_status: Optional[str] = None,
-        last_fetch: Optional[str] = None
+        fetch_status: Optional[str] = None
     ) -> Tuple[bool, str, dict]:
         """
         HAUPTMETHODE: Prüft ob Variante alle Filter besteht.
@@ -13914,7 +13850,7 @@ class MainFilterGate:
             temp_row = {
                 "af_filter_mean": af_value,
                 "meanAF_fetch_success": fetch_status,
-                "meanAF_last_fetch": last_fetch
+                "meanAF_last_fetch": None  # Nicht verfügbar in diesem Kontext
             }
             none_type = self._af_none_manager.classify_none_type(temp_row)
             
@@ -14528,11 +14464,6 @@ class Distiller:
     
     def invalidate_cache_bulk(self, keys: List[Tuple]):
         """Leitet Cache-Invalidierung an die App weiter."""
-        # Zuerst den EIGENEN _bulk_cache leeren (wie invalidate_cache für Einzel-Keys) —
-        # sonst liefert _get_variants_bulk_cached nach einem Batch-Write weiterhin veraltete
-        # Pre-Update-Zeilen (Cache-Inkohärenz; genau der vom V15-Fix adressierte Pfad).
-        for k in keys:
-            self._bulk_cache.pop(k, None)
         if self.app:
             self.app.invalidate_cache_bulk(keys)
     
@@ -14682,7 +14613,6 @@ class Distiller:
         if val and isinstance(val, dict):
             mean_af = val.get("af_filter_mean")
             fetch_status = val.get("meanAF_fetch_success")
-            last_fetch = val.get("meanAF_last_fetch")
             
             # Konvertiere AF zu float
             if mean_af is not None:
@@ -14698,7 +14628,6 @@ class Distiller:
                 if row:
                     mean_af = row.get("af_filter_mean")
                     fetch_status = row.get("meanAF_fetch_success")
-                    last_fetch = row.get("meanAF_last_fetch")
                     if mean_af is not None:
                         try:
                             mean_af = float(mean_af)
@@ -14713,8 +14642,7 @@ class Distiller:
         passed, reason, data = self.main_filter_gate.check_variant(
             key=key,
             af_value=mean_af,
-            fetch_status=fetch_status,
-            last_fetch=last_fetch
+            fetch_status=fetch_status
         )
         
         return "emit" if passed else "reject"
@@ -17240,8 +17168,9 @@ class Distiller:
 
                     for k in chunk:
                         val = merged.get(k) if merged else None
+                        results[k] = val
+
                         if val is None:
-                            results[k] = None
                             # ✅ FIX: Verwende safe_nested_get
                             current_status = safe_nested_get(current_statuses, k, "meanAF_fetch_success")
                             new_status = FetchStatusManager.update_status(current_status, success=False)
@@ -17260,7 +17189,6 @@ class Distiller:
                                 "meanAF_last_fetch": now_iso(),
                                 "meanAF_fetch_success": status
                             })
-                            results[k] = enriched
                             self.vcf_buffer.add(k, enriched, priority=False)
 
                     success_count = len(chunk) - len(chunk_failed)
@@ -17449,10 +17377,8 @@ class Distiller:
 
                 pending_writes.clear()
             except Exception as e:
-                # Buffer NICHT leeren: die Keys stehen schon in processed_keys und würden nicht
-                # neu eingereiht -> sonst stiller Verlust von bis zu BATCH_WRITE_SIZE Annotationen.
-                # Behalten -> nächster flush_pending_writes-Aufruf wiederholt den Write.
-                self.logger.log(f"[Full-Anno] ⚠️ Batch-Write fehlgeschlagen (Buffer behalten, Retry): {e}")
+                self.logger.log(f"[Full-Anno] ⚠️ Batch-Write fehlgeschlagen: {e}")
+                pending_writes.clear()
 
         while True:
             if self.stopflag.is_set():
@@ -18206,9 +18132,6 @@ class Distiller:
         # Warte auf Full-Anno-Done
         while not pipeline_state["full_done"].is_set():
             if self.stopflag.is_set():
-                # missing_done IMMER setzen, sonst hängt _phase_alphagenome_streaming
-                # ewig auf missing_done.wait() (Deadlock auf dem normalen Stop-Pfad).
-                pipeline_state["missing_done"].set()
                 return
             time.sleep(0.5)
 
@@ -18218,7 +18141,6 @@ class Distiller:
         processed_keys = set()
         idle_rounds = 0
         max_idle_rounds = 3
-        db_errors = 0  # bounded Retry für get_variants_bulk (kein Endlos-Spin)
 
         # ✅ Circuit-Breaker für APIs (mit Settings-Check)
         clinvar_errors = 0
@@ -18279,19 +18201,7 @@ class Distiller:
 
             # ✅ Filtere nach fehlenden Feldern
             to_annotate = []
-            try:
-                rows = self.db.get_variants_bulk(new_keys)
-            except Exception as e:
-                # NICHT ungeguardet lassen: sonst stirbt der Thread, missing_done bleibt
-                # ungesetzt -> AlphaGenome-Deadlock. Bounded Retry, dann sauber beenden
-                # (break fällt in den Post-Loop-Abschluss, der missing_done setzt).
-                db_errors += 1
-                self.logger.log(f"[Missing-Fill] ⚠️ get_variants_bulk fehlgeschlagen, retry: {e}")
-                if db_errors >= 5:
-                    self.logger.log("[Missing-Fill] ⚠️ Zu viele DB-Fehler → Phase beenden.")
-                    break
-                time.sleep(2)
-                continue
+            rows = self.db.get_variants_bulk(new_keys)
             
             for key in new_keys:
                 row = rows.get(key) or {}
@@ -18682,16 +18592,11 @@ class Distiller:
                         self.progress.mark_fully_processed(1)
                         self.progress.update_phase("ag_score", 1)
 
-        # ✅ Warte auf alle anderen Phasen — MIT StopFlag-Check + Timeout (wie die Warteschleife
-        # in Fall 1), sonst Deadlock falls eine Phase ihr Event nie setzt (event.wait() ohne
-        # Timeout/Stop-Check hing ewig).
+        # ✅ Warte auf alle anderen Phasen
         for event_name in ["af_done", "full_done", "gene_done", "rsid_done", "missing_done"]:
             event = pipeline_state.get(event_name)
             if event:
-                while not event.is_set():
-                    if self.stopflag.is_set():
-                        break
-                    event.wait(timeout=1.0)
+                event.wait()
 
         # ✅ Finaler Pass: Alle display_keys als processed markieren
         final_keys = self.display_keys.copy()
@@ -18871,10 +18776,9 @@ class Distiller:
                 self.logger.log(f"[FASTA] Small file ({file_size_mb:.1f} MB), creating gVCF...")
                 conv.convert_streaming_gvcf(path, None, tmp_vcf)
                 filtered_vcf = tmp_vcf.replace(".vcf", "_variants.vcf")
-                with open(tmp_vcf, "r", encoding="utf-8") as fin, open(filtered_vcf, "w", encoding="utf-8") as fout:
+                with open(tmp_vcf, "r") as fin, open(filtered_vcf, "w") as fout:
                     for line in fin:
-                        parts = line.split("\t")
-                        if line.startswith("#") or (len(parts) > 4 and parts[4] != "."):
+                        if line.startswith("#") or line.split("\t")[4] != ".":
                             fout.write(line)
                 vcf_for_pipeline = filtered_vcf
             else:
@@ -18920,12 +18824,9 @@ class Distiller:
                 .replace(".gvcf", "_variants.vcf")
         )
         
-        with open_text_maybe_gzip(path) as fin, open(filtered_vcf, "w", encoding="utf-8") as fout:
+        with open_text_maybe_gzip(path) as fin, open(filtered_vcf, "w") as fout:
             for line in fin:
-                parts = line.split("\t")
-                # Guard gegen <5-Spalten-Zeilen: '(line and ...)' war wirkungslos (Iteration
-                # liefert nie "", Leerzeile = "\n" ist truthy -> ["\n"][4] = IndexError).
-                if line.startswith("#") or (len(parts) > 4 and parts[4] != "."):
+                if line.startswith("#") or (line and line.split("\t")[4] != "."):
                     fout.write(line)
         
         self.logger.log(f"[gVCF] Filtered to: {filtered_vcf}")
@@ -19748,22 +19649,7 @@ class QualityManager:
                 has_qual = qv >= self.settings["qual_threshold"]
             except (ValueError, TypeError):
                 has_qual = False
-
-            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, BEWUSST NICHT geändert) ──────────────
-            # Beobachtung: An dieser Stelle ist `has_pass` durch den Kontrollfluss oben
-            # IMMER True (filter_pass_only=True → non-PASS wurde in der FILTER-Stufe bereits
-            # mit `return False` verworfen; filter_pass_only=False → has_pass=True gesetzt).
-            # Folge: `not has_pass and not has_qual` kann nie True werden — qual_threshold
-            # (Presets 20/30/50) wirkt damit als KOMBINIERTES "PASS ODER QUAL"-Gate, NICHT
-            # als eigenständiges QUAL-Mindest-Gate (QUAL allein verwirft keine Variante).
-            # Das ist möglicherweise BEABSICHTIGT (FILTER=PASS impliziert ausreichende
-            # Qualität). NICHT durch den automatischen Bugsweep geändert, weil:
-            #   (a) jede Änderung das KLINISCHE Filterverhalten verschiebt, und
-            #   (b) diese Logik in früheren Reviews mehrfach als "falsch" markiert wurde
-            #       und sich dann als korrekt/beabsichtigt herausstellte.
-            # Falls QUAL ein eigenständiges Gate sein SOLL: `if not has_qual: return False`.
-            # → Fachliche Entscheidung des Maintainers (Lukas), bewusst offen gelassen.
-            # ───────────────────────────────────────────────────────────────────────────
+            
             if not has_pass and not has_qual:
                 # Weder PASS noch ausreichendes QUAL
                 self.stats["failed_qual"] += 1
@@ -20548,12 +20434,12 @@ def build_resource_cards(parent, rm, logger_inst, card_widgets=None, _t=None):
         for key, info in items:
             st = status.get(key, "missing")
             is_ok = st in ("found", "registered", "created")
-            _build_single_resource_card(lf, key, info, is_ok, rm, logger_inst, card_widgets, _t=_t)
+            _build_single_resource_card(lf, key, info, is_ok, rm, logger_inst, card_widgets)
 
     return card_widgets
 
 
-def _build_single_resource_card(parent, key, info, is_ok, rm, logger_inst, card_widgets, _t=None):
+def _build_single_resource_card(parent, key, info, is_ok, rm, logger_inst, card_widgets):
     """Einzelne Resource-Card mit Status, Beschreibung, Buttons und Progressbar."""
     card = ttk.Frame(parent, padding=5)
     card.pack(fill=X, pady=3)
@@ -21027,7 +20913,7 @@ class App(ttk.Window):
         self.saved_theme = Config.DEFAULT_THEME
         if os.path.exists(Config.SETTINGS_FILE):
             try:
-                with open(Config.SETTINGS_FILE, "r", encoding="utf-8") as f:
+                with open(Config.SETTINGS_FILE, "r") as f:
                     d = json.load(f)
                     self.saved_theme = d.get("theme", Config.DEFAULT_THEME)
             except (OSError, ValueError): pass
@@ -21242,16 +21128,12 @@ class App(ttk.Window):
         if cache_size >= Config.CACHE_MAX_SIZE:
             evict_count = max(1, int(cache_size * 0.1))
             try:
-                # _table_lock (RLock): rows_cache wird auch aus _fetch_row_async-Workern
-                # geschrieben -> Eviction (next(iter)/del) ohne Lock riskiert
-                # "dictionary changed size during iteration" / inkonsistenten Cache.
-                with self._table_lock:
-                    for _ in range(evict_count):
-                        try:
-                            first_key = next(iter(self.rows_cache))
-                            del self.rows_cache[first_key]
-                        except (StopIteration, KeyError):
-                            break
+                for _ in range(evict_count):
+                    try:
+                        first_key = next(iter(self.rows_cache))
+                        del self.rows_cache[first_key]
+                    except (StopIteration, KeyError):
+                        break
                 
                 if not hasattr(self, '_evict_count'):
                     self._evict_count = 0
@@ -21299,10 +21181,7 @@ class App(ttk.Window):
         try:
             row = self.db.get_variant(key)
             if row:
-                # Worker-Thread-Schreibzugriff auf rows_cache unter _table_lock
-                # (gleicher Lock wie Eviction/Invalidierung) -> kein Race.
-                with self._table_lock:
-                    self.rows_cache[key] = row
+                self.rows_cache[key] = row
                 # Trigger re-drain (row ist jetzt im Cache)
                 try:
                     self.live_queue.put_nowait(key)
@@ -21726,11 +21605,9 @@ class App(ttk.Window):
         
         # Reset UI if finished
         if self.progress.phase_name == "Abgeschlossen":
-             # winfo_exists-Guard: Fenster kann innerhalb der 2s geschlossen werden ->
-             # sonst feuern die Lambdas auf zerstörte Widgets (TclError "invalid command").
-             self.after(2000, lambda: self.winfo_exists() and self.progress_bar.configure(value=0))
-             self.after(2000, lambda: self.winfo_exists() and self.perc_label.config(text=self._t("Fertig")))
-             self.after(2000, lambda: self.winfo_exists() and self.eta_label.config(text=""))
+             self.after(2000, lambda: self.progress_bar.configure(value=0))
+             self.after(2000, lambda: self.perc_label.config(text=self._t("Fertig")))
+             self.after(2000, lambda: self.eta_label.config(text=""))
         
     def on_close(self):
         """
@@ -21753,19 +21630,13 @@ class App(ttk.Window):
         - Gene-Annotator & AF-Fetcher an Crawler übergeben
         - Cache-Path-Ermittlung für Migration
         """
-        # Reentrancy-Guard: WM_DELETE_WINDOW / erneuter Close-Trigger während eines
-        # hängenden Cleanups würde sonst einen zweiten BackofficeCrawler-Thread + ein
-        # zweites destroy() auslösen.
-        if getattr(self, "_closing", False):
-            return
-        self._closing = True
         cache_path = None
         db_path = None
         gene_annotator = None
         af_fetcher = None
         distiller = None
         stopflag = None
-
+        
         try:
             logger.log("[App] 🛑 Beende Anwendung...")
             
@@ -22070,12 +21941,6 @@ class App(ttk.Window):
         V17: Start-Klick triggert immer erst Stop/Reset (Legacy compatibility).
         Sorgt für konsistenten Status bei Mehrfachklicks auf Start.
         """
-        # Doppelstart-Guard: zuverlässiger als die (2-Ebenen-)Text-Heuristik-Button-Deaktivierung.
-        # Wird in _on_start_continue auf ALLEN Exit-Pfaden wieder freigegeben.
-        if getattr(self, "_starting", False):
-            self.logger.log("[App] ℹ Start läuft bereits — Klick ignoriert.")
-            return
-        self._starting = True
         # ✅ V17: Start -> Stop -> Startmechanik
         self.on_stop()
         # ✅ 1. Stopflag initialisieren falls nicht vorhanden
@@ -22231,7 +22096,6 @@ class App(ttk.Window):
         path = self.selected_file.get()
         if not path:
             Messagebox.show_error("Bitte eine Eingabe-Datei auswählen.", "Fehlende Datei")
-            self._starting = False
             return
 
         # ✅ 9. AlphaGenome-Key aktualisieren
@@ -22241,22 +22105,16 @@ class App(ttk.Window):
         except Exception as e:
             self.logger.log(f"[App] ⚠️ AlphaGenome-Update fehlgeschlagen: {e}")
 
-        # ✅ 10. Filter-Parameter sammeln (mit Validierung: leeres/ungültiges Entry-Feld darf
-        # nicht ungefangen aus dem after-Callback fliegen -> User-Feedback statt Tk-Traceback)
-        try:
-            kwargs = {
-                "af_threshold": float(self.af_threshold.get()),
-                "include_none": bool(self.include_none.get()),
-                "filter_pass_only": bool(self.filter_pass_only.get()),
-                "cadd_highlight_threshold": float(self.cadd_highlight_threshold.get()),
-                "stale_days": int(self.stale_days.get()),
-                "qual_threshold": float(self.qual_threshold.get()),
-                "skip_info_recycling": bool(self.skip_info_recycling.get())
-            }
-        except (ValueError, TypeError) as e:
-            Messagebox.show_error(f"Ungültiger Filterwert: {e}", "Ungültige Eingabe")
-            self._starting = False
-            return
+        # ✅ 10. Filter-Parameter sammeln
+        kwargs = {
+            "af_threshold": float(self.af_threshold.get()),
+            "include_none": bool(self.include_none.get()),
+            "filter_pass_only": bool(self.filter_pass_only.get()),
+            "cadd_highlight_threshold": float(self.cadd_highlight_threshold.get()),
+            "stale_days": int(self.stale_days.get()),
+            "qual_threshold": float(self.qual_threshold.get()),
+            "skip_info_recycling": bool(self.skip_info_recycling.get())
+        }
 
         # ✅ 11. Pipeline starten
         # V15: Härteres Pausieren des Maintainers, um DB-Lock-Contention zu vermeiden
@@ -22280,7 +22138,6 @@ class App(ttk.Window):
             f"[App] ✅ Pipeline gestartet: {path} | "
             f"Filter: AF≤{kwargs['af_threshold']}, include_none={kwargs['include_none']}"
         )
-        self._starting = False  # Start-Sequenz abgeschlossen -> Guard freigeben
 
     def on_stop(self):
         """Signalisiert den sofortigen Abbruch der Pipeline."""
@@ -22643,17 +22500,6 @@ class App(ttk.Window):
                         pass
             
             # Clinical significance (checked = keep, missing = keep)
-            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, BEWUSST NICHT geändert) ──────────────
-            # Beobachtung: Die Klassifikation per Substring-`in` kann bei ClinVar-MEHRFACH-
-            # werten mehrdeutig sein (z. B. "Pathogenic/Likely_pathogenic", "Benign/Likely_
-            # benign"). Je nach exaktem DB-Stringformat (Trenner "/", "_" vs. Leerzeichen)
-            # greift evtl. der falsche Zweig (eine pathogen klassifizierte Variante könnte
-            # bei allow_likely_path=an / allow_path=aus durchrutschen). EIN möglicher robuster
-            # Ansatz: clin_sig an [/,|] tokenisieren und jedes Token exakt gegen die
-            # Allow-Flags prüfen. NICHT durch den automatischen Bugsweep geändert: hängt vom
-            # tatsächlichen clin_sig-Format der DB ab und verschiebt das KLINISCHE/Anzeige-
-            # Filterverhalten — fachliche Prüfung durch den Maintainer (Lukas) nötig.
-            # ───────────────────────────────────────────────────────────────────────────
             sig = row.get("clin_sig")
             if sig and not is_missing(sig):
                 s = sig.lower()
@@ -22864,7 +22710,7 @@ class App(ttk.Window):
 
         # rsID Update (Spalte 3), falls in DB vorhanden und im VCF fehlt
         db_rsid = annotations.get("rsid")
-        if isinstance(db_rsid, str) and db_rsid.startswith("rs") and parts[2] == ".":
+        if db_rsid and db_rsid.startswith("rs") and parts[2] == ".":
             parts[2] = db_rsid
 
         # INFO zusammenbauen
@@ -23346,10 +23192,7 @@ class App(ttk.Window):
                                 header_written = True
                             outfile.write(line)
                             if line.startswith("##fileformat"):
-                                # current_build (mit GRCh37-Fallback) statt ungeguardetem
-                                # self.distiller.build -> sonst '##reference=None' im Header,
-                                # wenn build None ist (filtered-Export nutzt ebenfalls current_build).
-                                self._check_and_add_reference_header(outfile, original_vcf, current_build)
+                                self._check_and_add_reference_header(outfile, original_vcf, self.distiller.build)
                             continue
 
                         # ✅ V14 FIX: Vollständige Enrichment-Logik wie in filtered export
@@ -23489,14 +23332,9 @@ class App(ttk.Window):
             # ✅ NEU: DB-Viewer Pfad laden
             self.external_db_viewer.set(data.get("external_db_viewer", ""))
             
-            # ✅ NEU: Column Links laden — mit Typ-/Schema-Guard + Merge:
-            # korrupte/alte settings.json darf keinen Nicht-Dict-Eintrag einschleusen
-            # (sonst AttributeError in _handle_column_click/open_general_settings), und
-            # neu hinzugekommene Default-Links sollen erhalten bleiben (kein Vollersatz).
-            if isinstance(data.get("column_links"), dict):
-                for _ck, _cv in data["column_links"].items():
-                    if isinstance(_cv, dict):
-                        self.column_links[_ck] = _cv
+            # ✅ NEU: Column Links laden
+            if "column_links" in data:
+                self.column_links = data["column_links"]
 
             # API-Settings: Deep-Merge (gespeicherte Werte ueberschreiben Defaults)
             if "api_settings" in data:
@@ -23565,7 +23403,7 @@ class App(ttk.Window):
         data = {}
         if os.path.exists(Config.SETTINGS_FILE):
             try:
-                with open(Config.SETTINGS_FILE, "r", encoding="utf-8") as f:
+                with open(Config.SETTINGS_FILE, "r") as f:
                     data = json.load(f)
             except (json.JSONDecodeError, OSError): pass
         
@@ -23612,7 +23450,7 @@ class App(ttk.Window):
         _runtime_api_settings = self.api_settings
 
         try:
-            with open(Config.SETTINGS_FILE, "w", encoding="utf-8") as f:
+            with open(Config.SETTINGS_FILE, "w") as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
             logger.log(f"Settings save error: {e}")
@@ -23635,76 +23473,6 @@ class App(ttk.Window):
             logger.log(f"[App] Startup-Setup-Check Fehler: {e}")
             import traceback
             logger.log(traceback.format_exc())
-
-    def _attach_tooltip(self, widget, text: str, delay_ms: int = 350):
-        """Ergaenzt kompakten Symbolbuttons einen fokussierbaren Hilfetext."""
-        if not widget or not text:
-            return
-
-        widget._vf_tooltip_text = text
-        state = {"after_id": None, "window": None}
-
-        def hide_tooltip(*_args):
-            after_id = state.get("after_id")
-            if after_id is not None:
-                try:
-                    widget.after_cancel(after_id)
-                except Exception:
-                    pass
-                state["after_id"] = None
-
-            window = state.get("window")
-            if window is not None:
-                try:
-                    window.destroy()
-                except Exception:
-                    pass
-                state["window"] = None
-
-        def show_tooltip():
-            if state.get("window") is not None:
-                return
-            try:
-                if not widget.winfo_exists():
-                    return
-                x = widget.winfo_rootx() + max(8, widget.winfo_width() // 2)
-                y = widget.winfo_rooty() + widget.winfo_height() + 8
-                tooltip = tk.Toplevel(widget)
-                tooltip.wm_overrideredirect(True)
-                tooltip.wm_geometry(f"+{x}+{y}")
-                label = tk.Label(
-                    tooltip,
-                    text=text,
-                    bg="#1f1f1f",
-                    fg="#ffffff",
-                    bd=1,
-                    relief="solid",
-                    padx=8,
-                    pady=4,
-                )
-                label.pack()
-                state["window"] = tooltip
-            except Exception:
-                hide_tooltip()
-
-        def schedule_tooltip(*_args):
-            hide_tooltip()
-            try:
-                state["after_id"] = widget.after(delay_ms, show_tooltip)
-            except Exception:
-                state["after_id"] = None
-
-        for event, handler in (
-            ("<Enter>", schedule_tooltip),
-            ("<FocusIn>", schedule_tooltip),
-            ("<Leave>", hide_tooltip),
-            ("<FocusOut>", hide_tooltip),
-            ("<ButtonPress>", hide_tooltip),
-            ("<Escape>", hide_tooltip),
-        ):
-            widget.bind(event, handler, add="+")
-
-        widget._vf_tooltip_state = state
 
     def _build_gui(self):
         # --- MENÜ ---
@@ -23784,9 +23552,7 @@ class App(ttk.Window):
         
         ttk.Button(act_box, text="START PIPELINE", command=self.on_start, bootstyle="success", width=18).pack(side=LEFT, padx=5)
         ttk.Button(act_box, text="STOP", command=self.on_stop, bootstyle="danger").pack(side=LEFT, padx=5)
-        refresh_btn = ttk.Button(act_box, text="⟳", command=self.on_refresh, bootstyle="info-outline", width=3)
-        refresh_btn.pack(side=LEFT, padx=5)
-        self._attach_tooltip(refresh_btn, self._t("Ergebnisse neu laden"))
+        ttk.Button(act_box, text="⟳", command=self.on_refresh, bootstyle="info-outline", width=3).pack(side=LEFT, padx=5)
         
         # CADD Highlight
         ttk.Separator(act_box, orient=VERTICAL).pack(side=LEFT, fill=Y, padx=15)
@@ -23916,9 +23682,7 @@ class App(ttk.Window):
         wl = ttk.Frame(col3)
         wl.pack(fill=X)
         ttk.Entry(wl, textvariable=self.gen_whitelist, width=15).pack(side=LEFT, fill=X, expand=True)
-        whitelist_btn = ttk.Button(wl, text="📂", width=3, command=lambda: self.load_gene_list("whitelist"), style="secondary-outline")
-        whitelist_btn.pack(side=LEFT)
-        self._attach_tooltip(whitelist_btn, self._t("Whitelist laden"))
+        ttk.Button(wl, text="📂", width=3, command=lambda: self.load_gene_list("whitelist"), style="secondary-outline").pack(side=LEFT)
         
         # Blacklist - HIER WAR DER FEHLER
         # Das pady=(5,0) muss in .pack(), nicht in ttk.Label()
@@ -23927,9 +23691,7 @@ class App(ttk.Window):
         bl = ttk.Frame(col3)
         bl.pack(fill=X)
         ttk.Entry(bl, textvariable=self.gen_blacklist, width=15).pack(side=LEFT, fill=X, expand=True)
-        blacklist_btn = ttk.Button(bl, text="📂", width=3, command=lambda: self.load_gene_list("blacklist"), style="secondary-outline")
-        blacklist_btn.pack(side=LEFT)
-        self._attach_tooltip(blacklist_btn, self._t("Blacklist laden"))
+        ttk.Button(bl, text="📂", width=3, command=lambda: self.load_gene_list("blacklist"), style="secondary-outline").pack(side=LEFT)
         
         # Buttons
         ttk.Separator(col3).pack(fill=X, pady=10)
