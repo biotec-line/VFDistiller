@@ -35,11 +35,6 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
-- AF-Fetch-Endentscheidung nutzt jetzt das angereicherte Fetch-Ergebnis mit `meanAF_fetch_success`, damit validierte AF-None-Treffer nicht als ungeprüft klassifiziert und aus der Anzeige gefiltert werden.
-- Die kompakten Symbolbuttons für `⟳` sowie die `📂`-Genlistenlader exponieren jetzt Tooltip-Kontext auch bei Tastaturfokus, statt sich fast nur auf das Icon zu verlassen. Die Haupt-UI bleibt kompakt; Screenreader-nahe und keyboard-orientierte Nutzung bekommt jedoch klarere Hilfetexte.
-- `StreamingFastaToGVCF.convert_streaming_gvcf` und `convert_streaming_variants_only`: Fehlende `encoding="utf-8"`-Parameter beim Öffnen von FASTA-Eingabe und VCF-Ausgabe. Auf Windows wurde der cp1252-Standard verwendet, was zu `UnicodeDecodeError` führte, wenn Dateipfade oder `##reference`-Header Nicht-ASCII-Zeichen (z.B. Umlaute) enthielten. Betroffen war die Write-Seite eines Lese/Schreib-Paars, dessen Read-Seite bereits in Block 5b auf `encoding="utf-8"` gesichert wurde.
-- `StreamingFastaToGVCF.detect_build_from_fasta` und `load_fasta`: Fehlende `encoding="utf-8"`-Parameter beim Lesen von FASTA-Dateien auf denselben Codepfaden.
-- Technisches Issue-Register auf den aktuellen GitHub-Stand synchronisiert: Die im Hauptprogramm dokumentierten Bare-`except:`-Stellen sind seit Commit `7665133` behoben; `origin/main` enthält in `Variant_Fusion_pro_V17.py` keinen Treffer. Bare-`except:`-Stellen im separaten optionalen Cython-Benchmark bleiben ausdrücklich außerhalb dieses Fix-Claims.
 - Release packaging no longer references a non-existent `README/licenses/LICENSE.de.txt`; the documented license tree now matches the shipped files.
 - Removed a stale inline comment that incorrectly suggested the top-level `pickle` import was missing or only local-only, even though cache serialization uses it.
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.
