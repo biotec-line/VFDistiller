@@ -1,0 +1,46 @@
+# MARKETING-LOG.txt — VFDistiller (biotec-line/VFDistiller)
+
+Date: 2026-07-25
+Repository: biotec-line/VFDistiller
+Auditor: Antigravity GitHubBot (Discoverability, SEO & Marketing Automation)
+
+## Executive Summary & Visibility Audit
+
+VFDistiller (Variant Fusion Distiller) is a local-first bioinformatics desktop application for processing, converting, filtering, and annotating research-grade VCF, gVCF, 23andMe raw text, and FASTA variant data.
+
+### Store Withdrawal & Open Science Positioning
+On 2026-04-12, VFDistiller was withdrawn from the Microsoft Store listing to maintain a crisp "Research Use Only" boundary under IVDR (EU) 2017/746 without regulatory ambiguity. It is distributed exclusively via GitHub under AGPL-3.0-or-later.
+
+### Automated Discoverability Improvements Applied (2026-07-25)
+1. **PEP 621 `pyproject.toml` Manifest:** Created standard `pyproject.toml` with project metadata, dependencies, classifiers, URLs, and pytest configuration.
+2. **Shields.io Badges:** Added AGPL-3.0 license, Python version support, test count (42 passing), platform matrix, and Research Use Only status badges to `README.md` and `README.de.md`.
+3. **Mermaid Architecture Diagram:** Visualized the local-first processing pipeline (Inputs -> Local Core & Cython Hotpath -> Multi-Source Annotation Engine -> GUI & Export Surface) in both English and German READMEs.
+4. **LLM & AI Safety Callout:** Added GFM `> [!NOTE]` callouts specifying local-first data protection boundaries for genetic data and local credentials.
+5. **`llms.txt` Synchronization:** Updated timestamp to 2026-07-25, recorded 42 passing unit/integration tests, and added `pyproject.toml` reference and search phrases.
+6. **`CHANGELOG.md` Update:** Documented all discoverability, SEO, and manifest updates.
+
+---
+
+## Non-Automatable Recommendations (Action Items for Maintainers)
+
+### 1. Bioinformatics Registry Submissions
+- **biotools (bio.tools):** Register `VFDistiller` on EDAM-annotated registry `bio.tools` under topic `Topic: Bio-Informatics / Genotype to Phenotype` and EDAM operation `Operation: Variant annotation`.
+- **Awesome Bioinformatics:** Submit a pull request to `danielecook/awesome-bioinformatics` under Desktop GUI Applications for VCF/gVCF annotation.
+
+### 2. GitHub Topics & Repository Metadata
+Ensure the following topics are set on `github.com/biotec-line/VFDistiller`:
+- `bioinformatics`
+- `vcf`
+- `gvcf`
+- `genomics`
+- `variant-annotation`
+- `23andme`
+- `fasta`
+- `gnomad`
+- `clinvar`
+- `local-first`
+- `python`
+- `pyside` / `ttkbootstrap`
+
+### 3. Open Science & Preprint Cross-Referencing
+- If a methodology paper or application note for VFDistiller is deposited on bioRxiv/F1000Research, include the DOI and citation snippet in `README.md` and `CITATION.cff`.

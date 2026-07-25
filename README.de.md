@@ -1,5 +1,11 @@
 # VFDistiller — lokales Desktop-Tool für VCF- und Variantenannotation
 
+[![Lizenz: AGPL 3.0](https://img.shields.io/badge/Lizenz-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/Tests-42%20bestanden-brightgreen.svg)](tests/)
+[![Plattform](https://img.shields.io/badge/Plattform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com/biotec-line/VFDistiller)
+[![Status](https://img.shields.io/badge/Status-Research%20Use%20Only-orange.svg)](SECURITY.md)
+
 VFDistiller, auch Variant Fusion Distiller genannt, ist eine lokale
 Bioinformatik-Desktop-Anwendung für forschungsbezogene genetische
 Variantendateien. Das Tool konvertiert, filtert, annotiert und exportiert VCF,
@@ -52,6 +58,47 @@ Windows-Workstations praktikabel.
   Feldern und optionalen AlphaGenome-Daten.
 - **Research-Use-Only-Grenze** ist im Projekt klar markiert: kein
   Diagnoseprodukt, kein Medizinprodukt, keine klinische Zweckbestimmung.
+
+> [!NOTE]
+> **LLM- & KI-Integrationsgrenze:** VFDistiller arbeitet zu 100 % lokal-first. Rohdaten, konvertierte VCFs, Genomreferenzen, SQLite-Caches, lokale Einstellungen und API-Schlüssel verbleiben auf der Workstation des Nutzers und werden niemals an externe KI-Endpunkte oder Cloud-Crawler übertragen, außer wenn dies vom Nutzer explizit konfiguriert wird.
+
+## Systemarchitektur
+
+```mermaid
+graph TD
+    subgraph Inputs["Eingabe-Variantendaten"]
+        VCF["VCF- / gVCF-Dateien"]
+        RAW23["23andMe-Rohdaten"]
+        FASTA["FASTA-Referenzsequenzen"]
+    end
+
+    subgraph CoreEngine["Lokaler Verarbeitungs-Kern"]
+        Parser["Pure-Python VCF/gVCF Parser"]
+        Cython["Cython Hotpath-Beschleunigung (.pyx)"]
+        Interval["IntervalTree Regionen-Lookup"]
+        Cache["Lokale SQLite-Caches & DBs"]
+    end
+
+    subgraph Annotations["Multi-Source Annotations-Engine"]
+        gnomAD["gnomAD Allelfrequenz"]
+        ClinVar["ClinVar (ClinSig / Impact)"]
+        Ensembl["Ensembl VEP / MyVariant.info"]
+        TOPMed["ALFA & TOPMed Frequenzen"]
+        Alpha["AlphaGenome (Optional)"]
+    end
+
+    subgraph Outputs["Interaktive GUI & Export-Oberfläche"]
+        GUI["ttkbootstrap Desktop-Oberfläche"]
+        VCFOut["Annotierter VCF- / gVCF-Export"]
+        Excel["Excel (.xlsx) & PDF-Berichte"]
+        JSONOut["JSON & Custom Pipeline Output"]
+    end
+
+    Inputs --> CoreEngine
+    CoreEngine --> Annotations
+    Annotations --> Outputs
+    Cache <--> CoreEngine
+```
 
 ## Screenshot-Galerie
 

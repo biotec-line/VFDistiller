@@ -6,6 +6,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- `pyproject.toml`: Standardisierter PEP 621-Projekt-Manifest mit Abhängigkeiten, Meta-Informationen, URLs, Keywords und Pytest-Konfiguration.
+- Shields.io-Badges für Lizenz (AGPL-3.0-or-later), Python-Versionen, Testsuite-Status (42 bestanden), Plattform-Matrix und Research Use Only-Status in `README.md` und `README.de.md`.
+- Mermaid-Systemarchitekturdiagramm zur Visualisierung der lokalen Datenfluss-Pipeline (Eingaben -> Lokaler Verarbeitungs-Kern & Cython Hotpath -> Multi-Source Annotations-Engine -> GUI & Export-Oberfläche) in `README.md` und `README.de.md`.
+- GFM `> [!NOTE]`-Callout zur klaren Abgrenzung lokaler KI- und Datenschutzgrenzen für genetische Variantendaten.
+- `MARKETING-LOG.txt`: Dokumentation der Sichtbarkeits- und Marketingmaßnahmen, Empfehlungen für EDAM-Katalogisierung (bio.tools) und Repositoriendaten.
 - `make_source_zip.py`: Source-ZIP-Builder für Linux und macOS. Erstellt ein portables Quellcode-Archiv mit allen Python-Quellen, Übersetzungen, optionalem Cython-Hotpath (.pyx), Tests und Dokumentation. Schließt Windows-Binaries (.pyd, .exe), generierte Caches und FASTA-Referenzgenome aus.
 - `PACKAGING.md`: Vollständige Packaging-Dokumentation mit Optionen-Matrix (Windows EXE vs. Source-ZIP), Schritt-für-Schritt-Installationsanleitung für Linux/macOS, Cython-Fallback-Erläuterung und Hinweisen zu Annotationsdaten.
 - `tests/test_source_packaging.py`: 14 automatisierte Tests für `make_source_zip.py` — Ausschlusslogik (.pyd/.exe/_index.pkl), Inklusionslogik (.pyx/.py/.json/.md), Versionslesung, ZIP-Erzeugung und ZIP-Inhalt.
