@@ -21,6 +21,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
 
 ### Geändert / Changed
+- `llms.txt`: Timestamp auf `2026-07-27` und Testergebnisse verifiziert (42/42 Pytest-Tests grün). [G 2026-07-27]
 - `build_release.py` now builds via PyInstaller in `C:\_Local_DEV\codex_build\vfdistiller`, mirrors the finished EXE back to `dist\VFDistiller.exe`, and produces the versioned release ZIP from that local artifact.
 - `build_exe.bat` added as a Windows build entrypoint so the project follows the current `.SOFTWARE` local-build workflow more directly.
 - Source Platform Smoke CI now uses `actions/checkout@v6` and `actions/setup-python@v6`.
