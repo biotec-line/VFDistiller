@@ -86,6 +86,20 @@ class _FakeConnection:
         self.closed = True
 
 
+class _MaintainerDistillerStub:
+    def __init__(self):
+        self.done_variants = 0
+        self.end_retry_variants = 0
+        self.af_none_manager = type(
+            "AfNoneManagerStub",
+            (),
+            {"current_preset": "clinical"},
+        )()
+
+    def upsert_from_mv(self, *_args, **_kwargs):
+        return None
+
+
 def _install_connect_spy(monkeypatch, fake_conn):
     calls = []
 
@@ -95,6 +109,41 @@ def _install_connect_spy(monkeypatch, fake_conn):
 
     monkeypatch.setattr(_vf.sqlite3, "connect", fake_connect)
     return calls
+
+
+def _make_background_maintainer(**overrides):
+    kwargs = {
+        "distiller": _MaintainerDistillerStub(),
+        "db": MagicMock(),
+        "stopflag": MagicMock(),
+        "logger": MagicMock(),
+    }
+    kwargs.update(overrides)
+    return _vf.BackgroundMaintainer(**kwargs)
+
+
+def test_background_maintainer_uses_separate_stale_day_defaults():
+    maintainer = _make_background_maintainer()
+
+    assert maintainer.stale_days_af == _vf.Config.STALE_DAYS_AF
+    assert maintainer.stale_days_full == _vf.Config.STALE_DAYS_FULL
+    assert maintainer._stale_days_for_mode("af") == _vf.Config.STALE_DAYS_AF
+    assert (
+        maintainer._stale_days_for_mode("full")
+        == _vf.Config.STALE_DAYS_FULL
+    )
+
+
+def test_background_maintainer_routes_custom_stale_days_by_mode():
+    maintainer = _make_background_maintainer(
+        stale_days_af=91,
+        stale_days_full=17,
+    )
+
+    assert maintainer._stale_days_for_mode("af") == 91
+    assert maintainer._stale_days_for_mode("full") == 17
+    with pytest.raises(ValueError, match="Unbekannter Maintainer-Modus"):
+        maintainer._stale_days_for_mode("invalid")
 
 
 # ---------------------------------------------------------------------------

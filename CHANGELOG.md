@@ -41,6 +41,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
+- `BackgroundMaintainer` verwendet getrennte AF- und Vollannotations-
+  Staleness-Schwellen aus `Config.STALE_DAYS_AF` und `Config.STALE_DAYS_FULL`.
 - Release packaging no longer references a non-existent `README/licenses/LICENSE.de.txt`; the documented license tree now matches the shipped files.
 - Removed a stale inline comment that incorrectly suggested the top-level `pickle` import was missing or only local-only, even though cache serialization uses it.
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.

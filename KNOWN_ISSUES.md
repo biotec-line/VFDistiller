@@ -46,10 +46,12 @@
 
 ## TODOs
 
-### [NIEDRIG] stale_days Parameter aufteilen
-- **Datei:** Variant_Fusion_pro_V17.py, Zeile 10910
+### [BEHOBEN 2026-07-28] stale_days Parameter aufteilen
+- **Datei:** Variant_Fusion_pro_V17.py, Konstruktor ab Zeile 10861
 - **Problem:** BackgroundMaintainer-Konstruktor hat noch einzelnen stale_days Parameter, obwohl intern bereits Config.STALE_DAYS_AF etc. genutzt werden
-- **Status:** Semantisch erledigt, Konstruktor-Signatur noch nicht aktualisiert
+- **Fix:** Konstruktor, Prioritätsabfragen und Fetch-Verarbeitung verwenden
+  getrennte `stale_days_af`-/`stale_days_full`-Werte mit den jeweiligen
+  Config-Defaults; Unit-Tests sichern Default und Modusauswahl.
 
 ## Kosmetisch
 - Doppelter Alias HAVE_AIOHTTP / AIOHTTP_AVAILABLE (Zeile 107) -- bewusster Kompatibilitäts-Alias

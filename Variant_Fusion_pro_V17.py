@@ -10865,7 +10865,8 @@ class BackgroundMaintainer:
         stopflag: StopFlag,
         logger, 
         threads=DEFAULT_THREADS, 
-        stale_days=Config.STALE_DAYS_AF,
+        stale_days_af=Config.STALE_DAYS_AF,
+        stale_days_full=Config.STALE_DAYS_FULL,
         p1_cooldown_hours=24, 
         max_per_round=100,
         short_pause=15, 
@@ -10883,7 +10884,8 @@ class BackgroundMaintainer:
             stopflag: StopFlag für Pipeline-Kontrolle
             logger: Logger-Instanz
             threads: Anzahl Worker-Threads
-            stale_days: Tage bis Daten als veraltet gelten (TODO: aufteilen)
+            stale_days_af: Tage bis AF-Daten als veraltet gelten
+            stale_days_full: Tage bis Vollannotationen als veraltet gelten
             p1_cooldown_hours: Cooldown für generische Fehler
             max_per_round: Max. Varianten pro Durchlauf
             short_pause: Kurze Pause (Sekunden)
@@ -10897,7 +10899,8 @@ class BackgroundMaintainer:
         self.db = db
         self.stopflag = stopflag
         self.threads = threads
-        self.stale_days = stale_days
+        self.stale_days_af = stale_days_af
+        self.stale_days_full = stale_days_full
         self.p1_cooldown_hours = p1_cooldown_hours
         self.max_per_round = max_per_round
         self.short_pause = short_pause
@@ -10944,6 +10947,14 @@ class BackgroundMaintainer:
         for fld in ("done_variants", "end_retry_variants"):
             if not hasattr(self.distiller, fld):
                 setattr(self.distiller, fld, 0)
+
+    def _stale_days_for_mode(self, mode: str) -> int:
+        """Liefert den getrennten Staleness-Schwellwert für einen Fetch-Modus."""
+        if mode == "af":
+            return self.stale_days_af
+        if mode == "full":
+            return self.stale_days_full
+        raise ValueError(f"Unbekannter Maintainer-Modus: {mode}")
     
     # ✅ Thread-safe Property für Pipeline-Status
     @property
@@ -11202,7 +11213,10 @@ class BackgroundMaintainer:
                 before_fail = self.distiller.end_retry_variants
 
                 self.automatic_fetch_decission_and_processing_unit(
-                    actionable, actionable[0][4], mode=mode, stale_days=self.stale_days
+                    actionable,
+                    actionable[0][4],
+                    mode=mode,
+                    stale_days=self._stale_days_for_mode(mode),
                 )
 
                 done = (self.distiller.done_variants - before_done) + deleted
@@ -11253,7 +11267,7 @@ class BackgroundMaintainer:
                 try:
                     # AF-Priorities
                     p0_af, p1_af, p2_af, p3_af = self.db.for_background_priorities(
-                        stale_days=self.stale_days,
+                        stale_days=self._stale_days_for_mode("af"),
                         p1_cooldown_hours=self.p1_cooldown_hours,
                         mode="af",
                         af_none_policy=policy,
@@ -11262,7 +11276,7 @@ class BackgroundMaintainer:
 
                     # Full-Priorities
                     p0_full, p1_full, p2_full, p3_full = self.db.for_background_priorities(
-                        stale_days=self.stale_days,
+                        stale_days=self._stale_days_for_mode("full"),
                         p1_cooldown_hours=self.p1_cooldown_hours,
                         mode="full",
                         af_none_policy=policy,
