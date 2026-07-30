@@ -6,7 +6,7 @@ License: AGPL-3.0-or-later
 Primary language: Python
 UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, optional PyInstaller build
 Also known as: Variant Fusion Distiller
-Last-checked: 2026-07-27 (42 passing unit/integration tests)
+Last-checked: 2026-06-12
 
 ## Summary
 
@@ -39,13 +39,11 @@ assessments.
 - offline gnomAD allele frequency lookup
 - FASTA reference validation GUI
 - Research Use Only variant annotation software
-- PEP 621 pyproject.toml bioinformatics desktop
 
 ## Important Files
 
 - `README.md`: English public documentation
 - `README.de.md`: German public documentation
-- `pyproject.toml`: PEP 621 project manifest and pytest configuration
 - `Variant_Fusion_pro_V17.py`: main desktop application and pipeline
 - `variant_fusion_settings.json.example`: configuration template
 - `cython_hotpath/`: optional Cython acceleration modules

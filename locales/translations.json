@@ -23,6 +23,10 @@
     "de": "Allgemeine Einstellungen...",
     "en": "General Settings..."
   },
+  "Analyse der ausgewählten Datei starten": {
+    "de": "Analyse der ausgewählten Datei starten",
+    "en": "Start analysis of the selected file"
+  },
   "Angezeigt: 0 Varianten": {
     "de": "Angezeigt: 0 Varianten",
     "en": "Displayed: 0 variants"
@@ -83,6 +87,10 @@
     "de": "CADD Filter:",
     "en": "CADD filter:"
   },
+  "CADD-Hervorhebungsschwelle setzen": {
+    "de": "CADD-Hervorhebungsschwelle setzen",
+    "en": "Set CADD highlight threshold"
+  },
   "CSV Export": {
     "de": "CSV Export",
     "en": "CSV export"
@@ -115,6 +123,10 @@
     "de": "Dateiauswahl",
     "en": "File selection"
   },
+  "Ergebnisse neu laden": {
+    "de": "Ergebnisse neu laden",
+    "en": "Reload displayed results"
+  },
   "Datenalter für Refresh (Tage):": {
     "de": "Datenalter für Refresh (Tage):",
     "en": "Data age for refresh (days)"
@@ -122,6 +134,14 @@
   "Datenbank extern öffnen": {
     "de": "Datenbank extern öffnen",
     "en": "Open database externally"
+  },
+  "Durchsuchen": {
+    "de": "Durchsuchen",
+    "en": "Browse"
+  },
+  "Eingabedatei auswählen": {
+    "de": "Eingabedatei auswählen",
+    "en": "Select input file"
   },
   "Datenbankdatei:": {
     "de": "Datenbankdatei:",
@@ -182,6 +202,14 @@
   "Export Format wählen:": {
     "de": "Export Format wählen:",
     "en": "Choose export format:"
+  },
+  "Laufende Analyse stoppen": {
+    "de": "Laufende Analyse stoppen",
+    "en": "Stop the running analysis"
+  },
+  "Maximale Allelfrequenz vor dem Scan": {
+    "de": "Maximale Allelfrequenz vor dem Scan",
+    "en": "Maximum allele frequency before the scan"
   },
   "FASTQ-Datei:": {
     "de": "FASTQ-Datei:",
@@ -283,6 +311,14 @@
     "de": "Optionen",
     "en": "Options"
   },
+  "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei": {
+    "de": "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei",
+    "en": "Path of the VCF, gVCF, 23andMe, or FASTA input file"
+  },
+  "Pipeline starten": {
+    "de": "Pipeline starten",
+    "en": "Start pipeline"
+  },
   "PDF Export": {
     "de": "PDF Export",
     "en": "PDF export"
@@ -358,6 +394,10 @@
   "Sprache / Language": {
     "de": "Sprache / Language",
     "en": "Language"
+  },
+  "Stoppen": {
+    "de": "Stoppen",
+    "en": "Stop"
   },
   "Später": {
     "de": "Später",

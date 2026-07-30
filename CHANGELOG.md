@@ -6,11 +6,6 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
-- `pyproject.toml`: Standardisierter PEP 621-Projekt-Manifest mit Abhängigkeiten, Meta-Informationen, URLs, Keywords und Pytest-Konfiguration.
-- Shields.io-Badges für Lizenz (AGPL-3.0-or-later), Python-Versionen, Testsuite-Status (42 bestanden), Plattform-Matrix und Research Use Only-Status in `README.md` und `README.de.md`.
-- Mermaid-Systemarchitekturdiagramm zur Visualisierung der lokalen Datenfluss-Pipeline (Eingaben -> Lokaler Verarbeitungs-Kern & Cython Hotpath -> Multi-Source Annotations-Engine -> GUI & Export-Oberfläche) in `README.md` und `README.de.md`.
-- GFM `> [!NOTE]`-Callout zur klaren Abgrenzung lokaler KI- und Datenschutzgrenzen für genetische Variantendaten.
-- `MARKETING-LOG.txt`: Dokumentation der Sichtbarkeits- und Marketingmaßnahmen, Empfehlungen für EDAM-Katalogisierung (bio.tools) und Repositoriendaten.
 - `make_source_zip.py`: Source-ZIP-Builder für Linux und macOS. Erstellt ein portables Quellcode-Archiv mit allen Python-Quellen, Übersetzungen, optionalem Cython-Hotpath (.pyx), Tests und Dokumentation. Schließt Windows-Binaries (.pyd, .exe), generierte Caches und FASTA-Referenzgenome aus.
 - `PACKAGING.md`: Vollständige Packaging-Dokumentation mit Optionen-Matrix (Windows EXE vs. Source-ZIP), Schritt-für-Schritt-Installationsanleitung für Linux/macOS, Cython-Fallback-Erläuterung und Hinweisen zu Annotationsdaten.
 - `tests/test_source_packaging.py`: 14 automatisierte Tests für `make_source_zip.py` — Ausschlusslogik (.pyd/.exe/_index.pkl), Inklusionslogik (.pyx/.py/.json/.md), Versionslesung, ZIP-Erzeugung und ZIP-Inhalt.
@@ -21,7 +16,6 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `llms.txt` added with machine-readable project context, search phrases, important files, and Research Use Only boundaries.
 
 ### Geändert / Changed
-- `llms.txt`: Timestamp auf `2026-07-27` und Testergebnisse verifiziert (42/42 Pytest-Tests grün). [G 2026-07-27]
 - `build_release.py` now builds via PyInstaller in `C:\_Local_DEV\codex_build\vfdistiller`, mirrors the finished EXE back to `dist\VFDistiller.exe`, and produces the versioned release ZIP from that local artifact.
 - `build_exe.bat` added as a Windows build entrypoint so the project follows the current `.SOFTWARE` local-build workflow more directly.
 - Source Platform Smoke CI now uses `actions/checkout@v6` and `actions/setup-python@v6`.
@@ -41,8 +35,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Community workflows now use current `actions/stale@v10` and `actions/first-interaction@v3` actions.
 
 ### Behoben / Fixed
-- `BackgroundMaintainer` verwendet getrennte AF- und Vollannotations-
-  Staleness-Schwellen aus `Config.STALE_DAYS_AF` und `Config.STALE_DAYS_FULL`.
+- Die primäre Arbeitsleiste verwendet für Start/Stop jetzt übersetzbare
+  deutsche Aktionslabels und gibt Dateipfad, Dateiauswahl, AF-Schwelle,
+  Start/Stop und CADD-Hervorhebung per fokussierbaren Tooltips Kontext.
+- AF-Fetch-Endentscheidung nutzt jetzt das angereicherte Fetch-Ergebnis mit `meanAF_fetch_success`, damit validierte AF-None-Treffer nicht als ungeprüft klassifiziert und aus der Anzeige gefiltert werden.
+- Die kompakten Symbolbuttons für `⟳` sowie die `📂`-Genlistenlader exponieren jetzt Tooltip-Kontext auch bei Tastaturfokus, statt sich fast nur auf das Icon zu verlassen. Die Haupt-UI bleibt kompakt; Screenreader-nahe und keyboard-orientierte Nutzung bekommt jedoch klarere Hilfetexte.
+- `StreamingFastaToGVCF.convert_streaming_gvcf` und `convert_streaming_variants_only`: Fehlende `encoding="utf-8"`-Parameter beim Öffnen von FASTA-Eingabe und VCF-Ausgabe. Auf Windows wurde der cp1252-Standard verwendet, was zu `UnicodeDecodeError` führte, wenn Dateipfade oder `##reference`-Header Nicht-ASCII-Zeichen (z.B. Umlaute) enthielten. Betroffen war die Write-Seite eines Lese/Schreib-Paars, dessen Read-Seite bereits in Block 5b auf `encoding="utf-8"` gesichert wurde.
+- `StreamingFastaToGVCF.detect_build_from_fasta` und `load_fasta`: Fehlende `encoding="utf-8"`-Parameter beim Lesen von FASTA-Dateien auf denselben Codepfaden.
+- Technisches Issue-Register auf den aktuellen GitHub-Stand synchronisiert: Die im Hauptprogramm dokumentierten Bare-`except:`-Stellen sind seit Commit `7665133` behoben; `origin/main` enthält in `Variant_Fusion_pro_V17.py` keinen Treffer. Bare-`except:`-Stellen im separaten optionalen Cython-Benchmark bleiben ausdrücklich außerhalb dieses Fix-Claims.
 - Release packaging no longer references a non-existent `README/licenses/LICENSE.de.txt`; the documented license tree now matches the shipped files.
 - Removed a stale inline comment that incorrectly suggested the top-level `pickle` import was missing or only local-only, even though cache serialization uses it.
 - Removed stale contributing-template placeholders and replaced the missing CLA reference with DCO guidance.

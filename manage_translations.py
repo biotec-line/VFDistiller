@@ -36,8 +36,11 @@ def find_german_strings(source_dir):
 def manage_translations():
     # Bestehende Übersetzungen laden
     if os.path.exists(TRANSLATION_FILE):
-        with open(TRANSLATION_FILE, "r", encoding="utf-8") as f:
-            translations = json.load(f)
+        try:
+            with open(TRANSLATION_FILE, "r", encoding="utf-8") as f:
+                translations = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            translations = {}
     else:
         translations = {}
 

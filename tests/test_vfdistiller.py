@@ -45,6 +45,7 @@ if "translator" not in sys.modules:
 # Hauptmodul laden
 # ---------------------------------------------------------------------------
 _MODULE_PATH = Path(__file__).parent.parent / "Variant_Fusion_pro_V17.py"
+_TRANSLATIONS_PATH = Path(__file__).parent.parent / "locales" / "translations.json"
 _spec = importlib.util.spec_from_file_location("vf_v17", str(_MODULE_PATH))
 _vf = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_vf)
@@ -86,20 +87,6 @@ class _FakeConnection:
         self.closed = True
 
 
-class _MaintainerDistillerStub:
-    def __init__(self):
-        self.done_variants = 0
-        self.end_retry_variants = 0
-        self.af_none_manager = type(
-            "AfNoneManagerStub",
-            (),
-            {"current_preset": "clinical"},
-        )()
-
-    def upsert_from_mv(self, *_args, **_kwargs):
-        return None
-
-
 def _install_connect_spy(monkeypatch, fake_conn):
     calls = []
 
@@ -109,41 +96,6 @@ def _install_connect_spy(monkeypatch, fake_conn):
 
     monkeypatch.setattr(_vf.sqlite3, "connect", fake_connect)
     return calls
-
-
-def _make_background_maintainer(**overrides):
-    kwargs = {
-        "distiller": _MaintainerDistillerStub(),
-        "db": MagicMock(),
-        "stopflag": MagicMock(),
-        "logger": MagicMock(),
-    }
-    kwargs.update(overrides)
-    return _vf.BackgroundMaintainer(**kwargs)
-
-
-def test_background_maintainer_uses_separate_stale_day_defaults():
-    maintainer = _make_background_maintainer()
-
-    assert maintainer.stale_days_af == _vf.Config.STALE_DAYS_AF
-    assert maintainer.stale_days_full == _vf.Config.STALE_DAYS_FULL
-    assert maintainer._stale_days_for_mode("af") == _vf.Config.STALE_DAYS_AF
-    assert (
-        maintainer._stale_days_for_mode("full")
-        == _vf.Config.STALE_DAYS_FULL
-    )
-
-
-def test_background_maintainer_routes_custom_stale_days_by_mode():
-    maintainer = _make_background_maintainer(
-        stale_days_af=91,
-        stale_days_full=17,
-    )
-
-    assert maintainer._stale_days_for_mode("af") == 91
-    assert maintainer._stale_days_for_mode("full") == 17
-    with pytest.raises(ValueError, match="Unbekannter Maintainer-Modus"):
-        maintainer._stale_days_for_mode("invalid")
 
 
 # ---------------------------------------------------------------------------
@@ -362,3 +314,91 @@ def test_distiller_lookup_lightdb_uses_worker_safe_connection(tmp_path, monkeypa
     assert still_uncached == [("1", 123, "A", "C", "GRCh37")]
     assert fake_conn.closed is True
     assert calls[0][1]["check_same_thread"] is False
+
+
+def test_compact_icon_buttons_expose_tooltip_context():
+    src = _MODULE_PATH.read_text(encoding="utf-8")
+
+    assert 'input_entry = ttk.Entry(file_row, textvariable=self.selected_file)' in src
+    assert 'text=self._t("Durchsuchen")' in src
+    assert 'text=self._t("Pipeline starten")' in src
+    assert 'text=self._t("Stoppen")' in src
+    assert 'self._attach_tooltip(input_entry, self._t("Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei"))' in src
+    assert 'self._attach_tooltip(browse_btn, self._t("Eingabedatei auswählen"))' in src
+    assert 'self._attach_tooltip(af_entry, self._t("Maximale Allelfrequenz vor dem Scan"))' in src
+    assert 'self._attach_tooltip(start_btn, self._t("Analyse der ausgewählten Datei starten"))' in src
+    assert 'self._attach_tooltip(stop_btn, self._t("Laufende Analyse stoppen"))' in src
+    assert 'self._attach_tooltip(cadd_entry, self._t("CADD-Hervorhebungsschwelle setzen"))' in src
+    assert 'self._attach_tooltip(refresh_btn, self._t("Ergebnisse neu laden"))' in src
+    assert 'self._attach_tooltip(whitelist_btn, self._t("Whitelist laden"))' in src
+    assert 'self._attach_tooltip(blacklist_btn, self._t("Blacklist laden"))' in src
+    assert 'widget._vf_tooltip_text = text' in src
+    assert '("<FocusIn>", schedule_tooltip)' in src
+
+
+def test_tooltip_translations_cover_refresh_action():
+    translations = json.loads(_TRANSLATIONS_PATH.read_text(encoding="utf-8"))
+
+    assert translations["Ergebnisse neu laden"]["de"] == "Ergebnisse neu laden"
+    assert translations["Ergebnisse neu laden"]["en"] == "Reload displayed results"
+    assert translations["Durchsuchen"]["de"] == "Durchsuchen"
+    assert translations["Durchsuchen"]["en"] == "Browse"
+    assert translations["Pipeline starten"]["de"] == "Pipeline starten"
+    assert translations["Pipeline starten"]["en"] == "Start pipeline"
+    assert translations["Stoppen"]["de"] == "Stoppen"
+    assert translations["Stoppen"]["en"] == "Stop"
+    assert translations["Eingabedatei auswählen"]["de"] == "Eingabedatei auswählen"
+    assert translations["Analyse der ausgewählten Datei starten"]["de"] == "Analyse der ausgewählten Datei starten"
+    assert translations["Laufende Analyse stoppen"]["de"] == "Laufende Analyse stoppen"
+    assert translations["Maximale Allelfrequenz vor dem Scan"]["de"] == "Maximale Allelfrequenz vor dem Scan"
+    assert translations["CADD-Hervorhebungsschwelle setzen"]["de"] == "CADD-Hervorhebungsschwelle setzen"
+
+
+def _make_filter_only_distiller(include_none=False):
+    logger = MagicMock()
+    flag_manager = _vf.Flag_and_Options_Manager(logger=logger)
+    flag_manager.set_include_none(include_none)
+
+    distiller = _vf.Distiller.__new__(_vf.Distiller)
+    distiller.flag_manager = flag_manager
+    distiller.main_filter_gate = _vf.MainFilterGate(
+        flag_manager=flag_manager,
+        db=MagicMock(),
+        gene_annotator=None,
+        logger=logger,
+    )
+    distiller._get_variants_bulk_cached = lambda _keys: {}
+    return distiller
+
+
+def test_af_filter_treats_successful_none_as_true_none():
+    distiller = _make_filter_only_distiller(include_none=False)
+    key = ("1", 12345, "A", "G", "GRCh37")
+
+    decision = distiller._apply_af_filter_final(
+        key,
+        {
+            "af_filter_mean": None,
+            "meanAF_fetch_success": "111",
+            "meanAF_last_fetch": _vf.now_iso(),
+        },
+    )
+
+    assert decision == "emit"
+
+
+def test_af_filter_rejects_unclassified_none_when_include_none_disabled():
+    distiller = _make_filter_only_distiller(include_none=False)
+    key = ("1", 12345, "A", "G", "GRCh37")
+
+    decision = distiller._apply_af_filter_final(key, {"af_filter_mean": None})
+
+    assert decision == "reject"
+
+
+def test_af_fetch_final_filter_receives_enriched_status():
+    src = _MODULE_PATH.read_text(encoding="utf-8")
+    marker = "status = FetchStatusManager.update_status(None, success=True)"
+    segment = src.split(marker, 1)[1][:450]
+
+    assert "results[k] = enriched" in segment

@@ -1,6 +1,6 @@
 # Variant Fusion -- Store Issues & Versionsverlauf
 
-> Policy: Siehe `.SOFTWARE/WINDOWS_STORE_BUGFIX_POLICY.md`
+> Lokale Steuer-Policy (nicht Teil dieses GitHub-Repositories): `../../_STORE/WINDOWS_STORE_BUGFIX_POLICY.md`
 
 ## Store-Informationen
 
@@ -27,14 +27,18 @@ Veröffentlicht: 2026-03-10 (ca.)
 
 | # | Severity | Beschreibung | Datei:Zeile | Gefunden | Status |
 |---|----------|-------------|-------------|----------|--------|
-| 1 | P2 | Connection-Leak in `_lookup_lightdb` (AfFetcher) -- kein `finally`-Block, `conn.close()` wird bei Exception übersprungen. Auf Windows hält offene Connection File-Lock auf DB. | V17.py:7500-7567 | 2026-03-13 | BEHOBEN 2026-05-23 |
-| 2 | P2 | SQLite-Verbindungen ohne `check_same_thread=False` in Methoden die aus Worker-Threads aufgerufen werden können | V17.py:7249,10263,16676 | 2026-03-13 | BEHOBEN 2026-05-23 |
-| 3 | P3 | Bare `except:` an 6 Stellen -- fängt auch SystemExit und KeyboardInterrupt | V17.py:329,8315,10338,14419,21589,21606 | 2026-03-13 | OFFEN |
-| 4 | P3 | TODO: `stale_days` Parameter im BackgroundMaintainer-Konstruktor aufteilen (semantisch erledigt, Signatur nicht aktualisiert) | V17.py:10861 | 2026-03-13 | BEHOBEN 2026-07-28 |
-| 5 | P3 | Doppelter Alias HAVE_AIOHTTP / AIOHTTP_AVAILABLE (bewusster Compat-Alias) | V17.py:107 | 2026-03-13 | WONTFIX |
-| 6 | P3 | Irreführender Kommentar bei pickle-Import | V17.py:66 | 2026-03-13 | BEHOBEN 2026-06-12 |
+| 1 | P2 | Connection-Leak in `_lookup_lightdb` (AfFetcher) -- kein `finally`-Block, `conn.close()` wird bei Exception übersprungen. Auf Windows hält eine offene Connection einen File-Lock auf der DB. | `Variant_Fusion_pro_V17.py:7504-7609` | 2026-03-13 | GEFIXT (GitHub) 2026-05-23, `9d54dee` |
+| 2 | P2 | SQLite-Verbindungen ohne `check_same_thread=False` in Methoden, die aus Worker-Threads aufgerufen werden können | `Variant_Fusion_pro_V17.py:7278,7531,10297,16724` | 2026-03-13 | GEFIXT (GitHub) 2026-05-26, `9cb6141` |
+| 3 | P3 | Bare `except:` an den sechs ursprünglich dokumentierten Stellen im Hauptprogramm -- fängt auch SystemExit und KeyboardInterrupt | `Variant_Fusion_pro_V17.py` (ehemals 329, 8315, 10338, 14419, 21589, 21606) | 2026-03-13 | GEFIXT (GitHub) 2026-03-16, `7665133`; Remote-Readback 2026-07-15 ohne Treffer |
+| 4 | P3 | TODO: `stale_days`-Parameter im BackgroundMaintainer-Konstruktor aufteilen (semantisch erledigt, Signatur nicht aktualisiert) | `Variant_Fusion_pro_V17.py:10926,10944,10958` | 2026-03-13 | OFFEN |
+| 5 | P3 | Doppelter Alias `HAVE_AIOHTTP` / `AIOHTTP_AVAILABLE` (bewusster Compat-Alias) | `Variant_Fusion_pro_V17.py:107-112` | 2026-03-13 | WONTFIX |
+| 6 | P3 | Irreführender Kommentar beim `pickle`-Import | `Variant_Fusion_pro_V17.py:67` | 2026-03-13 | GEFIXT (GitHub) 2026-06-12, `cad96f8` |
 
-**Release-Trigger-Status:** 0x P0, 0x P1, 0x P2, 1x P3 → Kein Release-Trigger (P0 oder 3x P1 nötig, P3 sammeln bis 10+)
+**Statusaufschlüsselung:** 1x OFFEN (#4, P3), 1x WONTFIX (#5, P3), 4x GEFIXT (GitHub) (#1, #2, #3, #6), 0x GEFIXT (Store).
+
+**Release-Trigger-Status:** 0x P0, 0x P1; 5x P2/P3 noch nicht als Store-Fix belegt (2x P2 + 3x P3: vier GitHub-Fixes und ein offenes Issue). WONTFIX wird nicht gezählt. Damit bleibt die Policy-Schwelle von 10x P2/P3 unterschritten und es besteht kein Store-Release-Trigger.
+
+**Scope-Hinweis zu #3:** Der Nulltreffer gilt für das veröffentlichte Hauptprogramm `Variant_Fusion_pro_V17.py` auf `origin/main`; Fix-Commit `7665133` ist ein verifizierter Vorfahr dieses Stands. Das optionale Benchmarkskript `cython_hotpath/test_performance.py` enthält weiterhin sechs Bare-`except:`-Stellen; diese gehörten nicht zu den sechs in #3 dokumentierten Hauptprogramm-Fundstellen und sind kein stillschweigend geschlossener projektweiter Befund.
 
 ---
 
@@ -48,8 +52,8 @@ Veröffentlicht: 2026-03-10 (ca.)
 
 ## Geplanter naechster Release: 17.0.2.0
 
-**Trigger:** Noch nicht erreicht -- sammeln bis P0, 3x P1, oder 10+ P2/P3
-**Enthaelt bisher:** --
+**Trigger:** Nicht erreicht -- 5x P2/P3 noch nicht als Store-Fix belegt; Schwelle 10, kein P0/P1
+**GitHub-Fixes seit dem Store-Stand:** #1, #2, #3 und #6; #4 bleibt offen, #5 bleibt WONTFIX
 
 ---
 
