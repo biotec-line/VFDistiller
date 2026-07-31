@@ -1,3 +1,5 @@
+![VFDistiller Banner](docs/assets/banner.svg)
+
 # VFDistiller — lokales Desktop-Tool für VCF- und Variantenannotation
 
 VFDistiller, auch Variant Fusion Distiller genannt, ist eine lokale

@@ -1,0 +1,262 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080C14"/>
+      <stop offset="50%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    
+    <linearGradient id="accent-title-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#C084FC"/>
+    </linearGradient>
+
+    <linearGradient id="helix-strand-1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <linearGradient id="helix-strand-2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#34D399" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <linearGradient id="funnel-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.25"/>
+      <stop offset="70%" stop-color="#34D399" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0.8"/>
+    </linearGradient>
+
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <radialGradient id="glow-cyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glow-emerald" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glow-purple" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#A855F7" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#A855F7" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Filters for SVG glow -->
+    <filter id="blur-bg" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+
+    <filter id="soft-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Background Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#334155" stroke-width="1" stroke-opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- Base Background -->
+  <rect width="1200" height="630" fill="url(#bg-grad)"/>
+
+  <!-- Ambient Glow Orbs -->
+  <circle cx="200" cy="180" r="300" fill="url(#glow-purple)" filter="url(#blur-bg)"/>
+  <circle cx="950" cy="220" r="280" fill="url(#glow-cyan)" filter="url(#blur-bg)"/>
+  <circle cx="850" cy="480" r="250" fill="url(#glow-emerald)" filter="url(#blur-bg)"/>
+
+  <!-- Grid Overlay -->
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Decorative Top &amp; Bottom Border Highlights -->
+  <rect x="0" y="0" width="1200" height="3" fill="url(#accent-title-grad)"/>
+  <rect x="0" y="627" width="1200" height="3" fill="url(#accent-title-grad)" opacity="0.4"/>
+
+  <!-- ==================== LEFT CONTENT AREA ==================== -->
+  
+  <!-- Pill Badge: Category -->
+  <g transform="translate(90, 115)">
+    <rect x="0" y="0" width="285" height="32" rx="16" fill="#1E293B" stroke="#38BDF8" stroke-width="1" stroke-opacity="0.4"/>
+    <circle cx="16" cy="16" r="5" fill="#38BDF8"/>
+    <text x="30" y="21" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#38BDF8" letter-spacing="1.5">LOCAL-FIRST BIOINFORMATICS</text>
+  </g>
+
+  <!-- Title: VFDistiller -->
+  <g transform="translate(90, 215)">
+    <!-- "VF" in Gradient Accent -->
+    <text x="0" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="76" font-weight="900" fill="url(#accent-title-grad)" letter-spacing="-1">VF</text>
+    <!-- "Distiller" in Bright White -->
+    <text x="110" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="76" font-weight="800" fill="#F8FAFC" letter-spacing="-1">Distiller</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="90" y="265" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="22" font-weight="400" fill="#94A3B8" letter-spacing="0.2">Local-first VCF &amp; genetic variant annotation</text>
+
+  <!-- Description paragraph -->
+  <text x="90" y="308" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#64748B" letter-spacing="0.1">High-performance desktop tool for filtering, annotating, and converting</text>
+  <text x="90" y="330" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#64748B" letter-spacing="0.1">genomic variant files (VCF, gVCF, 23andMe, FASTA) 100% offline.</text>
+
+  <!-- Feature Tags Grid -->
+  <!-- Tag 1: Privacy -->
+  <g transform="translate(90, 385)">
+    <rect width="215" height="42" rx="10" fill="url(#card-grad)" stroke="#334155" stroke-width="1"/>
+    <!-- Lock Icon -->
+    <path d="M 22 17 V 14 A 4 4 0 0 1 30 14 V 17 M 19 17 H 33 V 27 H 19 Z" fill="none" stroke="#34D399" stroke-width="2" stroke-linejoin="round"/>
+    <text x="42" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#E2E8F0">100% Local Privacy</text>
+  </g>
+
+  <!-- Tag 2: Formats -->
+  <g transform="translate(320, 385)">
+    <rect width="215" height="42" rx="10" fill="url(#card-grad)" stroke="#334155" stroke-width="1"/>
+    <!-- Dna Icon -->
+    <circle cx="26" cy="22" r="6" fill="none" stroke="#38BDF8" stroke-width="2"/>
+    <path d="M 22 26 L 30 18" stroke="#38BDF8" stroke-width="2"/>
+    <text x="42" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#E2E8F0">VCF / gVCF / FASTA</text>
+  </g>
+
+  <!-- Tag 3: Performance -->
+  <g transform="translate(90, 442)">
+    <rect width="215" height="42" rx="10" fill="url(#card-grad)" stroke="#334155" stroke-width="1"/>
+    <!-- Lightning Icon -->
+    <path d="M 27 14 L 20 23 H 26 L 24 30 L 31 21 H 25 Z" fill="#FBBF24" stroke="#FBBF24" stroke-width="1" stroke-linejoin="round"/>
+    <text x="42" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#E2E8F0">Cython &amp; SQLite Core</text>
+  </g>
+
+  <!-- Tag 4: Multi-Source -->
+  <g transform="translate(320, 442)">
+    <rect width="215" height="42" rx="10" fill="url(#card-grad)" stroke="#334155" stroke-width="1"/>
+    <!-- Database Icon -->
+    <path d="M 20 17 C 20 15 32 15 32 15 C 32 15 44 15 44 17 C 44 19 32 19 32 19 C 32 19 20 19 20 17 Z M 20 22 C 20 24 32 24 32 24 C 32 24 44 24 44 22 M 20 27 C 20 29 32 29 32 29 C 32 29 44 29 44 27" fill="none" stroke="#C084FC" stroke-width="1.8"/>
+    <text x="42" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#E2E8F0">gnomAD &amp; ClinVar</text>
+  </g>
+
+  <!-- Platform OS Badges &amp; RUO indicator -->
+  <g transform="translate(90, 522)">
+    <text x="0" y="15" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#475569" letter-spacing="0.5">SUPPORTED PLATFORMS:</text>
+    
+    <rect x="155" y="1" width="76" height="22" rx="4" fill="#1E293B"/>
+    <text x="193" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" text-anchor="middle">Windows</text>
+
+    <rect x="237" y="1" width="58" height="22" rx="4" fill="#1E293B"/>
+    <text x="266" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" text-anchor="middle">Linux</text>
+
+    <rect x="301" y="1" width="62" height="22" rx="4" fill="#1E293B"/>
+    <text x="332" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" text-anchor="middle">macOS</text>
+
+    <rect x="370" y="1" width="76" height="22" rx="4" fill="#312E81"/>
+    <text x="408" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#A5B4FC" text-anchor="middle">AGPL-3.0</text>
+  </g>
+
+
+  <!-- ==================== RIGHT GRAPHIC AREA: VARIANT DISTILLATION ==================== -->
+  <g id="graphic-distillation">
+    
+    <!-- TOP SECTION: DNA Double Helix / Raw Variant Stream -->
+    <g id="dna-helix-input">
+      <!-- Helix Background Glow Line -->
+      <path d="M 680 80 Q 760 140 880 120 T 1080 130" fill="none" stroke="url(#helix-strand-1)" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+      <path d="M 680 140 Q 760 80 880 140 T 1080 90" fill="none" stroke="url(#helix-strand-2)" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+
+      <!-- Base Pair Rungs -->
+      <line x1="720" y1="102" x2="720" y2="120" stroke="#475569" stroke-width="2" stroke-dasharray="2 2"/>
+      <line x1="770" y1="128" x2="770" y2="92" stroke="#475569" stroke-width="2" stroke-dasharray="2 2"/>
+      <line x1="830" y1="131" x2="830" y2="110" stroke="#475569" stroke-width="2" stroke-dasharray="2 2"/>
+      <line x1="890" y1="120" x2="890" y2="138" stroke="#475569" stroke-width="2" stroke-dasharray="2 2"/>
+      <line x1="950" y1="124" x2="950" y2="102" stroke="#475569" stroke-width="2" stroke-dasharray="2 2"/>
+      <line x1="1010" y1="128" x2="1010" y2="108" stroke="#475569" stroke-width="2" stroke-dasharray="2 2"/>
+
+      <!-- Raw Unfiltered Variant Dots (scattered top) -->
+      <circle cx="710" cy="98" r="6" fill="#F43F5E"/>
+      <circle cx="770" cy="90" r="5" fill="#38BDF8"/>
+      <circle cx="830" cy="133" r="6" fill="#F59E0B"/>
+      <circle cx="890" cy="140" r="7" fill="#A855F7"/>
+      <circle cx="950" cy="100" r="5" fill="#EF4444"/>
+      <circle cx="1020" cy="130" r="6" fill="#38BDF8"/>
+
+      <!-- Raw Stream Floating Particles funneling down -->
+      <path d="M 720 130 C 750 180 820 220 840 250" fill="none" stroke="#F43F5E" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+      <path d="M 830 145 C 840 180 860 220 870 250" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+      <path d="M 950 135 C 930 180 900 220 890 250" fill="none" stroke="#A855F7" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+      <path d="M 1020 140 C 980 180 930 220 910 250" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+    </g>
+
+    <!-- MIDDLE SECTION: Sleek Distillation Funnel / Filter Mechanism -->
+    <g id="funnel-filter" transform="translate(730, 240)">
+      <!-- Outer Funnel Polygon -->
+      <polygon points="40,10 260,10 180,150 120,150" fill="url(#funnel-grad)" stroke="#38BDF8" stroke-width="2" stroke-opacity="0.8"/>
+      
+      <!-- Top Ring of Funnel -->
+      <ellipse cx="150" cy="10" rx="110" ry="16" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+      <ellipse cx="150" cy="10" rx="85" ry="11" fill="none" stroke="#818CF8" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <!-- Inner Filter Mesh / Laser Lines -->
+      <line x1="80" y1="40" x2="220" y2="40" stroke="#38BDF8" stroke-width="1" opacity="0.5"/>
+      <line x1="100" y1="70" x2="200" y2="70" stroke="#34D399" stroke-width="1" opacity="0.6"/>
+      <line x1="120" y1="100" x2="180" y2="100" stroke="#10B981" stroke-width="1.5" opacity="0.8"/>
+
+      <!-- Filter Node Glow -->
+      <circle cx="150" cy="70" r="4" fill="#34D399" filter="url(#soft-glow)"/>
+      <circle cx="130" cy="40" r="3" fill="#38BDF8"/>
+      <circle cx="170" cy="40" r="3" fill="#A855F7"/>
+
+      <!-- Distillation Spout / Neck -->
+      <rect x="126" y="150" width="48" height="40" fill="#0F172A" stroke="#10B981" stroke-width="2"/>
+      
+      <!-- Concentrated Droplet / Concentrator -->
+      <path d="M 150 160 Q 162 175 150 185 Q 138 175 150 160 Z" fill="#34D399" filter="url(#soft-glow)"/>
+    </g>
+
+    <!-- BOTTOM SECTION: Distilled & Annotated Variant Cards (Filtered High-Value Output) -->
+    
+    <!-- Pure Concentrated Rays extending downwards -->
+    <path d="M 872 430 L 760 480" stroke="#34D399" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.7"/>
+    <path d="M 880 430 L 880 475" stroke="#10B981" stroke-width="2" opacity="0.9"/>
+    <path d="M 888 430 L 1000 480" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.7"/>
+
+    <!-- Variant Card 1: ClinVar / gnomAD (Center Bottom) -->
+    <g transform="translate(765, 475)">
+      <rect width="230" height="95" rx="12" fill="url(#card-grad)" stroke="#10B981" stroke-width="1.5" filter="url(#soft-glow)"/>
+      
+      <!-- Variant Header -->
+      <circle cx="22" cy="24" r="7" fill="#10B981"/>
+      <text x="36" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#F8FAFC">chr1:10423 C&gt;T</text>
+      
+      <!-- PASS Badge -->
+      <rect x="168" y="14" width="48" height="18" rx="4" fill="#065F46"/>
+      <text x="192" y="27" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" font-weight="800" fill="#34D399" text-anchor="middle">PASS</text>
+
+      <!-- Divider line -->
+      <line x1="16" y1="42" x2="214" y2="42" stroke="#334155" stroke-width="1"/>
+
+      <!-- Annotations -->
+      <text x="18" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#94A3B8">gnomAD AF:</text>
+      <text x="92" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#38BDF8">0.00041 (Rare)</text>
+
+      <text x="18" y="78" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#94A3B8">ClinVar:</text>
+      <text x="92" y="78" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#34D399">Likely Benign</text>
+    </g>
+
+    <!-- Floating Mini Pill Left: High Impact -->
+    <g transform="translate(640, 465)">
+      <rect width="135" height="38" rx="8" fill="#0F172A" stroke="#818CF8" stroke-width="1" stroke-opacity="0.8"/>
+      <circle cx="16" cy="19" r="4" fill="#818CF8"/>
+      <text x="28" y="23" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#C7D2FE">VEP: Missense</text>
+    </g>
+
+    <!-- Floating Mini Pill Right: CADD Score -->
+    <g transform="translate(980, 445)">
+      <rect width="130" height="38" rx="8" fill="#0F172A" stroke="#F59E0B" stroke-width="1" stroke-opacity="0.8"/>
+      <circle cx="16" cy="19" r="4" fill="#F59E0B"/>
+      <text x="28" y="23" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#FDE68A">CADD: 24.2</text>
+    </g>
+
+  </g>
+</svg>

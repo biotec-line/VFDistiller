@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/banner.png" width="100%" alt="VFDistiller Banner">
-</p>
+![VFDistiller Banner](docs/assets/banner.svg)
 
 # VFDistiller — local-first VCF and genetic variant annotation desktop tool
 
