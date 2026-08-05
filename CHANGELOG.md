@@ -5,6 +5,20 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Sicherheit / Security (2026-08-06)
+- **Die Logdatei trägt keine Variantenkennungen mehr.** `MultiSinkLogger` schrieb
+  jede Zeile wörtlich in `logfile_path` — also auch
+  `[Cache] rs1801133 @ hg38 → chr1:11796321`. Auf der Konsole ist das richtig,
+  dort sitzt die Person, deren Genom es ist; die Datei dagegen überlebt die
+  Sitzung und geht in Bugreports mit. rsIDs und genomische Loci werden jetzt
+  beim Schreiben redigiert (`redact_for_logfile`), Konsole und UI bleiben
+  vollständig. Der Dateikopf weist auf die Redaktion hin.
+  Bewusst eng gefasst: keine Entropie-Heuristik, die Zähler, Prozentwerte,
+  Zeitstempel oder Pfade mitschwärzen und das Log unlesbar machen würde —
+  `tests/test_logfile_redaction.py` prüft beide Richtungen. Schließt CodeQL
+  `py/clear-text-logging-sensitive-data` (#2) und
+  `py/clear-text-storage-sensitive-data` (#3).
+
 ### Hinzugefügt / Added
 - `make_source_zip.py`: Source-ZIP-Builder für Linux und macOS. Erstellt ein portables Quellcode-Archiv mit allen Python-Quellen, Übersetzungen, optionalem Cython-Hotpath (.pyx), Tests und Dokumentation. Schließt Windows-Binaries (.pyd, .exe), generierte Caches und FASTA-Referenzgenome aus.
 - `PACKAGING.md`: Vollständige Packaging-Dokumentation mit Optionen-Matrix (Windows EXE vs. Source-ZIP), Schritt-für-Schritt-Installationsanleitung für Linux/macOS, Cython-Fallback-Erläuterung und Hinweisen zu Annotationsdaten.

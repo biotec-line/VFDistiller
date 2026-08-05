@@ -1961,9 +1961,40 @@ class _NullLogger:
 # =============================================================================
 # LOGGER CLASSES
 # =============================================================================
+# Kennungen, die in einer dauerhaft auf der Platte liegenden Logdatei nichts
+# verloren haben. Konsole und UI sehen weiter den vollen Text -- dort sitzt die
+# Person, die die Daten ohnehin eingegeben hat. Die Logdatei dagegen ueberlebt
+# die Sitzung, wandert in Bugreports und wird weitergegeben.
+#
+# Bewusst eng gefasst: rsIDs und genomische Loci. Keine Entropie-Heuristik, die
+# Zaehler, Prozentwerte oder Dateipfade schwaerzen wuerde. Der Zeitstempel
+# ([2026-08-06 00:20:15]) bleibt heil, weil nach dem Doppelpunkt mindestens drei
+# Ziffern stehen muessen.
+_LOGFILE_REDACTIONS = (
+    (re.compile(r"\brs\d{2,}\b", re.IGNORECASE), "rs<redigiert>"),
+    (re.compile(r"\b(?:chr)?(?:[0-9]{1,2}|[XYM]|MT):\d{3,}\b", re.IGNORECASE), "<locus redigiert>"),
+)
+
+
+def redact_for_logfile(line: str) -> str:
+    """Entfernt Variantenkennungen aus einer Zeile, bevor sie in die Datei geht.
+
+    Absicht wie beim Gardener-Index: Die Datei sagt, DASS eine Variante
+    verarbeitet wurde, nicht WELCHE. Wer die konkrete Kennung braucht, liest sie
+    in der laufenden Sitzung von der Konsole ab.
+    """
+    for pattern, replacement in _LOGFILE_REDACTIONS:
+        line = pattern.sub(replacement, line)
+    return line
+
+
 class MultiSinkLogger:
-    """Multi-Sink Logger mit automatischem Log-Clearing."""
-    
+    """Multi-Sink Logger mit automatischem Log-Clearing.
+
+    Konsole und UI bekommen den vollen Text, die Logdatei eine redigierte
+    Fassung (siehe `redact_for_logfile`).
+    """
+
     def __init__(self, logfile_path: Optional[str] = None, ui_queue: Optional[queue.Queue] = None):
         self.q = ui_queue
         self.logfile_path = logfile_path
@@ -1995,6 +2026,9 @@ class MultiSinkLogger:
                     timestamp = datetime.datetime.now().strftime(LOG_DATETIME_FMT)
                     f.write(f"{'='*70}\n")
                     f.write(f"VariantFusion Log Session Started: {timestamp}\n")
+                    f.write("Hinweis: rsIDs und genomische Loci sind in dieser Datei\n")
+                    f.write("redigiert. Die vollen Werte stehen nur in der laufenden\n")
+                    f.write("Sitzung auf der Konsole bzw. im UI.\n")
                     f.write(f"{'='*70}\n\n")
             print(f"[Logger] ✅ Logfile cleared: {self.logfile_path}")
         except Exception as e:
@@ -2020,7 +2054,7 @@ class MultiSinkLogger:
             try:
                 with self._lock:
                     with open(self.logfile_path, 'a', encoding='utf-8') as f:
-                        f.write(line + '\n')
+                        f.write(redact_for_logfile(line) + '\n')
             except Exception as e:
                 print(f"[Logger] ⚠️ File write error: {e}", file=sys.stderr)
         
