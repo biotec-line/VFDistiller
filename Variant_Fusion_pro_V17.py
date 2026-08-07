@@ -2034,10 +2034,7 @@ class MultiSinkLogger:
         except Exception as e:
             print(f"[Logger] ⚠️ Could not clear logfile: {e}")
     
-    def log(self, msg: str, prefix: Optional[str] = None, flush: bool = False):
-        ts = datetime.datetime.now().strftime(LOG_DATETIME_FMT)
-        line = f"[{ts}] [{prefix}] {msg}" if prefix else f"[{ts}] {msg}"
-        
+    def _emit(self, line: str, persistent_line: str, flush: bool = False):
         if self.q is not None:
             try:
                 self.q.put_nowait(line)
@@ -2054,7 +2051,7 @@ class MultiSinkLogger:
             try:
                 with self._lock:
                     with open(self.logfile_path, 'a', encoding='utf-8') as f:
-                        f.write(redact_for_logfile(line) + '\n')
+                        f.write(redact_for_logfile(persistent_line) + '\n')
             except Exception as e:
                 print(f"[Logger] ⚠️ File write error: {e}", file=sys.stderr)
         
@@ -2064,6 +2061,28 @@ class MultiSinkLogger:
                 sys.stdout.flush()
         except Exception:
             pass
+
+    def log(self, msg: str, prefix: Optional[str] = None, flush: bool = False):
+        ts = datetime.datetime.now().strftime(LOG_DATETIME_FMT)
+        line = f"[{ts}] [{prefix}] {msg}" if prefix else f"[{ts}] {msg}"
+        self._emit(line, line, flush=flush)
+
+    def log_private(
+        self,
+        msg: str,
+        persistent_msg: str,
+        prefix: Optional[str] = None,
+        flush: bool = False,
+    ):
+        """Zeigt den vollen Text nur in Sitzungssinks und speichert eine Kurzfassung."""
+        ts = datetime.datetime.now().strftime(LOG_DATETIME_FMT)
+        line = f"[{ts}] [{prefix}] {msg}" if prefix else f"[{ts}] {msg}"
+        persistent_line = (
+            f"[{ts}] [{prefix}] {persistent_msg}"
+            if prefix
+            else f"[{ts}] {persistent_msg}"
+        )
+        self._emit(line, persistent_line, flush=flush)
     
     def drain(self) -> list:
         msgs = []
@@ -2077,7 +2096,6 @@ class MultiSinkLogger:
         except Exception as e:
             print(f"[Logger] ⚠️ Drain error: {e}", file=sys.stderr)
         return msgs
-    
     def shutdown(self):
         if self.q is not None:
             remaining = self.drain()
@@ -2094,6 +2112,17 @@ class MultiSinkLogger:
                         f.write(f"{'='*70}\n")
             except Exception:
                 pass
+
+
+def log_private_safely(logger_obj, msg: str, persistent_msg: str):
+    """Trennt private Sitzungsdetails, ohne ältere ``log``-Logger zu brechen."""
+    private_log = getattr(logger_obj, "log_private", None)
+    if callable(private_log):
+        private_log(msg, persistent_msg)
+    else:
+        # Ein einfacher Fremdlogger kann ein persistenter Sink sein. Deshalb
+        # bekommt der kompatible Fallback ausschließlich die sichere Fassung.
+        logger_obj.log(persistent_msg)
 
 
 # =============================================================================
@@ -4785,7 +4814,11 @@ class convert_23andme_to_vcf:
         return None
     
     def create_vcf(self, variants, build, out_vcf, cache, fasta_path=None, sex="unknown"):
-        self.logger.log(f"[23andMe→VCF] Starte VCF-Erzeugung: {len(variants)} Varianten, Build={build}, Ausgabe={out_vcf}")
+        log_private_safely(
+            self.logger,
+            f"[23andMe→VCF] Starte VCF-Erzeugung: {len(variants)} Varianten, Build={build}, Ausgabe={out_vcf}",
+            f"[23andMe→VCF] Starte VCF-Erzeugung: {len(variants)} Varianten, Build={build}, Ausgabe=<Pfad redigiert>",
+        )
 
         fai_index = None
         if fasta_path:
@@ -5041,7 +5074,12 @@ class convert_23andme_to_vcf:
             else:
                 self.logger.log(f"[23andMe→VCF] Build automatisch ermittelt: {build}")
 
-        self.logger.log(f"[23andMe→VCF] Starte Konvertierung: {path}, Build={build}, Sex={sex}")
+        log_private_safely(
+            self.logger,
+            f"[23andMe→VCF] Starte Konvertierung: {path}, Build={build}, Sex={sex}",
+            f"[23andMe→VCF] Starte Konvertierung: <Pfad redigiert>, "
+            f"Build={build}, Sex=<redigiert>",
+        )
 
         # 2. Varianten einlesen
         variants = self.parse_23andme()
@@ -5083,7 +5121,11 @@ class convert_23andme_to_vcf:
             variants, build, out_vcf, self.cache,
             fasta_path=fasta_path, sex=sex
         )
-        self.logger.log(f"[23andMe→VCF] ✅ VCF erzeugt: {out_vcf}")
+        log_private_safely(
+            self.logger,
+            f"[23andMe→VCF] ✅ VCF erzeugt: {out_vcf}",
+            "[23andMe→VCF] ✅ VCF erzeugt: <Pfad redigiert>",
+        )
         return out_vcf, build
 
     def scan_header_for_build(self, file_path: str) -> Optional[str]:
@@ -18881,7 +18923,11 @@ class Distiller:
                 self.logger.log("[23andMe] Conversion failed or cancelled.")
                 return
 
-            self.logger.log(f"[23andMe] Conversion complete: {vcf_path} (Build: {out_build})")
+            log_private_safely(
+                self.logger,
+                f"[23andMe] Conversion complete: {vcf_path} (Build: {out_build})",
+                f"[23andMe] Conversion complete: <Pfad redigiert> (Build: {out_build})",
+            )
 
             # V10: Alle Parameter kommen vom FlagManager
             self._distill_vcf(vcf_path=vcf_path, build=out_build)
