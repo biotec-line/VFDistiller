@@ -5,6 +5,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Dokumentation & Sichtbarkeit / Discoverability (2026-08-14)
+- **Badges & Header-Politur**: Shields.io-Badges für Organisation (`biotec-line`), Dach-Ökosystem (`open-bricks`), Lizenz (`AGPL-3.0`), Python-Version (`3.10+`), Bioinformatik-Standards (`VCF 4.2 | gVCF`), Genom-Builds (`GRCh37 | GRCh38`), Teststatus (`115 passed`) und LLM-Kontext in englische und deutsche README integriert.
+- **Pipeline-Architekturdiagramm**: Interaktives Mermaid-Flowchart in `README.md` und `README.de.md` ergänzt, das die 5 Stufen (Eingabe, Ingestion/Build-Erkennung, Multi-Source-Annotation, Quality Gate, Export) visualisiert.
+- **LLM-Discoverability**: GFM Callout (`> [!TIP]`) für `llms.txt` in beiden READMEs verankert; `llms.txt` Prüfstempel auf `2026-08-14` und Ökosystem-Metadaten synchronisiert.
+
 ### Sicherheit / Security (2026-08-06)
 - **Die Logdatei trägt keine Variantenkennungen mehr.** `MultiSinkLogger` schrieb
   jede Zeile wörtlich in `logfile_path` — also auch

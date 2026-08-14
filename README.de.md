@@ -1,5 +1,23 @@
 ![VFDistiller Banner](docs/assets/banner.svg)
 
+<div align="center">
+
+[![Organisation: biotec-line](https://img.shields.io/badge/Organisation-biotec--line-0284c7?style=flat&logo=dna&logoColor=white)](https://github.com/biotec-line)
+[![Ökosystem: open-bricks](https://img.shields.io/badge/Ökosystem-open--bricks-blue?style=flat)](https://github.com/open-bricks)
+[![Lizenz: AGPL-3.0](https://img.shields.io/badge/Lizenz-AGPL_3.0-blue.svg)](LICENSE)
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
+[![Genom-Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genom--Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
+[![Tests: 115 passed](https://img.shields.io/badge/Tests-115%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![LLM-Kontext](https://img.shields.io/badge/LLM--Kontext-llms.txt-orange?style=flat)](llms.txt)
+
+**[English](README.md)** • **[Deutsch](README.de.md)**
+
+</div>
+
+> [!TIP]
+> **KI-Agenten & LLM-Kontext**: Dieses Repository stellt maschinenlesbare Architektur- und Auffindbarkeits-Metadaten in [`llms.txt`](llms.txt) bereit.
+
 # VFDistiller — lokales Desktop-Tool für VCF- und Variantenannotation
 
 VFDistiller, auch Variant Fusion Distiller genannt, ist eine lokale
@@ -54,6 +72,56 @@ Windows-Workstations praktikabel.
   Feldern und optionalen AlphaGenome-Daten.
 - **Research-Use-Only-Grenze** ist im Projekt klar markiert: kein
   Diagnoseprodukt, kein Medizinprodukt, keine klinische Zweckbestimmung.
+
+## Pipeline-Architektur
+
+```mermaid
+flowchart TD
+    classDef input fill:#e0f2fe,stroke:#0284c7,stroke-width:1.5px,color:#0c4a6e;
+    classDef process fill:#f1f5f9,stroke:#64748b,stroke-width:1.5px,color:#0f172a;
+    classDef anno fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f;
+    classDef filter fill:#fce7f3,stroke:#db2777,stroke-width:1.5px,color:#831843;
+    classDef output fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d;
+
+    subgraph Inputs ["1. Multi-Format-Eingabe (Lokal)"]
+        VCF["VCF / VCF.GZ (v4.2)"]:::input
+        GVCF["gVCF (Genomisches VCF)"]:::input
+        RAW["23andMe-Rohdaten (.txt)"]:::input
+        FASTA["FASTA-Referenz (.fa)"]:::input
+    end
+
+    subgraph Core ["2. Ingestion & Build-Erkennung"]
+        PARSER["Streaming-Parser / Cython-Hotpath"]:::process
+        BUILD["Build-Erkennung<br/>GRCh37 (hg19) / GRCh38 (hg38)"]:::process
+        PARSER --> BUILD
+    end
+
+    subgraph Annotation ["3. Multi-Source-Annotationsschicht"]
+        GNOMAD["gnomAD LightDB (Offline-SQLite)"]:::anno
+        MYVAR["MyVariant.info (REST)"]:::anno
+        VEP["Ensembl VEP (Async aiohttp)"]:::anno
+        ALFA["ALFA / TOPMed"]:::anno
+        AG["AlphaGenome-API (Optional)"]:::anno
+    end
+
+    subgraph QualityGate ["4. Qualitäts- & Relevanzfilterung"]
+        AF_FILT["Allelfrequenz-Schwelle (z.B. &lt; 0.007)"]:::filter
+        CADD_FILT["CADD-Hervorhebungswert"]:::filter
+        CLIN_FILT["ClinVar / ClinSig & Variant-Impact"]:::filter
+        GENE_FILT["Gen-Listen / FILTER=PASS"]:::filter
+    end
+
+    subgraph Outputs ["5. Interaktive GUI & Multi-Format-Export"]
+        GUI["Interaktive ttkbootstrap-Tabelle"]:::output
+        EXP_VCF["Annotierter VCF-Export"]:::output
+        EXP_DOC["CSV / Excel (.xlsx) / PDF-Bericht"]:::output
+    end
+
+    Inputs --> PARSER
+    BUILD --> Annotation
+    Annotation --> QualityGate
+    QualityGate --> Outputs
+```
 
 ## Screenshot-Galerie
 
