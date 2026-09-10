@@ -15,7 +15,6 @@ Red-on-revert: set VFD_SRC to the PRE-bugsweep backup copy → the three fix ass
      re-discovery (asymmetric with absolute=True).
 """
 import os
-import re
 import unittest
 from pathlib import Path
 

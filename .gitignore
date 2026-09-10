@@ -95,14 +95,17 @@ _WARTUNG/
 docs/superpowers/
 
 # ---------------------------------------------------------------------------
-# Interne Entwicklungs-Dateien
+# Interne Entwicklungs-Dateien & Multi-Agent Locks
 # ---------------------------------------------------------------------------
 AUFGABEN.txt
 TEST.txt
 TESTS.txt
 TESTERGEBNISSE.txt
-LOCK.txt
-LOCK.*.txt
+LOCK
+LOCK.*
+*.lock
+LOCK*.txt
+LOCK.permissions.json
 BUGREPORT.md
 BUG-DIFF.txt
 DIAGNOSE_REPORT.md
@@ -113,6 +116,30 @@ RELEASE_PLAN.md
 _persönlich/
 .claude/
 COMPLETE_PROJECT_CONTEXT.txt
+
+# ---------------------------------------------------------------------------
+# Multi-Host Synchronisationskonflikte (OneDrive / Cloud Sync)
+# ---------------------------------------------------------------------------
+*-conflict-*
+*.sync-conflict-*
+*.conflict
+*-CONFLIT-*
+*.sync-temp-*
+*-ASUS-GEI.*
+*-WORKSTATION-LG.*
+
+# ---------------------------------------------------------------------------
+# Test- & Packaging-Caches
+# ---------------------------------------------------------------------------
+.ruff_cache/
+wheelhouse/
+.wheel-smoke/
+*.egg-info/
+.coverage
+coverage/
+htmlcov/
+*.tmp
+*.bak
 
 # ---------------------------------------------------------------------------
 # OS-spezifisch

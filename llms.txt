@@ -7,7 +7,8 @@ License: AGPL-3.0-or-later
 Primary language: Python
 UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, optional PyInstaller build
 Also known as: Variant Fusion Distiller
-Last-checked: 2026-08-14
+Version: 17.0.1
+Last-checked: 2026-09-10
 
 ## Summary
 
@@ -45,6 +46,8 @@ assessments.
 
 - `README.md`: English public documentation
 - `README.de.md`: German public documentation
+- `pyproject.toml`: PEP 621 packaging metadata, dependencies, and tool settings
+- `.github/workflows/`: CI workflows for multi-version testing and platform smoke
 - `Variant_Fusion_pro_V17.py`: main desktop application and pipeline
 - `variant_fusion_settings.json.example`: configuration template
 - `cython_hotpath/`: optional Cython acceleration modules

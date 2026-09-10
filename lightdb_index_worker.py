@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-import sqlite3, sys, json, time, os, traceback
+import sqlite3
+import sys
+import json
+import time
+import os
+import traceback
 
 def ensure_index_worker(db_path: str, progress_file: str):
     try:

@@ -3,6 +3,16 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [17.0.1] - 2026-09-10
+
+### Repository-Hygiene & CI-Matrix-Härtung (Pfad A)
+- **PEP 621 Standard-Metadaten**: `pyproject.toml` mit standardisierter Paketkonfiguration für `vfdistiller` v17.0.1 angelegt (AGPL-3.0-or-later, Python >=3.10, vollständige Ökosystem- und Repository-URLs für biotec-line und open-bricks, standardisierte Classifiers, optionale Dev-/Test-Dependencies sowie `[tool.pytest.ini_options]` und `[tool.ruff]`).
+- **CI-Matrix & Concurrency-Härtung**: Neue GitHub Actions Workflow-Matrix `.github/workflows/tests.yml` für Python 3.10 bis 3.13 unter `ubuntu-latest` mit Bytecode-Kompilierungsgate (`python -m compileall -q .`), Linter-Gate (`ruff check .`) und Pytest-Ausführung. Concurrency-Cancellation (`cancel-in-progress: true`) in `source-platform-smoke.yml` und `tests.yml` nachgerüstet.
+- **Git-Hygiene & Lock-Schutz**: `.gitignore` erweitert um Schutz vor Multi-Host-Synchronisationskonflikten (`*-conflict-*`, `*.sync-conflict-*`, etc.), Multi-Agent Locks (`LOCK`, `LOCK.*`, etc.) sowie `.ruff_cache/`, `wheelhouse/` und Build-Caches.
+- **Sicherheitsrichtlinie & SLAs**: `SECURITY.md` zweisprachig überarbeitet mit verbindlicher 48-Stunden-Erstrückmeldung (SLA), 5-Werktage-Triage und offiziellen Sicherheitskontakten (`security@open-bricks.org`, `security@biotec-line.org`, `lukas@open-bricks.org`).
+- **Code-Qualität & Bugfixes**: Unbenutzte Imports in `tests/` bereinigt, ungebundene `DIST_DIR`-Variable in `build_release.py` behoben, Benchmark-Schleifen in `test_performance.py` an Ruff-Konventionen angepasst.
+- **Vertragstestsuite**: `tests/test_metadata.py` hinzugefügt, um PEP 621 Metadaten, `.gitignore`-Muster, Sicherheits-SLAs, `llms.txt`, `CHANGELOG.md` und CI-Workflows automatisiert im Testzyklus abzusichern.
+
 ## [Unreleased]
 
 ### Dokumentation & Sichtbarkeit / Discoverability (2026-08-14)

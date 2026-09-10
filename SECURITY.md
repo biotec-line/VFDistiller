@@ -1,97 +1,88 @@
 # Security Policy — VFDistiller
 
-Thank you for helping to keep VFDistiller safe. This document describes how
-to report security vulnerabilities and which parts of the project are in
-scope.
+[English](#english) | [Deutsch](#deutsch)
 
-## Supported Versions
+---
 
-| Version | Supported                       |
-| ------- | ------------------------------- |
-| V17.x   | :white_check_mark: (current)    |
-| < V17   | :x: (no further security fixes) |
+<a name="english"></a>
+## English
 
-Only the current major version is supplied with security updates. Older
-versions are not patched; users are expected to upgrade to V17.x.
+### Supported Versions
 
-## How to Report a Vulnerability
+| Version | Supported | Security Maintenance |
+| ------- | --------- | -------------------- |
+| 17.x / V17 | :white_check_mark: Yes | Active security support (current release: 17.0.1) |
+| < 17.0  | :x: No | End of life; upgrade required |
 
-**Do not open a public GitHub issue for security reports.**
+Only the current major release series (`17.x`) receives active security patches. Users are strongly advised to run the latest available release.
 
-Please use GitHub's **Private Vulnerability Reporting** feature:
+### Reporting a Vulnerability
 
-1. Go to <https://github.com/biotec-line/VFDistiller/security/advisories>.
-2. Click **Report a vulnerability**.
-3. Provide a description, a minimal reproducer if possible, and the version
-   / build you tested against.
+**Please do not report security vulnerabilities through public GitHub issues.**
 
-Alternatively you can reach the maintainer via the contact methods listed
-in the repository profile (GitHub: `@lukisch`).
+Use one of the following secure channels:
 
-You can expect:
+1. **GitHub Private Vulnerability Reporting (Preferred):**
+   Navigate to [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) and click **"Report a vulnerability"**.
+2. **Security Email:**
+   - Primary: `security@open-bricks.org`
+   - Organization: `security@biotec-line.org`
+   - Maintainer: `lukas@open-bricks.org`
+   - GitHub profile: [`@lukisch`](https://github.com/lukisch)
 
-- An acknowledgement within **7 days** of your report.
-- A triage decision (accepted / duplicate / not in scope) within **14 days**.
-- Coordinated disclosure: we aim to publish a fix and an advisory within
-  **90 days**. If a fix cannot be delivered in that time window, we will
-  communicate openly about it.
+### Response Commitments & SLAs
 
-Please do **not** perform destructive testing against third-party services
-or other people's data while researching VFDistiller. Use your own sample
-files, a local SQLite database and your own API keys.
+- **Initial Response:** Within **48 hours** with an acknowledgment and issue reference.
+- **Triage Assessment:** Within **5 business days** confirming validity, severity assessment, and reproduction steps.
+- **Remediation & Advisory:** Coordinated release typically within **30–90 days**, depending on vulnerability complexity.
 
-## Scope
+### Scope
 
-VFDistiller is a desktop application. The following areas are **in scope**
-for security reports:
-
-- **VCF / gVCF / 23andMe / FASTA parsers** — memory-unsafe handling,
-  path-traversal, ZIP-slip-style issues, resource-exhaustion through
-  maliciously crafted input files.
-- **SQLite storage** — SQL-injection, file-permission issues, data-loss
-  bugs that can be triggered remotely (e.g. through a crafted import file).
-- **Third-party API integrations** — credential leakage (AlphaGenome,
-  NCBI, Ensembl VEP, gnomAD, MyVariant.info), unsanitised data sent over
-  HTTPS, TLS downgrade, unsafe handling of API responses.
-- **Cython hot-path modules** — buffer overflows, out-of-bounds reads,
-  use-after-free.
-- **Packaging / AppxManifest templates** — capability requests that exceed
-  what the documentation claims; path-escalation out of the sandbox.
-- **Update / background workers** — privilege escalation, arbitrary file
-  writes outside the user-data directory.
+The following areas are **in scope** for security reports:
+- **Genomic parsers & file ingestion:** Memory corruption, path traversal, Zip-Slip, or unconstrained resource allocation in VCF, gVCF, 23andMe, and FASTA processing.
+- **Local SQLite engine:** SQL injection vulnerabilities, unsafe deserialization, or local privilege/permission escalation.
+- **External API connectors:** AlphaGenome, NCBI E-Utilities, Ensembl VEP, gnomAD, and MyVariant.info credential management, TLS enforcement, and secure deserialization.
+- **Cython acceleration modules:** Buffer bounds checking, arithmetic overflow, and memory-safety regressions in `cython_hotpath`.
+- **Packaging & Desktop Sandbox:** AppxManifest capability boundaries, MSIX isolation, and sandbox escape vectors.
 
 The following areas are **out of scope**:
+- **Biological / clinical annotations:** Discrepancies in third-party clinical significance classifications (ClinVar, gnomAD, Ensembl).
+- **Regulatory claims:** VFDistiller is licensed and designated for **Research Use Only (RUO)**.
+- **Upstream dependency issues:** Vulnerabilities in third-party libraries (`requests`, `Pillow`, `aiohttp`) without actionable impact on VFDistiller (though dependencies will be updated upon upstream release).
+- **Self-inflicted credential leaks:** Committing private API keys into personal repositories or fork branches.
 
-- **Clinical correctness or clinical validity of the displayed ClinVar
-  (ClinSig) / VEP / AlphaGenome / gnomAD annotations.** These values are
-  reproduced as-is from the underlying third-party research databases.
-  Reports about „pathogenic" / „benign" / allele-frequency mis-classifications
-  should be directed to the respective upstream sources
-  (ClinVar/NCBI, Ensembl, Google DeepMind, gnomAD / Broad Institute).
-- **Regulatory status.** VFDistiller is Research Use Only (see NOTICE).
-  Issues such as „the tool should have been CE-IVD certified" are not
-  security reports; please contact the maintainer directly for regulatory
-  correspondence.
-- **Third-party Python packages.** Vulnerabilities in `requests`,
-  `aiohttp`, `Pillow`, `reportlab`, `openpyxl`, etc. should be reported to
-  the respective upstream projects. We will, however, bump the pinned
-  version in `requirements.txt` once an upstream fix is published.
-- **User's own API-key leakage via their own misuse** (e.g. committing a
-  configuration file to a public repository).
+---
 
-## Handling of User Data
+<a name="deutsch"></a>
+## Deutsch
 
-VFDistiller processes data locally. See `PRIVACY_POLICY.md` for the
-full privacy statement. No telemetry, analytics or crash reporting is
-included. Outbound network traffic only occurs when the user explicitly
-triggers an annotation or lookup feature.
+### Unterstützte Versionen
 
-## Coordinated Disclosure
+| Version | Unterstützt | Sicherheitswartung |
+| ------- | ----------- | ------------------ |
+| 17.x / V17 | :white_check_mark: Ja | Aktiver Sicherheitssupport (aktuelle Version: 17.0.1) |
+| < 17.0  | :x: Nein | End of Life; Aktualisierung erforderlich |
 
-Once a fix is available, we will:
+### Sicherheitslücke melden
 
-1. Publish a GitHub Security Advisory with a CVE request where applicable.
-2. Ship a patched GitHub release or source update and update `CHANGELOG.md`.
-3. Credit the reporter (unless anonymity was requested).
+**Bitte melden Sie Sicherheitslücken niemals über öffentliche GitHub Issues.**
 
-Thank you for responsible disclosure.
+Nutzen Sie stattdessen:
+
+1. **Private Vulnerability Reporting:**
+   Über das GitHub-Menü [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) auf **"Report a vulnerability"** klicken.
+2. **Sicherheits-E-Mail:**
+   - Primär: `security@open-bricks.org`
+   - Organisation: `security@biotec-line.org`
+   - Maintainer: `lukas@open-bricks.org`
+   - GitHub: [`@lukisch`](https://github.com/lukisch)
+
+### Service-Level-Agreements (SLA)
+
+- **Erstrückmeldung:** Innerhalb von **48 Stunden**.
+- **Triage & Einstufung:** Verbindliche Einschätzung innerhalb von **5 Werktagen**.
+- **Behebung:** Koordiniertes Release und Security Advisory in der Regel innerhalb von **30 bis 90 Tagen**.
+
+### Geltungsbereich & Forschungshinweis
+
+VFDistiller arbeitet nach dem **Local-First-Prinzip**. Es werden keine Telemetrie-, Analyse- oder Nutzungsdaten übertragen. Netzwerkanfragen erfolgen ausschließlich nach expliziter Nutzeraktion zur Konsultation wissenschaftlicher APIs über gesicherte HTTPS-Verbindungen. VFDistiller ist ausschließlich für Forschungszwecke bestimmt (**Research Use Only**).

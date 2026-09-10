@@ -256,9 +256,9 @@ def main():
     if not args.skip_exe:
         build_exe(args)
     else:
-        exe_path = os.path.join(DIST_DIR, EXE_NAME)
-        if not os.path.exists(exe_path):
-            print(f"\nWARNUNG: Keine EXE in {DIST_DIR} gefunden!")
+        exe_path = PROJECT_DIST_DIR / EXE_NAME
+        if not exe_path.exists():
+            print(f"\nWARNUNG: Keine EXE in {PROJECT_DIST_DIR} gefunden!")
             print("         Verwende 'python build_release.py' ohne --skip-exe")
 
     # Release-ZIP erstellen

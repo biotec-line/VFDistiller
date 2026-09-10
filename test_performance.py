@@ -60,9 +60,9 @@ def benchmark_vcf_parsing(acc: CythonAccelerator, iterations: int = 1):
     print("\n" + "="*70)
     print("VCF PARSING BENCHMARK")
     print("="*70)
-    
+
     results = []
-    
+
     # -------------------------------------------------------------------------
     # CYTHON
     # -------------------------------------------------------------------------
@@ -71,13 +71,13 @@ def benchmark_vcf_parsing(acc: CythonAccelerator, iterations: int = 1):
         for _ in range(iterations):
             for line in VCF_LINES:
                 try:
-                    record = acc.parse_vcf_line(line)
+                    _ = acc.parse_vcf_line(line)
                 except Exception:
                     pass
         cython_time = time.time() - start
         results.append(("Cython", cython_time))
         print(f"Cython:  {cython_time:.3f}s  ({len(VCF_LINES)*iterations:,} lines)")
-    
+
     # -------------------------------------------------------------------------
     # PYTHON
     # -------------------------------------------------------------------------
@@ -86,7 +86,7 @@ def benchmark_vcf_parsing(acc: CythonAccelerator, iterations: int = 1):
         for line in VCF_LINES:
             try:
                 parts = line.split('\t')
-                record = {
+                _ = {
                     'chrom': parts[0],
                     'pos': int(parts[1]),
                     'id': parts[2],
@@ -101,14 +101,14 @@ def benchmark_vcf_parsing(acc: CythonAccelerator, iterations: int = 1):
     python_time = time.time() - start
     results.append(("Python", python_time))
     print(f"Python:  {python_time:.3f}s  ({len(VCF_LINES)*iterations:,} lines)")
-    
+
     # -------------------------------------------------------------------------
     # SPEEDUP
     # -------------------------------------------------------------------------
     if acc.available and cython_time > 0:
         speedup = python_time / cython_time
         print(f"\n⚡ Speedup: {speedup:.1f}x faster")
-    
+
     return results
 
 
@@ -117,9 +117,9 @@ def benchmark_af_validation(acc: CythonAccelerator, iterations: int = 1):
     print("\n" + "="*70)
     print("AF VALIDATION BENCHMARK")
     print("="*70)
-    
+
     results = []
-    
+
     # -------------------------------------------------------------------------
     # CYTHON
     # -------------------------------------------------------------------------
@@ -128,13 +128,13 @@ def benchmark_af_validation(acc: CythonAccelerator, iterations: int = 1):
         for _ in range(iterations):
             for val in AF_VALUES:
                 try:
-                    is_valid = acc.validate_af(val)
+                    _ = acc.validate_af(val)
                 except Exception:
                     pass
         cython_time = time.time() - start
         results.append(("Cython", cython_time))
         print(f"Cython:  {cython_time:.3f}s  ({len(AF_VALUES)*iterations:,} validations)")
-    
+
     # -------------------------------------------------------------------------
     # PYTHON
     # -------------------------------------------------------------------------
@@ -142,9 +142,9 @@ def benchmark_af_validation(acc: CythonAccelerator, iterations: int = 1):
     for _ in range(iterations):
         for val in AF_VALUES:
             try:
-                is_valid = (
-                    val is not None 
-                    and isinstance(val, (int, float)) 
+                _ = (
+                    val is not None
+                    and isinstance(val, (int, float))
                     and 0.0 <= val <= 1.0
                 )
             except Exception:
@@ -152,14 +152,14 @@ def benchmark_af_validation(acc: CythonAccelerator, iterations: int = 1):
     python_time = time.time() - start
     results.append(("Python", python_time))
     print(f"Python:  {python_time:.3f}s  ({len(AF_VALUES)*iterations:,} validations)")
-    
+
     # -------------------------------------------------------------------------
     # SPEEDUP
     # -------------------------------------------------------------------------
     if acc.available and cython_time > 0:
         speedup = python_time / cython_time
         print(f"\n⚡ Speedup: {speedup:.1f}x faster")
-    
+
     return results
 
 
@@ -168,9 +168,9 @@ def benchmark_key_normalization(acc: CythonAccelerator, iterations: int = 1):
     print("\n" + "="*70)
     print("KEY NORMALIZATION BENCHMARK")
     print("="*70)
-    
+
     results = []
-    
+
     # -------------------------------------------------------------------------
     # CYTHON
     # -------------------------------------------------------------------------
@@ -179,13 +179,13 @@ def benchmark_key_normalization(acc: CythonAccelerator, iterations: int = 1):
         for _ in range(iterations):
             for chrom, pos, ref, alt, build in KEYS:
                 try:
-                    key = acc.normalize_key(chrom, pos, ref, alt, build)
+                    _ = acc.normalize_key(chrom, pos, ref, alt, build)
                 except Exception:
                     pass
         cython_time = time.time() - start
         results.append(("Cython", cython_time))
         print(f"Cython:  {cython_time:.3f}s  ({len(KEYS)*iterations:,} normalizations)")
-    
+
     # -------------------------------------------------------------------------
     # PYTHON
     # -------------------------------------------------------------------------
@@ -198,20 +198,20 @@ def benchmark_key_normalization(acc: CythonAccelerator, iterations: int = 1):
                 ref = ref.upper()
                 alt = alt.upper()
                 build = build.lower()
-                key = (chrom, pos, ref, alt, build)
+                _ = (chrom, pos, ref, alt, build)
             except Exception:
                 pass
     python_time = time.time() - start
     results.append(("Python", python_time))
     print(f"Python:  {python_time:.3f}s  ({len(KEYS)*iterations:,} normalizations)")
-    
+
     # -------------------------------------------------------------------------
     # SPEEDUP
     # -------------------------------------------------------------------------
     if acc.available and cython_time > 0:
         speedup = python_time / cython_time
         print(f"\n⚡ Speedup: {speedup:.1f}x faster")
-    
+
     return results
 
 
@@ -254,20 +254,20 @@ def run_correctness_checks(acc: CythonAccelerator):
     print("\n" + "="*70)
     print("CORRECTNESS TESTS")
     print("="*70)
-    
+
     passed = 0
     failed = 0
-    
+
     # -------------------------------------------------------------------------
     # VCF-PARSING
     # -------------------------------------------------------------------------
     print("\n1. VCF Parsing...")
     line = "chr1\t12345\trs123\tA\tT\t30.5\tPASS\tDP=100"
-    
+
     if acc.available:
         cython_result = acc.parse_vcf_line(line)
     python_result = parse_vcf_line_python(line)
-    
+
     if acc.available:
         if cython_result == python_result:
             print("   ✅ PASS: Cython == Python")
@@ -279,18 +279,18 @@ def run_correctness_checks(acc: CythonAccelerator):
             failed += 1
     else:
         print("   ⚠️  SKIP: Cython not available")
-    
+
     # -------------------------------------------------------------------------
     # AF-VALIDIERUNG
     # -------------------------------------------------------------------------
     print("\n2. AF Validation...")
     test_vals = [0.05, 1.5, -0.1, None, "invalid"]
-    
+
     if acc.available:
         for val in test_vals:
             cython_result = acc.validate_af(val)
             python_result = validate_af_python(val)
-            
+
             if cython_result == python_result:
                 print(f"   ✅ PASS: {val} -> {cython_result}")
                 passed += 1
@@ -301,7 +301,7 @@ def run_correctness_checks(acc: CythonAccelerator):
                 failed += 1
     else:
         print("   ⚠️  SKIP: Cython not available")
-    
+
     # -------------------------------------------------------------------------
     # KEY-NORMALISIERUNG
     # -------------------------------------------------------------------------
@@ -310,12 +310,12 @@ def run_correctness_checks(acc: CythonAccelerator):
         ("chr1", 123, "A", "t", "HG38"),
         ("2", 456, "gg", "G", "hg19"),
     ]
-    
+
     if acc.available:
         for chrom, pos, ref, alt, build in test_keys:
             cython_result = acc.normalize_key(chrom, pos, ref, alt, build)
             python_result = normalize_key_python(chrom, pos, ref, alt, build)
-            
+
             if cython_result == python_result:
                 print(f"   ✅ PASS: {chrom}:{pos} -> {cython_result}")
                 passed += 1
@@ -326,14 +326,14 @@ def run_correctness_checks(acc: CythonAccelerator):
                 failed += 1
     else:
         print("   ⚠️  SKIP: Cython not available")
-    
+
     # -------------------------------------------------------------------------
     # SUMMARY
     # -------------------------------------------------------------------------
     print("\n" + "-"*70)
     print(f"Results: {passed} passed, {failed} failed")
     print("="*70)
-    
+
     return failed == 0
 
 
@@ -345,39 +345,39 @@ def main():
     print("\n" + "="*70)
     print("CYTHON HOT-PATH PERFORMANCE TEST")
     print("="*70)
-    
+
     # Initialize
     acc = CythonAccelerator(enable_stats=True)
-    
+
     print(f"\nCython available: {acc.available}")
     if not acc.available:
         print("\n⚠️  WARNING: Cython not available, running Python-only benchmarks")
         print("\nTo compile Cython modules:")
         print("  cd cython_hotpath")
         print("  python setup.py build_ext --inplace")
-    
+
     # Correctness tests
     if not run_correctness_checks(acc):
         print("\n❌ CORRECTNESS TESTS FAILED!")
         return 1
-    
+
     # Performance benchmarks
     print("\n" + "="*70)
     print("PERFORMANCE BENCHMARKS")
     print("="*70)
-    
+
     iterations = 5
     print(f"\nRunning {iterations} iterations per benchmark...\n")
-    
+
     benchmark_vcf_parsing(acc, iterations=iterations)
     benchmark_af_validation(acc, iterations=iterations)
     benchmark_key_normalization(acc, iterations=iterations)
-    
+
     # Stats
     if acc.enable_stats and acc.available:
         print("\n" + "="*70)
         acc.print_stats()
-    
+
     print("\n✅ ALL TESTS COMPLETE\n")
     return 0
 

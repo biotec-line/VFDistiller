@@ -1,0 +1,119 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vfdistiller"
+version = "17.0.1"
+description = "Local-first bioinformatics desktop tool for research-grade genetic variant filtering, annotation, and conversion (VCF, gVCF, 23andMe, FASTA)."
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.10"
+authors = [
+    {name = "Lukas Geiger", email = "lukas@open-bricks.org"}
+]
+keywords = [
+    "bioinformatics",
+    "vcf",
+    "gvcf",
+    "genomics",
+    "variant-annotation",
+    "23andme",
+    "fasta",
+    "biotec-line",
+    "open-bricks",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+dependencies = [
+    "requests>=2.31.0",
+    "psutil>=5.9.0",
+    "Pillow>=10.0.0",
+    "intervaltree>=3.1.0",
+    "ttkbootstrap>=1.10.0",
+    "pystray>=0.19.0",
+    "aiohttp>=3.9.0",
+    "scipy>=1.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff",
+]
+test = [
+    "pytest>=7.0",
+    "ruff",
+]
+export = [
+    "openpyxl>=3.1.0",
+    "reportlab>=4.0.0",
+]
+extended = [
+    "numpy>=1.24.0",
+    "biopython>=1.81",
+    "pyfaidx>=0.7.0",
+]
+all = [
+    "openpyxl>=3.1.0",
+    "reportlab>=4.0.0",
+    "numpy>=1.24.0",
+    "biopython>=1.81",
+    "pyfaidx>=0.7.0",
+    "pytest>=7.0",
+    "ruff",
+]
+
+[project.urls]
+Homepage = "https://github.com/biotec-line/VFDistiller"
+Repository = "https://github.com/biotec-line/VFDistiller"
+Documentation = "https://github.com/biotec-line/VFDistiller#readme"
+Issues = "https://github.com/biotec-line/VFDistiller/issues"
+Changelog = "https://github.com/biotec-line/VFDistiller/blob/main/CHANGELOG.md"
+Security = "https://github.com/biotec-line/VFDistiller/blob/main/SECURITY.md"
+"Parent Organization" = "https://github.com/biotec-line"
+"Umbrella Ecosystem" = "https://github.com/open-bricks"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra -v"
+norecursedirs = [
+    "releases",
+    "build",
+    "dist",
+    "_archive",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "codex_build",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+exclude = [
+    "Variant_Fusion_pro_V17.py",
+    "cython_hotpath",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]

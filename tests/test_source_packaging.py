@@ -6,8 +6,6 @@ import os
 import zipfile
 from pathlib import Path
 
-import pytest
-
 _SCRIPT = Path(__file__).parent.parent / "make_source_zip.py"
 _spec = importlib.util.spec_from_file_location("make_source_zip", str(_SCRIPT))
 _msz = importlib.util.module_from_spec(_spec)
