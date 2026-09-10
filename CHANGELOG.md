@@ -15,6 +15,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Behoben / Fixed (2026-09-10 - Bug-Sweep Block 8)
+- **VCF FORMAT-Metriken im Export (`_extract_format_field` & `_build_format_fields`)**: `_extract_format_field` unterstützt nun neben geparsten Datensätzen mit `samples`-Liste auch `orig_records`-Einträge mit `sample`-String (Singular). Zuvor wurden beim VCF-Export alle Qualitäts-Metriken (DP, GQ, AD, PL) stillschweigend verworfen.
+- **Multi-Sample VCF Parsing**: In `parse_vcf_records` und `parse_vcf_records_mmap` wurde die fehlerhafte Begrenzung `split('\t', 9)` entfernt, wodurch Multi-Sample-Spalten nicht mehr in ein einziges Feld konkateniert werden.
+- **QualityManager Sample-Namen & DP-Priorisierung**: `QualityManager` stellt nun die Methode `get_vcf_sample_names` bereit, die von `Distiller.process_vcf` aufgerufen wird (verhindert stumme `AttributeError`-Fehler). Zudem priorisiert `QualityManager._extract_dp` nun sample-spezifische FORMAT-DP-Werte vor aggregierten INFO-DP-Werten.
+
 ### Dokumentation & Sichtbarkeit / Discoverability (2026-08-14)
 - **Badges & Header-Politur**: Shields.io-Badges für Organisation (`biotec-line`), Dach-Ökosystem (`open-bricks`), Lizenz (`AGPL-3.0`), Python-Version (`3.10+`), Bioinformatik-Standards (`VCF 4.2 | gVCF`), Genom-Builds (`GRCh37 | GRCh38`), Teststatus (`115 passed`) und LLM-Kontext in englische und deutsche README integriert.
 - **Pipeline-Architekturdiagramm**: Interaktives Mermaid-Flowchart in `README.md` und `README.de.md` ergänzt, das die 5 Stufen (Eingabe, Ingestion/Build-Erkennung, Multi-Source-Annotation, Quality Gate, Export) visualisiert.

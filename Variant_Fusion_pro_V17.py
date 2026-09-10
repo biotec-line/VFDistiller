@@ -2480,7 +2480,7 @@ def parse_vcf_records(path):
                 continue
 
             # --- Nur Python-Parsing hier ---
-            parts = line.rstrip("\n").split("\t", 9)
+            parts = line.rstrip("\r\n").split("\t")
             if len(parts) < 8:
                 continue
 
@@ -2579,7 +2579,7 @@ def parse_vcf_records_mmap(path: str):
 
                     # --- Parsing Logic ---
                     # (Identisch zum Standard-Parser, aber optimiert)
-                    parts = line.split('\t', 9)
+                    parts = line.split('\t')
                     if len(parts) < 8:
                         continue
 
@@ -19455,7 +19455,7 @@ def _extract_format_field(rec: dict, field_name: str) -> Optional[str]:
     Extrahiert einen spezifischen Wert aus dem FORMAT-String eines VCF-Records.
     
     Args:
-        rec: VCF-Record dict
+        rec: VCF-Record dict (unterstützt 'sample' aus orig_records oder 'samples' aus Parser)
         field_name: Name des FORMAT-Feldes (z.B. "DP", "GQ", "AD")
     
     Returns:
@@ -19465,22 +19465,36 @@ def _extract_format_field(rec: dict, field_name: str) -> Optional[str]:
         _extract_format_field(rec, "DP")  # "45"
         _extract_format_field(rec, "GQ")  # "99"
     """
-    if not rec.get("fmt") or field_name not in rec.get("fmt", ""):
+    fmt = rec.get("fmt")
+    if not fmt or not isinstance(fmt, str):
         return None
     
-    if not rec.get("samples") or len(rec["samples"]) == 0:
+    fmt_fields = fmt.split(":")
+    if field_name not in fmt_fields:
         return None
+    field_index = fmt_fields.index(field_name)
+    
+    # Sample-Werte: Unterstütze sowohl "sample" (String aus orig_records)
+    # als auch "samples" (Liste aus VCF-Parser)
+    sample_raw = rec.get("sample")
+    if not sample_raw:
+        samples_list = rec.get("samples")
+        if samples_list and isinstance(samples_list, (list, tuple)) and len(samples_list) > 0:
+            sample_raw = samples_list[0]
+    
+    if not sample_raw or not isinstance(sample_raw, str):
+        return None
+    
+    # Multi-Sample Guard: falls sample_raw noch Tabulatoren enthält
+    if "\t" in sample_raw:
+        sample_raw = sample_raw.split("\t")[0]
     
     try:
-        fmt_fields = rec["fmt"].split(":")
-        sample_fields = rec["samples"][0].split(":")
-        
-        if field_name in fmt_fields:
-            field_index = fmt_fields.index(field_name)
-            if len(sample_fields) > field_index:
-                value = sample_fields[field_index]
-                if value and value != ".":
-                    return value
+        sample_fields = sample_raw.split(":")
+        if len(sample_fields) > field_index:
+            value = sample_fields[field_index].strip()
+            if value and value != ".":
+                return value
     except (IndexError, ValueError, AttributeError):
         pass
     
@@ -19898,7 +19912,7 @@ class QualityManager:
     
     def _extract_dp(self, record: dict) -> Optional[int]:
         """
-        Extrahiert DP aus INFO oder FORMAT.
+        Extrahiert DP aus FORMAT (bevorzugt - sample-spezifisch) oder INFO (Fallback).
 
         Args:
             record: VCF-Record dict
@@ -19906,15 +19920,36 @@ class QualityManager:
         Returns:
             int oder None
 
-        V16 FIX: Unterstützt sowohl String- als auch Dict-Format für INFO.
+        V17 FIX: FORMAT-spezifisches DP vor INFO-DP priorisiert (Analog zu _get_dp_value).
+                 Unterstützt sowohl 'sample' als auch 'samples' und bereinigt Tab-Reste.
         """
-        # 1. INFO-Feld: DP=123
-        info = record.get("info")
+        # 1. FORMAT-Feld: GT:DP -> 0/1:45 (sample-spezifisch bevorzugt)
+        fmt = record.get("fmt")
+        if fmt and isinstance(fmt, str):
+            try:
+                fmt_fields = fmt.split(":")
+                if "DP" in fmt_fields:
+                    dp_idx = fmt_fields.index("DP")
+                    sample_raw = record.get("sample")
+                    if not sample_raw:
+                        samples = record.get("samples")
+                        if samples and isinstance(samples, (list, tuple)) and len(samples) > 0:
+                            sample_raw = samples[0]
+                    if sample_raw and isinstance(sample_raw, str):
+                        if "\t" in sample_raw:
+                            sample_raw = sample_raw.split("\t")[0]
+                        sample_fields = sample_raw.split(":")
+                        if dp_idx < len(sample_fields):
+                            val = sample_fields[dp_idx].strip()
+                            if val and val != ".":
+                                return int(val)
+            except (ValueError, IndexError, TypeError, AttributeError):
+                pass
 
+        # 2. INFO-Feld: DP=123 (fallback - multi-sample gesamt)
+        info = record.get("info")
         if info:
-            # V16 FIX: INFO kann Dict (vom Parser) oder String sein
             if isinstance(info, dict):
-                # Parser liefert Dict mit geparsten Werten
                 dp_val = info.get("DP")
                 if dp_val is not None:
                     try:
@@ -19922,39 +19957,12 @@ class QualityManager:
                     except (ValueError, TypeError):
                         pass
             elif isinstance(info, str) and "DP=" in info:
-                # Legacy: INFO als String
                 match = re.search(r'DP=(\d+)', info)
                 if match:
                     try:
                         return int(match.group(1))
                     except ValueError:
                         pass
-
-        # 2. FORMAT-Feld: GT:DP -> 0/1:45
-        fmt = record.get("fmt", "")
-        sample = record.get("sample", "")
-
-        if fmt and sample and "DP" in fmt:
-            try:
-                fmt_fields = fmt.split(":")
-                sample_fields = sample.split(":")
-                dp_idx = fmt_fields.index("DP")
-                if dp_idx < len(sample_fields):
-                    return int(sample_fields[dp_idx])
-            except (ValueError, IndexError):
-                pass
-
-        # 3. Aus samples-Liste (falls vorhanden)
-        samples = record.get("samples", [])
-        if samples and fmt and "DP" in fmt:
-            try:
-                fmt_fields = fmt.split(":")
-                dp_idx = fmt_fields.index("DP")
-                sample_fields = samples[0].split(":")
-                if dp_idx < len(sample_fields):
-                    return int(sample_fields[dp_idx])
-            except (ValueError, IndexError):
-                pass
 
         return None
     
@@ -20122,6 +20130,23 @@ class QualityManager:
             
             if self.logger:
                 self.logger.log(msg)
+    
+    def get_vcf_sample_names(self, path: str) -> list:
+        """Extrahiert Sample-Namen aus dem VCF-Header (#CHROM-Zeile, Spalten ab Index 9)."""
+        try:
+            with open_text_maybe_gzip(path) as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith("#CHROM"):
+                        cols = line.split("\t")
+                        if len(cols) > 9:
+                            return cols[9:]
+                        return []
+                    if not line.startswith("#"):
+                        break
+        except Exception:
+            pass
+        return []
 
 class QualitySettingsDialog(ttk.Toplevel):
     """
