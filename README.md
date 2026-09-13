@@ -8,7 +8,7 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Tests: 124 passed](https://img.shields.io/badge/Tests-124%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Tests: 134 passed](https://img.shields.io/badge/Tests-134%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![LLM Context](https://img.shields.io/badge/LLM%20Context-llms.txt-orange?style=flat)](llms.txt)
 

@@ -15,6 +15,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Hinzugefügt / Added (2026-09-13)
+- **Web Companion & Mobile PWA Suite**: `web_companion/` mit responsivem HTML-Interface, Web-App-Manifest (`manifest.json`, `manifest.webmanifest`), Touch-Icons und Vektor-/Favicon-Assets für lokale Web-Vorschau und PWA-Unterstützung integriert.
+
+### Dokumentation & Metadaten (2026-09-13)
+- **Test-Badges & LLM-Kontext**: Test-Badge in `README.md` und `README.de.md` auf 134 bestandene Tests (inkl. Regressionstestsuite `test_bugsweep_partial8_20260910.py`) aktualisiert; Prüfdatum in `llms.txt` auf 2026-09-13 nachgezogen.
+
 ### Behoben / Fixed (2026-09-10 - Bug-Sweep Block 8)
 - **VCF FORMAT-Metriken im Export (`_extract_format_field` & `_build_format_fields`)**: `_extract_format_field` unterstützt nun neben geparsten Datensätzen mit `samples`-Liste auch `orig_records`-Einträge mit `sample`-String (Singular). Zuvor wurden beim VCF-Export alle Qualitäts-Metriken (DP, GQ, AD, PL) stillschweigend verworfen.
 - **Multi-Sample VCF Parsing**: In `parse_vcf_records` und `parse_vcf_records_mmap` wurde die fehlerhafte Begrenzung `split('\t', 9)` entfernt, wodurch Multi-Sample-Spalten nicht mehr in ein einziges Feld konkateniert werden.
