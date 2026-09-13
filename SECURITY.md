@@ -24,9 +24,10 @@ Use one of the following secure channels:
 
 1. **GitHub Private Vulnerability Reporting (Preferred):**
    Navigate to [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) and click **"Report a vulnerability"**.
-2. **Security Email:**
-   - Primary: `security@open-bricks.org`
+2. **Security & Support Email:**
    - Organization: `security@biotec-line.org`
+   - Ecosystem: `security@open-bricks.org`
+   - Official Support: `support@lukasgeiger.com`
    - Maintainer: `lukas@open-bricks.org`
    - GitHub profile: [`@lukisch`](https://github.com/lukisch)
 
@@ -35,6 +36,11 @@ Use one of the following secure channels:
 - **Initial Response:** Within **48 hours** with an acknowledgment and issue reference.
 - **Triage Assessment:** Within **5 business days** confirming validity, severity assessment, and reproduction steps.
 - **Remediation & Advisory:** Coordinated release typically within **30–90 days**, depending on vulnerability complexity.
+
+### Security & Architectural Invariants
+
+- **Local-First & Zero-Egress by Design:** Genomic sequencing data (VCF, gVCF, FASTA, 23andMe) is processed strictly locally in offline mode. No patient or genomic data is ever transmitted to remote telemetry, tracking, or analytics services. External queries to scientific databases (e.g. NCBI, Ensembl, gnomAD, MyVariant.info) are explicitly initiated by user action and transmit only public locus coordinates over encrypted HTTPS connections, never personal or sample identities.
+- **Non-Elevation / Least Privilege:** VFDistiller operates entirely in unprivileged user-space and never requires or requests administrative (root or UAC) privilege elevation.
 
 ### Scope
 
@@ -71,18 +77,20 @@ Nutzen Sie stattdessen:
 
 1. **Private Vulnerability Reporting:**
    Über das GitHub-Menü [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) auf **"Report a vulnerability"** klicken.
-2. **Sicherheits-E-Mail:**
-   - Primär: `security@open-bricks.org`
+2. **Sicherheits- & Support-E-Mail:**
    - Organisation: `security@biotec-line.org`
+   - Ökosystem: `security@open-bricks.org`
+   - Offizieller Support: `support@lukasgeiger.com`
    - Maintainer: `lukas@open-bricks.org`
    - GitHub: [`@lukisch`](https://github.com/lukisch)
 
 ### Service-Level-Agreements (SLA)
 
-- **Erstrückmeldung:** Innerhalb von **48 Stunden**.
+- **Erstrückmeldung:** Innerhalb von **48 Stunden** mit Empfangsbestätigung und Vorgangsnummer.
 - **Triage & Einstufung:** Verbindliche Einschätzung innerhalb von **5 Werktagen**.
 - **Behebung:** Koordiniertes Release und Security Advisory in der Regel innerhalb von **30 bis 90 Tagen**.
 
-### Geltungsbereich & Forschungshinweis
+### Sicherheits- und Architektur-Invarianten
 
-VFDistiller arbeitet nach dem **Local-First-Prinzip**. Es werden keine Telemetrie-, Analyse- oder Nutzungsdaten übertragen. Netzwerkanfragen erfolgen ausschließlich nach expliziter Nutzeraktion zur Konsultation wissenschaftlicher APIs über gesicherte HTTPS-Verbindungen. VFDistiller ist ausschließlich für Forschungszwecke bestimmt (**Research Use Only**).
+- **Local-First & Zero-Egress:** VFDistiller verarbeitet sensible genetische Daten (VCF, gVCF, FASTA, 23andMe) standardmäßig und ausnahmslos lokal im Offline-Modus auf dem Rechner des Anwenders. Es werden keinerlei Telemetrie-, Analyse- oder Nutzerverhaltensdaten übertragen. Abfragen an öffentliche Forschungsdatenbanken (NCBI, Ensembl, gnomAD, MyVariant.info) erfolgen rein anlassbezogen nach expliziter Nutzeraktion über verschlüsselte HTTPS-Verbindungen und übertragen ausschließlich Locus-Koordinaten, niemals Probandenidentitäten.
+- **Non-Elevation / Minimale Rechtevergabe:** Die Anwendung läuft vollständig im unprivilegierten Benutzerkontext und erfordert oder beansprucht zu keinem Zeitpunkt Administrator- oder Root-Rechte (keine UAC-Elevation erforderlich).

@@ -1,54 +1,137 @@
-THIRD-PARTY LICENSES for VFDistiller
-=====================================
+THIRD-PARTY SOFTWARE LICENSES
+=============================
+
+This document lists the third-party dependencies, libraries, and build tools
+used by VFDistiller along with their respective license and SPDX identifiers.
 
 requests
 License: Apache-2.0
+SPDX: Apache-2.0
 URL: https://pypi.org/project/requests/
+Notice: HTTP client library for downloading genomic database annotations and external API integration (>=2.32.3)
 
 psutil
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/psutil/
+Notice: Cross-platform process and system resource monitoring for background index workers (>=5.9.0)
 
 Pillow
-License: HPND (Historical Permission Notice and Disclaimer)
+License: HPND
+SPDX: HPND
 URL: https://pypi.org/project/Pillow/
+Notice: Image processing library for UI icons and visual asset rendering (>=10.3.0)
 
 intervaltree
 License: Apache-2.0
+SPDX: Apache-2.0
 URL: https://pypi.org/project/intervaltree/
+Notice: Mutable interval tree data structure for genomic locus queries and overlap detection (>=3.1.0)
+
+sortedcontainers
+License: Apache-2.0
+SPDX: Apache-2.0
+URL: https://pypi.org/project/sortedcontainers/
+Notice: Fast, pure-Python sorted collections underpinning intervaltree (>=2.4.0)
 
 ttkbootstrap
 License: MIT
+SPDX: MIT
 URL: https://pypi.org/project/ttkbootstrap/
+Notice: Theme extension for Tkinter delivering modern desktop styling (>=1.10.0)
 
 pystray
-License: LGPL-3.0
+License: LGPL-3.0-or-later
+SPDX: LGPL-3.0-or-later
 URL: https://pypi.org/project/pystray/
+Notice: System tray icon integration for background workers and task progress (>=0.19.0)
 
 aiohttp
 License: Apache-2.0
+SPDX: Apache-2.0
 URL: https://pypi.org/project/aiohttp/
+Notice: Asynchronous HTTP client/server framework for concurrent genomic API queries (>=3.10.11)
 
 scipy
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/scipy/
+Notice: Fundamental algorithms for scientific computing and genomic statistical analysis (>=1.11.0)
 
 openpyxl
 License: MIT
+SPDX: MIT
 URL: https://pypi.org/project/openpyxl/
+Notice: Excel XLSX spreadsheet creation and tabular report export engine (>=3.1.3)
+
+et_xmlfile
+License: MIT
+SPDX: MIT
+URL: https://pypi.org/project/et_xmlfile/
+Notice: Low-memory XML creation library powering openpyxl (>=1.1.0)
 
 reportlab
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/reportlab/
+Notice: Enterprise PDF document generation engine for variant report export (>=4.0.0)
 
 numpy
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/numpy/
+Notice: Array computation primitives and high-performance numerical operations (>=1.24.0)
 
 biopython
-License: BSD-3-Clause (Biopython License)
+License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/biopython/
+Notice: Computational molecular biology tools for parsing FASTA, GenBank, and genomic features (>=1.81)
 
 pyfaidx
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/pyfaidx/
+Notice: Efficient random access to FASTA sequence files and indexing (>=0.7.0)
+
+pytest
+License: MIT
+SPDX: MIT
+URL: https://pypi.org/project/pytest/
+Notice: Testing framework for automated regression and contract verification (>=9.1.1)
+
+pluggy
+License: MIT
+SPDX: MIT
+URL: https://pypi.org/project/pluggy/
+Notice: Plugin management and hook specification engine powering pytest (>=1.5.0)
+
+iniconfig
+License: MIT
+SPDX: MIT
+URL: https://pypi.org/project/iniconfig/
+Notice: Fast configuration file parsing engine used by pytest (>=2.0.0)
+
+ruff
+License: MIT OR Apache-2.0
+SPDX: MIT OR Apache-2.0
+URL: https://pypi.org/project/ruff/
+Notice: Extremely fast Python linter and code formatter (>=0.9.0)
+
+packaging
+License: Apache-2.0 OR BSD-2-Clause
+SPDX: Apache-2.0 OR BSD-2-Clause
+URL: https://pypi.org/project/packaging/
+Notice: Core utilities for Python package version parsing and PEP specifications (>=24.0)
+
+PyInstaller
+License: GPL-2.0-or-later WITH Bootloader-exception
+SPDX: GPL-2.0-or-later WITH Bootloader-exception
+URL: https://pypi.org/project/PyInstaller/
+Notice: Standalone executable packaging bundle engine (>=6.10.0)
+
+altgraph
+License: MIT
+SPDX: MIT
+URL: https://pypi.org/project/altgraph/
+Notice: Graph computation engine used by PyInstaller for module dependency resolution (>=0.17.4)

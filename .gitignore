@@ -31,6 +31,11 @@ converted_23andme_vcfs/
 credentials.json
 client_secret*.json
 token.json
+secrets.*
+*.pfx
+*.p12
+*.cer
+*.crt
 *.pem
 *.key
 keyring/
@@ -125,6 +130,8 @@ COMPLETE_PROJECT_CONTEXT.txt
 *.conflict
 *-CONFLIT-*
 *.sync-temp-*
+*-ASUS-GEI*
+*-WORKSTATION-LG*
 *-ASUS-GEI.*
 *-WORKSTATION-LG.*
 
@@ -132,6 +139,8 @@ COMPLETE_PROJECT_CONTEXT.txt
 # Test- & Packaging-Caches
 # ---------------------------------------------------------------------------
 .ruff_cache/
+node_modules/
+.nyc_output/
 wheelhouse/
 .wheel-smoke/
 *.egg-info/
