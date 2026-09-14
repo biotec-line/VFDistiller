@@ -2458,6 +2458,28 @@ def _normalize_chrom_vcf(chrom: str) -> str:
     return c
 
 
+def _limit_vcf_line_to_alt(line: str, selected_alt: str) -> str:
+    """
+    Reduziert eine VCF-Zeile für den gefilterten Export auf eine sichtbare ALT.
+    """
+    if not selected_alt:
+        return line
+
+    line_body = line.rstrip("\r\n")
+    newline = line[len(line_body):]
+    parts = line_body.split("\t")
+    if len(parts) < 5:
+        return line
+
+    selected_alt_norm = str(selected_alt).upper()
+    for original_alt in parts[4].split(","):
+        if original_alt.upper() == selected_alt_norm:
+            parts[4] = original_alt
+            return "\t".join(parts) + newline
+
+    return line
+
+
 def parse_vcf_records(path):
     """
     Streamt VCF-Records effizient:
@@ -23355,19 +23377,16 @@ class App(ttk.Window):
                             
                             c_clean = chrom.replace("chr", "").replace("CHR", "").upper()
                             ref = ref.upper()
-                            match_found = False
-                            matched_key_full = None
-                            
+                            matched_alts = []
                             for alt in alt_str.split(","):
-                                alt = alt.upper()
-                                if (c_clean, pos, ref, alt) in target_keys_core:
-                                    match_found = True
-                                    matched_key_full = (c_clean, pos, ref, alt, current_build)
-                                    break
-                            
-                            if match_found:
+                                alt_norm = alt.upper()
+                                if (c_clean, pos, ref, alt_norm) in target_keys_core:
+                                    matched_alts.append((alt, (c_clean, pos, ref, alt_norm, current_build)))
+
+                            for matched_alt, matched_key_full in matched_alts:
                                 anno = annotations.get(matched_key_full, {})
-                                new_line = self._enrich_vcf_line(line, anno, matched_key_full)
+                                filtered_line = _limit_vcf_line_to_alt(line, matched_alt)
+                                new_line = self._enrich_vcf_line(filtered_line, anno, matched_key_full)
                                 outfile.write(new_line)
                                 exported_count += 1
                         except (ValueError, KeyError, IndexError): continue

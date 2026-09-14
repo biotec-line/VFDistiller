@@ -402,3 +402,24 @@ def test_af_fetch_final_filter_receives_enriched_status():
     segment = src.split(marker, 1)[1][:450]
 
     assert "results[k] = enriched" in segment
+
+
+def test_filtered_vcf_export_helper_limits_multiallelic_line_to_visible_alt():
+    line = "chr1\t100\t.\tA\tG,T\t60\tPASS\t.\n"
+
+    limited = _vf._limit_vcf_line_to_alt(line, "T")
+
+    fields = limited.rstrip("\n").split("\t")
+    assert fields[4] == "T"
+    assert limited.endswith("\n")
+
+
+def test_filtered_vcf_export_applies_alt_limiter_before_enrichment():
+    src = _MODULE_PATH.read_text(encoding="utf-8")
+    start = src.index("def export_filtered_vcf_optimized(self):")
+    end = src.index("def export_complete_vcf_optimized(self):", start)
+    export_block = src[start:end]
+
+    assert "matched_alts.append((alt, (c_clean, pos, ref, alt_norm, current_build)))" in export_block
+    assert "filtered_line = _limit_vcf_line_to_alt(line, matched_alt)" in export_block
+    assert "self._enrich_vcf_line(filtered_line, anno, matched_key_full)" in export_block
