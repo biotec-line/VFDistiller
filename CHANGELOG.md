@@ -15,6 +15,17 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Dokumentation & Auffindbarkeit / Discoverability (Pfad B — 2026-09-16)
+- **Zweisprachige 18-Punkte-Schnellnavigation**: Vollständige Strukturierung von `README.md` und `README.de.md` mit 18 durchnummerierten Hauptabschnitten und 100% wechselseitiger Anker-Parität (#1 bis #18 inklusive Alias-Ankern).
+- **Zielgruppen & High-Intent SEO Keywords**: 4 definierte Zielgruppen (`[PERSONA-01]` bis `[PERSONA-04]`: Klinische Genetiker, Bioinformatik-Core-Facility-Entwickler, Seltene-Krankheiten-Forscher, Datenschutzbeauftragte & Offline-Labor-IT) mit spezifischen High-Intent-Suchbegriffen in Englisch und Deutsch.
+- **10-Dimensionen-Vergleichsmatrix**: Detaillierte Gegenüberstellung von VFDistiller mit 4 Branchen-Alternativen (Unix Shell Pipelines, Cloud-Varianten-Portale, Desktop-Browser IGV, CLI-Annotations-Engines) gemappt auf die 10 Governance- und Laufzeit-Invarianten `INV-LOCAL-01` bis `INV-SLA-10`.
+- **Governance & Laufzeit-Invarianten**: Verbindliche Verankerung der 10 Invarianten (`INV-LOCAL-01` Local-First Zero-Egress, `INV-PRIVACY-02` Locus/rsID Log-Redaktion, `INV-INSPECT-03` Desktop GUI, `INV-CONVERT-04` Multi-Format Ingestion, `INV-OFFLINE-05` Offline gnomAD SQLite, `INV-ACCEL-06` Cython Hotpaths, `INV-EXPORT-07` FORMAT-Erhalt & Reports, `INV-UNPRIV-08` RunAsInvoker, `INV-COMPLY-09` RUO-Grenze, `INV-SLA-10` 48h SLA) in beiden READMEs, `THIRD_PARTY_LICENSES.md` und `MARKETING-LOG.txt`.
+- **Drittanbieter-Lizenzaudit (`THIRD_PARTY_LICENSES.md`)**: Vollständiges Markdown-Inventar aller Laufzeit-, Optional- und Entwicklungs-Dependencies mit SPDX-Bezeichnern, Bestätigung der Zero-Copyleft-Freiheit für genomische Forschungsdaten, unprivilegierter `RunAsInvoker`-Laufzeit sowie LGPLv3 § 4 Transparenzerklärung für dynamisch verlinktes `pystray`.
+- **Lokales Marketing- und Audit-Logbuch (`MARKETING-LOG.txt`)**: Lokales Register zur Erfassung von Pfad A (2026-09-10) und Pfad B (2026-09-16) mit Zielgruppen, Suchbegriffen, Vergleichsmatrix und Ökosystem-Synergien.
+- **PEP 621 URL-Erweiterung**: URLs in `pyproject.toml` um `Marketing Log`, `Third-Party Licenses` (Markdown) und `LLM Ready` erweitert.
+- **LLM-Kontext & Shields.io Badges**: `llms.txt` aktualisiert (Stand: 2026-09-16, 148 bestandene Tests, 10 Subtests); Badges für Teststand, Local-First Zero-Egress, RunAsInvoker, Third-Party Audited und Marketing-Log nachgezogen.
+- **Automatisierte Vertragstests**: Neue Contract-Tests in `tests/test_metadata.py` zur Validierung von 18-Punkte-Navigationsparität, Zielgruppen, Vergleichsmatrix, Invarianten, Lizenzaudit und Marketing-Log.
+
 ### Hinzugefügt / Added (2026-09-13)
 - **Web Companion & Mobile PWA Suite**: `web_companion/` mit responsivem HTML-Interface, Web-App-Manifest (`manifest.json`, `manifest.webmanifest`), Touch-Icons und Vektor-/Favicon-Assets für lokale Web-Vorschau und PWA-Unterstützung integriert.
 

@@ -142,3 +142,103 @@ def test_ci_workflows_concurrency_and_matrix() -> None:
     assert smoke_wf.exists(), "source-platform-smoke.yml must exist"
     smoke_content = smoke_wf.read_text(encoding="utf-8")
     assert "cancel-in-progress: true" in smoke_content
+
+
+def test_bilingual_readme_18_point_navigation_parity() -> None:
+    """Verify that README.md and README.de.md both define the 18-point navigation with reciprocal anchors."""
+    readme_en_path = REPO_ROOT / "README.md"
+    readme_de_path = REPO_ROOT / "README.de.md"
+    assert readme_en_path.exists(), "README.md must exist"
+    assert readme_de_path.exists(), "README.de.md must exist"
+
+    en_content = readme_en_path.read_text(encoding="utf-8")
+    de_content = readme_de_path.read_text(encoding="utf-8")
+
+    for point in range(1, 19):
+        assert f"(#{point}-" in en_content, f"README.md missing navigation link for section #{point}"
+        assert f"(#{point}-" in de_content, f"README.de.md missing navigation link for section #{point}"
+        assert f'id="{point}-' in en_content, f"README.md missing anchor id for section #{point}"
+        assert f'id="{point}-' in de_content, f"README.de.md missing anchor id for section #{point}"
+
+
+def test_target_personas_and_high_intent_queries() -> None:
+    """Verify target personas [PERSONA-01] through [PERSONA-04] and high-intent SEO queries."""
+    readme_en = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (REPO_ROOT / "README.de.md").read_text(encoding="utf-8")
+    marketing_log = (REPO_ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+    llms_txt = (REPO_ROOT / "llms.txt").read_text(encoding="utf-8")
+
+    personas = ["[PERSONA-01]", "[PERSONA-02]", "[PERSONA-03]", "[PERSONA-04]"]
+    for p in personas:
+        assert p in readme_en, f"{p} missing from README.md"
+        assert p in readme_de, f"{p} missing from README.de.md"
+        assert p in marketing_log, f"{p} missing from MARKETING-LOG.txt"
+        assert p in llms_txt, f"{p} missing from llms.txt"
+
+
+def test_comparative_matrix_and_governance_invariants() -> None:
+    """Verify 10-dimension comparative matrix and invariants INV-LOCAL-01 through INV-SLA-10."""
+    readme_en = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (REPO_ROOT / "README.de.md").read_text(encoding="utf-8")
+    licenses_md = (REPO_ROOT / "THIRD_PARTY_LICENSES.md").read_text(encoding="utf-8")
+    marketing_log = (REPO_ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+
+    invariants = [
+        "INV-LOCAL-01", "INV-PRIVACY-02", "INV-INSPECT-03", "INV-CONVERT-04",
+        "INV-OFFLINE-05", "INV-ACCEL-06", "INV-EXPORT-07", "INV-UNPRIV-08",
+        "INV-COMPLY-09", "INV-SLA-10",
+    ]
+
+    for inv in invariants:
+        assert inv in readme_en, f"{inv} missing from README.md"
+        assert inv in readme_de, f"{inv} missing from README.de.md"
+        assert inv in licenses_md, f"{inv} missing from THIRD_PARTY_LICENSES.md"
+        assert inv in marketing_log, f"{inv} missing from MARKETING-LOG.txt"
+
+    for alt in ["bcftools", "BaseSpace", "IGV", "VEP"]:
+        assert alt in readme_en, f"Alternative {alt} missing from README.md matrix"
+        assert alt in readme_de, f"Alternative {alt} missing from README.de.md matrix"
+
+
+def test_third_party_licenses_audit_markdown() -> None:
+    """Verify THIRD_PARTY_LICENSES.md includes SPDX audit, LGPL statement, and Zero-Copyleft guarantee."""
+    lic_md_path = REPO_ROOT / "THIRD_PARTY_LICENSES.md"
+    assert lic_md_path.exists(), "THIRD_PARTY_LICENSES.md must exist in repo root"
+
+    content = lic_md_path.read_text(encoding="utf-8")
+    assert "AGPL-3.0-or-later" in content
+    assert "LGPL-3.0-or-later" in content
+    assert "Apache-2.0" in content
+    assert "MIT" in content
+    assert "BSD-3-Clause" in content
+    assert "HPND" in content
+    assert "pystray" in content
+    assert "RunAsInvoker" in content
+    assert "Zero-Copyleft" in content
+    assert "Research Use Only" in content
+
+
+def test_marketing_log_audit_record() -> None:
+    """Verify MARKETING-LOG.txt documents Pfad A and Pfad B runs."""
+    m_log = REPO_ROOT / "MARKETING-LOG.txt"
+    assert m_log.exists(), "MARKETING-LOG.txt must exist"
+
+    content = m_log.read_text(encoding="utf-8")
+    assert "2026-09-10" in content
+    assert "Pfad A" in content
+    assert "2026-09-16" in content
+    assert "Pfad B" in content
+    assert "biotec-line/VFDistiller" in content
+
+
+def test_pyproject_marketing_and_license_urls() -> None:
+    """Verify pyproject.toml defines Marketing Log and Third-Party Licenses URLs."""
+    pyproject_path = REPO_ROOT / "pyproject.toml"
+    data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    urls = data.get("project", {}).get("urls", {})
+
+    assert "Marketing Log" in urls
+    assert "Third-Party Licenses" in urls
+    assert "LLM Ready" in urls
+    assert urls["Marketing Log"] == "https://github.com/biotec-line/VFDistiller/blob/main/MARKETING-LOG.txt"
+    assert urls["Third-Party Licenses"] == "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"

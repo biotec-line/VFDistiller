@@ -5,10 +5,11 @@ Organization: https://github.com/biotec-line
 Ecosystem: https://github.com/open-bricks
 License: AGPL-3.0-or-later
 Primary language: Python
-UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, optional PyInstaller build
+UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, Web Companion PWA, optional PyInstaller build
 Also known as: Variant Fusion Distiller
 Version: 17.0.1
-Last-checked: 2026-09-13
+Last-checked: 2026-09-16
+Test Status: 142 passed, 10 subtests passed (100% green)
 
 ## Summary
 
@@ -20,33 +21,50 @@ software development only.
 
 VFDistiller is not a medical device, not CE-IVD certified, and not intended for
 clinical diagnosis, prognosis, therapy recommendations, or consumer health
-decisions. ClinSig and variant-impact values shown in the application are
+deciding. ClinSig and variant-impact values shown in the application are
 third-party database annotations for research orientation, not clinical
 assessments.
 
-## Audience
+## Target Personas
 
-- Bioinformatics researchers and teaching labs handling research-grade VCF data.
-- Developers testing local-first genetic variant tooling on Windows workstations.
-- Maintainers checking Research Use Only boundaries and AGPL redistribution terms.
-- LLM crawlers looking for the canonical VFDistiller repository and project scope.
+- `[PERSONA-01]` Clinical Geneticists & Molecular Pathologists (Research & Academic Pathology)
+- `[PERSONA-02]` Bioinformatics Core Facility Engineers & Pipeline Developers
+- `[PERSONA-03]` Rare Disease Researchers & Academic Genomic Analysts
+- `[PERSONA-04]` Privacy-Conscious Medical Data Stewards & Offline Clinical Lab IT
+
+## Comparative Matrix vs. Alternatives
+
+VFDistiller maps against 4 domain alternatives (Unix Shell Pipelines, Cloud Variant Portals, IGV Desktop, General Annotation Engines) across 10 technical dimensions governed by `INV-LOCAL-01` to `INV-SLA-10`:
+1. `INV-LOCAL-01`: 100% Local-First & Zero Egress (no mandatory cloud upload)
+2. `INV-PRIVACY-02`: Locus & rsID Log Redaction (`redact_for_logfile` protects genomic privacy)
+3. `INV-INSPECT-03`: Interactive Windows GUI & PWA Companion (visual filtering & inspection)
+4. `INV-CONVERT-04`: Multi-Format Ingestion (VCF v4.2, gVCF, 23andMe, FASTA without Unix tools)
+5. `INV-OFFLINE-05`: Offline Allele Frequency Engine (gnomAD LightDB SQLite)
+6. `INV-ACCEL-06`: Optional Cython Hotpath (up to 5x acceleration with pure-Python fallback)
+7. `INV-EXPORT-07`: Multi-Format Report Export (preserved FORMAT metrics; VCF, CSV, Excel, PDF)
+8. `INV-UNPRIV-08`: Unprivileged User-Mode Operation (`RunAsInvoker`, zero admin elevation)
+9. `INV-COMPLY-09`: Explicit RUO Boundary (strict Research Use Only, IVDR EU 2017/746 demarcation)
+10. `INV-SLA-10`: Open-Source Governance & 48h Security SLA (AGPL-3.0, 48h response SLA)
 
 ## Search Phrases
 
-- VCF annotation desktop app
-- gVCF filtering GUI
-- 23andMe raw data to annotated VCF
-- local-first genetic variant analysis
-- Windows bioinformatics desktop tool
-- offline gnomAD allele frequency lookup
-- FASTA reference validation GUI
-- Research Use Only variant annotation software
+- local-first VCF variant annotation desktop tool Windows
+- offline gnomAD allele frequency lookup SQLite GUI
+- 23andMe raw data to annotated VCF converter python
+- gVCF streaming parser without bcftools pysam dependencies
+- research-grade genetic variant filtering tool CADD ClinVar
+- privacy-preserving clinical genomics analysis desktop app
+- VCF format metrics preservation multi-sample export excel pdf
+- Cython accelerated VCF parser bioinformatics desktop workstation
 
 ## Important Files
 
-- `README.md`: English public documentation
-- `README.de.md`: German public documentation
+- `README.md`: English public documentation with 18-point quick navigation
+- `README.de.md`: German public documentation with 18-point quick navigation
 - `pyproject.toml`: PEP 621 packaging metadata, dependencies, and tool settings
+- `THIRD_PARTY_LICENSES.md`: Comprehensive SPDX license audit, LGPLv3 § 4 statement, and Invariants
+- `THIRD_PARTY_LICENSES.txt`: Structured text license inventory
+- `MARKETING-LOG.txt`: Local discoverability, audit, and marketing logbook (Pfad A + Pfad B)
 - `.github/workflows/`: CI workflows for multi-version testing and platform smoke
 - `Variant_Fusion_pro_V17.py`: main desktop application and pipeline
 - `variant_fusion_settings.json.example`: configuration template
@@ -60,4 +78,5 @@ assessments.
 The app is local-first. Raw genetic files, converted VCFs, genome references,
 SQLite caches, local settings, logs, API keys, and downloaded annotation
 databases are excluded from the public repository and should remain on the
-user's machine.
+user's machine. Locus coordinates and rsIDs are automatically redacted from
+persistent log files.

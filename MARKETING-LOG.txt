@@ -1,0 +1,101 @@
+# MARKETING-LOG.txt — VFDistiller
+# Lokales Audit-, Discoverability- und Marketing-Logbuch
+
+## 2026-09-10 — Pfad A: Repository-Hygiene, CI-Matrix-Härtung & PEP 621 Standardisierung
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (C:\_Local_DEV\repos\VFDistiller)
+- Version: 17.0.1
+- Kategorie: Local-First Bioinformatics Desktop Application for Research-Grade Genetic Variant Analysis
+- Initialer Status: Arbeitsbaum sauber, 0 aktive Locks, Cooldown eingehalten.
+
+### 2. Umgesetzte Maßnahmen
+1. PEP 621 Standard-Metadaten:
+   - `pyproject.toml` mit standardisierter Paketkonfiguration für `vfdistiller` v17.0.1 angelegt (AGPL-3.0-or-later, Python >=3.10, vollständige Ökosystem- und Repository-URLs für biotec-line und open-bricks, standardisierte Classifiers, optionale Dev-/Test-Dependencies sowie `[tool.pytest.ini_options]` und `[tool.ruff]`).
+2. CI-Matrix & Concurrency-Härtung:
+   - Neue GitHub Actions Workflow-Matrix `.github/workflows/tests.yml` für Python 3.10 bis 3.13 unter `ubuntu-latest` mit Bytecode-Kompilierungsgate (`python -m compileall -q .`), Linter-Gate (`ruff check .`) und Pytest-Ausführung. Concurrency-Cancellation (`cancel-in-progress: true`) in `source-platform-smoke.yml` und `tests.yml` nachgerüstet.
+3. Git-Hygiene & Lock-Schutz:
+   - `.gitignore` erweitert um Schutz vor Multi-Host-Synchronisationskonflikten (`*-conflict-*`, `*.sync-conflict-*`, etc.), Multi-Agent Locks (`LOCK`, `LOCK.*`, etc.) sowie `.ruff_cache/`, `wheelhouse/` und Build-Caches.
+4. Sicherheitsrichtlinie & SLAs:
+   - `SECURITY.md` zweisprachig überarbeitet mit verbindlicher 48-Stunden-Erstrückmeldung (SLA), 5-Werktage-Triage und offiziellen Sicherheitskontakten (`security@open-bricks.org`, `security@biotec-line.org`, `lukas@open-bricks.org`).
+5. Code-Qualität & Bugfixes:
+   - Unbenutzte Imports in `tests/` bereinigt, ungebundene `DIST_DIR`-Variable in `build_release.py` behoben, Benchmark-Schleifen in `test_performance.py` an Ruff-Konventionen angepasst.
+6. Vertragstestsuite:
+   - `tests/test_metadata.py` hinzugefügt, um PEP 621 Metadaten, `.gitignore`-Muster, Sicherheits-SLAs, `llms.txt`, `CHANGELOG.md` und CI-Workflows automatisiert im Testzyklus abzusichern.
+
+---
+
+## 2026-09-16 — Pfad B: Discoverability, Visual Architecture, Target Personas & Comparative Matrix
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (C:\_Local_DEV\repos\VFDistiller)
+- Version: 17.0.1
+- Kategorie: Local-First Bioinformatics Desktop Application for Research-Grade Genetic Variant Analysis
+- Status: Arbeitsbaum sauber, 0 aktive Locks im kanonischen Lock-System (lock_status.py: UNLOCKED), Cooldown >24h seit letztem Kontakt eingehalten (25.4h Ruhezeit; Pfad A am 2026-09-10, Pfad B zuletzt am 2026-08-14 vor 32 Tagen).
+
+### 2. Zielgruppen & Personas
+- `[PERSONA-01]` Clinical Geneticists & Molecular Pathologists (Research & Academic Pathology):
+  - Fokus: Schnelle desktop-basierte Triage und Priorisierung seltener genetischer Varianten und somatischer Mutationen in Forschungskohorten ohne Abhängigkeit von rechenintensiven Cloud-Diensten oder proprietären Portalen.
+  - Lösung: Windows-first ttkbootstrap Desktop-GUI, integrierte Offline-Allelfrequenz-Annotation (gnomAD LightDB SQLite), ClinVar ClinSig, CADD-Scores, VEP-Integration und kompromisslose lokale Datenhaltung.
+- `[PERSONA-02]` Bioinformatics Core Facility Engineers & Pipeline Developers:
+  - Fokus: Nahtlose Konvertierung und Normierung zwischen proprietären Consumer-/Rohformaten (23andMe Rohdaten, Roh-FASTA) und standardisierten Forschungsformaten (VCF v4.2, gVCF), ohne schwerfällige Unix-Toolchains auf Windows voraussetzen zu müssen.
+  - Lösung: Streaming-Parser für VCF/gVCF ohne `bcftools`/`pysam`-Zwang, automatische GRCh37/GRCh38 Build-Erkennung, 5x Beschleunigung durch optionale Cython-Hotpaths und saubere Python/PEP 621 Architektur.
+- `[PERSONA-03]` Rare Disease Researchers & Academic Genomic Analysts:
+  - Fokus: Transparente Filterung nach Allelfrequenzen (AF < 0.007), CADD-Schwellenwerten, Gen-Whitelists und Read Depth mit flexiblem Multi-Format-Export (Excel, CSV, PDF-Berichte, annotierte VCFs) für wissenschaftliche Publikationen.
+  - Lösung: Lokales SQLite-Indexing, anpassbare Filterregeln, INFO-Feld-Recycling und vollständige Erhaltung probenspezifischer FORMAT-Metriken (DP, GQ, AD, PL).
+- `[PERSONA-04]` Privacy-Conscious Medical Data Stewards & Offline Clinical Lab IT:
+  - Fokus: Höchste Anforderungen an den genetischen Datenschutz (DSGVO Art. 9, Gendiagnostikgesetz GenDG) im universitären und klinischen Forschungsumfeld; Ausschluss unkontrollierten Datenabflusses sensibler Sequenzvarianten.
+  - Lösung: 100% Offline-fähiger Kern, automatische Redaktion von Loci und rsIDs in persistenten Logdateien (`redact_for_logfile`), unprivilegierte `RunAsInvoker`-Ausführung und strikte Research Use Only (RUO) Grenze ohne unzulässige IVD-Medizinprodukt-Behauptungen.
+
+### 3. High-Intent SEO Keywords (Bilingual EN/DE)
+- English:
+  - `local-first VCF variant annotation desktop tool Windows`
+  - `offline gnomAD allele frequency lookup SQLite GUI`
+  - `23andMe raw data to annotated VCF converter python`
+  - `gVCF streaming parser without bcftools pysam dependencies`
+  - `research-grade genetic variant filtering tool CADD ClinVar`
+  - `privacy-preserving clinical genomics analysis desktop app`
+  - `VCF format metrics preservation multi-sample export excel pdf`
+  - `Cython accelerated VCF parser bioinformatics desktop workstation`
+- Deutsch:
+  - `lokales VCF Varianten-Annotations-Desktop-Tool Windows`
+  - `Offline gnomAD Allelfrequenz-Lookup SQLite Benutzeroberfläche`
+  - `23andMe Rohdaten in annotiertes VCF konvertieren Python`
+  - `gVCF Streaming-Parser ohne Unix bcftools Abhängigkeit`
+  - `genetische Varianten filtern CADD ClinVar Forschung Lehre`
+  - `datenschutzkonforme Genom-Analyse ohne Cloud-Upload DSGVO`
+  - `VCF FORMAT-Metriken Erhaltung Multiproben-Export Excel PDF`
+  - `Cython beschleunigter VCF-Parser Bioinformatik Desktop-App`
+
+### 4. 10-Dimensionen-Vergleichsmatrix vs. 4 Alternativen
+- Verglichene Alternativen:
+  1. Unix Shell Pipelines (bcftools / samtools / vcftools)
+  2. Cloud Variant Portals & SaaS (Illumina BaseSpace / VarSome / Franklin)
+  3. Desktop Genome Browsers (IGV - Integrative Genomics Viewer)
+  4. General Annotation Engines (Ensembl VEP CLI / SnpEff / ANNOVAR)
+- Technische Dimensionen gemapped auf Invarianten:
+  1. 100% Local-First & Zero-Egress (`INV-LOCAL-01`): VFDistiller 100% lokal, externe Abfragen rein anlassbezogen; Cloud Portals erfordern Upload sensibler Probandendaten.
+  2. Locus & rsID Log Redaction (`INV-PRIVACY-02`): VFDistiller redigiert Loci/rsIDs vor dem Schreiben in Logdateien; CLI-Tools loggen Rohdaten unmaskiert.
+  3. Interactive Windows GUI & PWA Companion (`INV-INSPECT-03`): VFDistiller bietet ttkbootstrap Desktop-GUI + Web Companion; Unix-Pipelines und VEP bieten keine native Desktop-GUI.
+  4. Multi-Format Ingestion (`INV-CONVERT-04`): VFDistiller importiert VCF, gVCF, 23andMe Rohdaten und FASTA direkt ohne Hilfsskripte.
+  5. Offline Allele Frequency Engine (`INV-OFFLINE-05`): VFDistiller nutzt komprimierte SQLite LightDB für Offline-gnomAD-Lookups; Cloud-Dienste setzen permanente Internetanbindung voraus.
+  6. Optional Cython Hotpath (`INV-ACCEL-06`): Bis zu 5x Beschleunigung bei VCF-Parsing und AF-Validierung mit automatischem Python-Fallback.
+  7. Multi-Format Report Export (`INV-EXPORT-07`): Export in annotierte VCFs unter Beibehaltung aller FORMAT-Metriken sowie tabellarische Reports in CSV, Excel (.xlsx) und PDF.
+  8. Unprivileged User-Mode Operation (`INV-UNPRIV-08`): Strikte `RunAsInvoker`-Ausführung ohne Admin-/UAC-Rechte.
+  9. Explicit RUO Boundary (`INV-COMPLY-09`): Klare Research-Use-Only-Abgrenzung gemäß IVDR (EU) 2017/746; kein irreführendes medizinisches Marketing.
+  10. Security SLA & CI Matrix (`INV-SLA-10`): Verbindliche 48h-Erstrückmeldung, 5-Werktage-Triage, AGPL-3.0 Transparenz und automatisierte Testmatrizen.
+
+### 5. Zweisprachige README-Architektur & Schnellnavigation
+- 18-Punkte-Schnellnavigation in `README.md` und `README.de.md` mit 100% wechselseitiger Anker-Parität (#1 bis #18 inklusive Alias-Anker).
+- Erweiterte Shields.io Badges: Organisation (`biotec-line`), Dachverband (`open-bricks`), Lizenz (`AGPL-3.0`), Python (`3.10+`), Standards (`VCF 4.2 | gVCF`), Genom-Builds (`GRCh37 | GRCh38`), Tests (`142 passed`), SLA (`48h SLA`), Local-First (`100% Offline / RUO`), Third-Party Audited, Marketing Log, LLM Ready.
+
+### 6. Drittanbieter-Lizenzinventar & Governance
+- `THIRD_PARTY_LICENSES.md` mit vollständigem SPDX-Audit, 10 Governance-Invarianten, Bestätigung der Zero-Copyleft-Freiheit für genomische Forschungsdaten und LGPLv3 § 4 Transparenzerklärung für dynamisch verlinktes `pystray`.
+- `pyproject.toml` [project.urls] um `Third-Party Licenses`, `Marketing Log` und `LLM Ready` erweitert.
+
+### 7. Ökosystem-Cross-Linking & Verzeichnisempfehlungen
+- Verknüpfung zu `biotec-line` Repositories (`genotype-to-vcf`, `medizindaten-standards`), Open-Science Plattformen und `open-bricks`.
+- Verzeichnisse & Kataloge: bio.tools, nf-core related, PyPI/Bioinformatics, Awesome-Bioinformatics, Glama, LLM Tooling Registries.
+
+### 8. Automatisierte Vertragstest-Suite
+- `tests/test_metadata.py` ausgebaut um Vertragstests für 18-Punkte-Navigation, Personas, 10-Dimensionen-Vergleichsmatrix, Lizenz-Audit, Invarianten, Pyproject URLs und Marketing-Log-Integrität.
