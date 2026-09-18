@@ -53,8 +53,25 @@ RELEASE_FILES = [
     # Übersetzungen
     "locales/translations.json",
 
-    # Icon
+    # Module & Loader
+    "app_icon_loader.py",
+
+    # Icons & Assets
+    "VFDistiller.ico",
+    "DesktopIcon.ico",
+    "DesktopIcon.png",
+    "icon.ico",
+    "icon.png",
+    "VFDistiller.png",
     "ICO/ICO.ico",
+    "assets/icon.png",
+    "assets/icon.ico",
+    "assets/vfdistiller.ico",
+    "assets/app_icon.ico",
+    "assets/DesktopIcon.ico",
+    "assets/DesktopIcon.png",
+    "assets/favicon.ico",
+    "assets/favicon.png",
 
     # gnomAD Download-Tool
     "Get gnomAD DB light.py",

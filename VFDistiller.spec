@@ -9,6 +9,9 @@ a = Analysis(
     datas=[
         (os.path.join(BASE, 'locales', 'translations.json'), 'locales'),
         (os.path.join(BASE, 'ICO', 'ICO.ico'), 'ICO'),
+        (os.path.join(BASE, 'assets'), 'assets'),
+        (os.path.join(BASE, 'app_icon_loader.py'), '.'),
+        (os.path.join(BASE, 'VFDistiller.ico'), '.'),
         (os.path.join(BASE, 'data', 'annotations', 'GRCh37.gtf.gz'), os.path.join('data', 'annotations')),
         (os.path.join(BASE, 'data', 'annotations', 'GRCh38.gtf.gz'), os.path.join('data', 'annotations')),
         (os.path.join(BASE, 'variant_fusion_settings.json.example'), '.'),
@@ -66,5 +69,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=[os.path.join(BASE, 'ICO', 'ICO.ico')],
+    icon=[os.path.join(BASE, 'VFDistiller.ico')],
 )

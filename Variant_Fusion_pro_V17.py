@@ -244,8 +244,16 @@ else:
     _BUNDLE_DIR = BASE_DIR
 
 # =============================================================================
-# EARLY SPLASH WINDOW (V17.1) - Sofortiges visuelles Feedback beim Start
+# APPLICATION ICON & EARLY SPLASH WINDOW (V17.1)
 # =============================================================================
+try:
+    from app_icon_loader import get_app_icon_path, load_app_icon
+except ImportError:
+    def get_app_icon_path():  # type: ignore
+        return None
+    def load_app_icon(window=None):  # type: ignore
+        return None
+
 _splash_window = None
 _splash_log_text = None
 
@@ -264,6 +272,7 @@ def _create_early_splash():
         x = (sw - 620) // 2
         y = (sh - 400) // 2
         _splash_window.geometry(f"620x400+{x}+{y}")
+        load_app_icon(_splash_window)
 
         frame = tk.Frame(_splash_window, padx=25, pady=20)
         frame.pack(fill="both", expand=True)
@@ -21031,6 +21040,7 @@ class App(ttk.Window):
         # 2. Fenster initialisieren
         super().__init__(title=APP_NAME, themename=theme_name)
         self.geometry("1400x1000")
+        load_app_icon(self)
         
         self.live_queue = queue.Queue(maxsize=200000)
         self.logger = logger
