@@ -15,6 +15,10 @@
     "de": "Abgeschlossen",
     "en": "Completed"
   },
+  "Aktuelle Filterkriterien anwenden": {
+    "de": "Aktuelle Filterkriterien anwenden",
+    "en": "Apply current filter criteria"
+  },
   "Alle Dateien": {
     "de": "Alle Dateien",
     "en": "All files"
@@ -123,10 +127,6 @@
     "de": "Dateiauswahl",
     "en": "File selection"
   },
-  "Ergebnisse neu laden": {
-    "de": "Ergebnisse neu laden",
-    "en": "Reload displayed results"
-  },
   "Datenalter für Refresh (Tage):": {
     "de": "Datenalter für Refresh (Tage):",
     "en": "Data age for refresh (days)"
@@ -134,14 +134,6 @@
   "Datenbank extern öffnen": {
     "de": "Datenbank extern öffnen",
     "en": "Open database externally"
-  },
-  "Durchsuchen": {
-    "de": "Durchsuchen",
-    "en": "Browse"
-  },
-  "Eingabedatei auswählen": {
-    "de": "Eingabedatei auswählen",
-    "en": "Select input file"
   },
   "Datenbankdatei:": {
     "de": "Datenbankdatei:",
@@ -167,6 +159,18 @@
     "de": "Diesen Dialog nicht mehr anzeigen",
     "en": "Do not show this dialog again"
   },
+  "Dieses Hilfefenster anzeigen": {
+    "de": "Dieses Hilfefenster anzeigen",
+    "en": "Display this help window"
+  },
+  "Durchsuchen": {
+    "de": "Durchsuchen",
+    "en": "Browse"
+  },
+  "Eingabedatei auswählen": {
+    "de": "Eingabedatei auswählen",
+    "en": "Select input file"
+  },
   "Einstellungen gespeichert": {
     "de": "Einstellungen gespeichert",
     "en": "Settings saved"
@@ -182,6 +186,14 @@
   "Entpacke...": {
     "de": "Entpacke...",
     "en": "Extracting..."
+  },
+  "Ergebnisse als PDF-Bericht exportieren": {
+    "de": "Ergebnisse als PDF-Bericht exportieren",
+    "en": "Export results as PDF report"
+  },
+  "Ergebnisse neu laden": {
+    "de": "Ergebnisse neu laden",
+    "en": "Reload displayed results"
   },
   "Erstelle Index...": {
     "de": "Erstelle Index...",
@@ -202,14 +214,6 @@
   "Export Format wählen:": {
     "de": "Export Format wählen:",
     "en": "Choose export format:"
-  },
-  "Laufende Analyse stoppen": {
-    "de": "Laufende Analyse stoppen",
-    "en": "Stop the running analysis"
-  },
-  "Maximale Allelfrequenz vor dem Scan": {
-    "de": "Maximale Allelfrequenz vor dem Scan",
-    "en": "Maximum allele frequency before the scan"
   },
   "FASTQ-Datei:": {
     "de": "FASTQ-Datei:",
@@ -243,9 +247,13 @@
     "de": "Filter zurücksetzen",
     "en": "Reset filter"
   },
-  "Idle": {
-    "de": "Idle",
-    "en": "Idle"
+  "Filterkriterien auf Standard zurücksetzen": {
+    "de": "Filterkriterien auf Standard zurücksetzen",
+    "en": "Reset filter criteria to default"
+  },
+  "Funktion": {
+    "de": "Funktion",
+    "en": "Action"
   },
   "GEN-Whitelist:": {
     "de": "GEN-Whitelist:",
@@ -259,21 +267,49 @@
     "de": "Hauptfilter",
     "en": "Main filter"
   },
+  "Hilfe": {
+    "de": "Hilfe",
+    "en": "Help"
+  },
+  "Hinweis: Alle Schaltflächen und Eingabefelder besitzen fokussierbare Hilfetexte (Tooltips).": {
+    "de": "Hinweis: Alle Schaltflächen und Eingabefelder besitzen fokussierbare Hilfetexte (Tooltips).",
+    "en": "Note: All buttons and input fields include focusable contextual tooltips."
+  },
   "Hinweis: AlphaMissense Scores werden nur für gefilterte Varianten abgerufen.": {
     "de": "Hinweis: AlphaMissense Scores werden nur für gefilterte Varianten abgerufen.",
     "en": "Note: AlphaMissense scores are retrieved only for filtered variants."
+  },
+  "Idle": {
+    "de": "Idle",
+    "en": "Idle"
   },
   "Keine Datei ausgewählt": {
     "de": "Keine Datei ausgewählt",
     "en": "No file selected"
   },
+  "Kommaseparierte Liste von Gensymbolen für Blacklist": {
+    "de": "Kommaseparierte Liste von Gensymbolen für Blacklist",
+    "en": "Comma-separated list of gene symbols for blacklist"
+  },
+  "Kommaseparierte Liste von Gensymbolen für Whitelist": {
+    "de": "Kommaseparierte Liste von Gensymbolen für Whitelist",
+    "en": "Comma-separated list of gene symbols for whitelist"
+  },
   "Laden": {
     "de": "Laden",
     "en": "Load"
   },
+  "Laufende Analyse stoppen": {
+    "de": "Laufende Analyse stoppen",
+    "en": "Stop the running analysis"
+  },
   "Log & Export": {
     "de": "Log & Export",
     "en": "Log & Export"
+  },
+  "Maximale Allelfrequenz vor dem Scan": {
+    "de": "Maximale Allelfrequenz vor dem Scan",
+    "en": "Maximum allele frequency before the scan"
   },
   "Migration läuft": {
     "de": "Migration läuft",
@@ -282,6 +318,10 @@
   "Migriere": {
     "de": "Migriere",
     "en": "Migrating"
+  },
+  "Minimaler CADD-Phred-Score für Ergebnisfilter": {
+    "de": "Minimaler CADD-Phred-Score für Ergebnisfilter",
+    "en": "Minimum CADD phred score for result filtering"
   },
   "Nachfilter": {
     "de": "Nachfilter",
@@ -311,14 +351,6 @@
     "de": "Optionen",
     "en": "Options"
   },
-  "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei": {
-    "de": "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei",
-    "en": "Path of the VCF, gVCF, 23andMe, or FASTA input file"
-  },
-  "Pipeline starten": {
-    "de": "Pipeline starten",
-    "en": "Start pipeline"
-  },
   "PDF Export": {
     "de": "PDF Export",
     "en": "PDF export"
@@ -326,6 +358,10 @@
   "PDF exportieren": {
     "de": "PDF exportieren",
     "en": "Export PDF"
+  },
+  "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei": {
+    "de": "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei",
+    "en": "Path of the VCF, gVCF, 23andMe, or FASTA input file"
   },
   "Pfad wählen...": {
     "de": "Pfad wählen...",
@@ -339,9 +375,17 @@
     "de": "Phase: —",
     "en": "Phase: —"
   },
+  "Pipeline starten": {
+    "de": "Pipeline starten",
+    "en": "Start pipeline"
+  },
   "Platzhalter: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}": {
     "de": "Platzhalter: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}",
     "en": "Placeholders: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}"
+  },
+  "Primären Link der ausgewählten Variante öffnen": {
+    "de": "Primären Link der ausgewählten Variante öffnen",
+    "en": "Open primary link of selected variant"
   },
   "Quality-Filter Einstellungen": {
     "de": "Quality-Filter Einstellungen",
@@ -395,13 +439,33 @@
     "de": "Sprache / Language",
     "en": "Language"
   },
+  "Später": {
+    "de": "Später",
+    "en": "Later"
+  },
   "Stoppen": {
     "de": "Stoppen",
     "en": "Stop"
   },
-  "Später": {
-    "de": "Später",
-    "en": "Later"
+  "Tabelle als CSV-Datei exportieren": {
+    "de": "Tabelle als CSV-Datei exportieren",
+    "en": "Export table as CSV file"
+  },
+  "Tabelle als Excel-Arbeitsmappe exportieren": {
+    "de": "Tabelle als Excel-Arbeitsmappe exportieren",
+    "en": "Export table as Excel workbook"
+  },
+  "Tastaturbedienung & Barrierefreiheit": {
+    "de": "Tastaturbedienung & Barrierefreiheit",
+    "en": "Keyboard Navigation & Accessibility"
+  },
+  "Tastaturkürzel & Barrierefreiheit": {
+    "de": "Tastaturkürzel & Barrierefreiheit",
+    "en": "Keyboard Shortcuts & Accessibility"
+  },
+  "Tastenkürzel": {
+    "de": "Tastenkürzel",
+    "en": "Keyboard Shortcut"
   },
   "VCF Export": {
     "de": "VCF Export",
@@ -411,6 +475,14 @@
     "de": "VF Distiller - Ressourcen-Einrichtung",
     "en": "VF Distiller - Resource Setup"
   },
+  "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.": {
+    "de": "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.",
+    "en": "VFDistiller supports full keyboard and screen reader operation per BITV 2.0 / WCAG 2.1 AA."
+  },
+  "Varianten als VCF-Datei exportieren": {
+    "de": "Varianten als VCF-Datei exportieren",
+    "en": "Export variants as VCF file"
+  },
   "Varianten ohne AF-Wert können verschiedene Gründe haben:": {
     "de": "Varianten ohne AF-Wert können verschiedene Gründe haben:",
     "en": "Variants without AF value may have different reasons:"
@@ -418,6 +490,10 @@
   "Verarbeitung läuft...": {
     "de": "Verarbeitung läuft...",
     "en": "Processing..."
+  },
+  "Verfügbare Tastaturkürzel": {
+    "de": "Verfügbare Tastaturkürzel",
+    "en": "Available Keyboard Shortcuts"
   },
   "Vorhanden": {
     "de": "  Vorhanden",
@@ -446,6 +522,10 @@
   "Wählen": {
     "de": "Wählen",
     "en": "Select"
+  },
+  "Zwischen allen Steuerelementen und Filtern navigieren": {
+    "de": "Zwischen allen Steuerelementen und Filtern navigieren",
+    "en": "Navigate between all controls and filters"
   },
   "Übernehmen": {
     "de": "Übernehmen",

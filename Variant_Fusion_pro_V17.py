@@ -22592,11 +22592,68 @@ class App(ttk.Window):
 
     def _setup_events(self):
         """
-        Bindet GUI-Events (z. B. Doppelklick auf Tabellenzellen).
+        Bindet GUI-Events (z. B. Doppelklick auf Tabellenzellen, Tastatur-Navigation und Shortcuts).
         """
         self.tree.bind("<Double-1>", self._on_double_click)
         # Optional: einfacher Klick für RSID
         self.tree.bind("<Button-1>", self._on_click_single)
+        # Barrierefreie Tastatur-Aktivierung für Tabellenzeilen
+        self.tree.bind("<Return>", self._on_tree_return)
+        self.tree.bind("<KP_Enter>", self._on_tree_return)
+
+        # Globale Tastaturkürzel (WCAG 2.1 AA / Tastatur-Ergonomie)
+        self.bind("<Control-o>", lambda _e: self.choose_file())
+        self.bind("<Control-O>", lambda _e: self.choose_file())
+        self.bind("<Control-r>", lambda _e: self.on_start())
+        self.bind("<Control-R>", lambda _e: self.on_start())
+        self.bind("<Control-Return>", lambda _e: self.on_start())
+        self.bind("<F5>", lambda _e: self.on_refresh())
+        self.bind("<F1>", lambda _e: self.show_shortcuts_dialog())
+        self.bind("<Escape>", self._handle_escape)
+
+    def _handle_escape(self, event=None):
+        """Escape bricht eine laufende Analyse ab, wenn aktiv."""
+        if hasattr(self, "pipeline_thread") and self.pipeline_thread and self.pipeline_thread.is_alive():
+            self.on_stop()
+
+    def _on_tree_return(self, event=None):
+        """Tastatur-Aktivierung für ausgewählte Tabellenzeile (Enter / Return)."""
+        selection = self.tree.selection()
+        if not selection:
+            return
+        row_id = selection[0]
+        values = self.tree.item(row_id).get("values", [])
+        if not values:
+            return
+        visible_cols = self._current_displaycolumns()
+        row_data = {}
+        for i, vc in enumerate(visible_cols):
+            if i < len(values):
+                row_data[vc] = values[i]
+            else:
+                row_data[vc] = ""
+
+        # PubMed consequence Anreicherung falls nötig
+        iid = row_id
+        parts = iid.split("|")
+        if len(parts) == 5:
+            try:
+                chr_, pos_, ref_, alt_, build_ = parts
+                key = (chr_, int(pos_), ref_, alt_, build_)
+                db_row = self.db.get_variant(key) if key and hasattr(self, "db") and self.db else {}
+                row_data['consequence'] = db_row.get('consequence', '')
+            except Exception:
+                pass
+
+        # Priorisierte Link-Ausführung (rsid -> gene -> pubmed -> pos)
+        for col_name in ("rsid", "gene", "pubmed", "pos"):
+            if col_name in row_data:
+                val = str(row_data[col_name]).strip()
+                if val and val not in (".", "-", "none", "null"):
+                    config = self.column_links.get(col_name)
+                    if config and config.get('template'):
+                        self._handle_column_click(col_name, config.get('trigger', 'single'), row_data)
+                        return
     
     def _process_events(self):
         try:
@@ -23877,6 +23934,15 @@ class App(ttk.Window):
         menubar.add_cascade(label=self._t("Debug"), menu=debugmenu)
         debugmenu.add_command(label=self._t("Datenbank extern öffnen"), command=self.open_external_db)
 
+        # Hilfe-Menü (Barrierefreiheit & Tastaturkürzel)
+        helpmenu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label=self._t("Hilfe"), menu=helpmenu)
+        helpmenu.add_command(
+            label=self._t("Tastaturkürzel & Barrierefreiheit"),
+            command=self.show_shortcuts_dialog,
+            accelerator="F1",
+        )
+
         # =====================================================================
         # 1. TOP BAR (Datei, Scan-Settings)
         # =====================================================================
@@ -24050,7 +24116,9 @@ class App(ttk.Window):
         cadd_f = ttk.Frame(col2)
         cadd_f.pack(anchor="w", pady=(0, 10))
         ttk.Label(cadd_f, text="CADD ≥ ").pack(side=LEFT)
-        ttk.Entry(cadd_f, textvariable=self.postfilter_cadd_min, width=5).pack(side=LEFT)
+        cadd_post_entry = ttk.Entry(cadd_f, textvariable=self.postfilter_cadd_min, width=5)
+        cadd_post_entry.pack(side=LEFT)
+        self._attach_tooltip(cadd_post_entry, self._t("Minimaler CADD-Phred-Score für Ergebnisfilter"))
         
         # Consequences
         ttk.Label(col2, text="Konsequenz", font=("", 9, "bold")).pack(anchor="w", pady=(0,5))
@@ -24067,7 +24135,9 @@ class App(ttk.Window):
         ttk.Label(col3, text="Gen-Whitelist:").pack(anchor="w")
         wl = ttk.Frame(col3)
         wl.pack(fill=X)
-        ttk.Entry(wl, textvariable=self.gen_whitelist, width=15).pack(side=LEFT, fill=X, expand=True)
+        wl_entry = ttk.Entry(wl, textvariable=self.gen_whitelist, width=15)
+        wl_entry.pack(side=LEFT, fill=X, expand=True)
+        self._attach_tooltip(wl_entry, self._t("Kommaseparierte Liste von Gensymbolen für Whitelist"))
         whitelist_btn = ttk.Button(wl, text="📂", width=3, command=lambda: self.load_gene_list("whitelist"), style="secondary-outline")
         whitelist_btn.pack(side=LEFT)
         self._attach_tooltip(whitelist_btn, self._t("Whitelist laden"))
@@ -24078,15 +24148,21 @@ class App(ttk.Window):
         
         bl = ttk.Frame(col3)
         bl.pack(fill=X)
-        ttk.Entry(bl, textvariable=self.gen_blacklist, width=15).pack(side=LEFT, fill=X, expand=True)
+        bl_entry = ttk.Entry(bl, textvariable=self.gen_blacklist, width=15)
+        bl_entry.pack(side=LEFT, fill=X, expand=True)
+        self._attach_tooltip(bl_entry, self._t("Kommaseparierte Liste von Gensymbolen für Blacklist"))
         blacklist_btn = ttk.Button(bl, text="📂", width=3, command=lambda: self.load_gene_list("blacklist"), style="secondary-outline")
         blacklist_btn.pack(side=LEFT)
         self._attach_tooltip(blacklist_btn, self._t("Blacklist laden"))
         
         # Buttons
         ttk.Separator(col3).pack(fill=X, pady=10)
-        ttk.Button(col3, text="Filter Anwenden", command=self.apply_post_filter, bootstyle="primary").pack(fill=X, pady=2)
-        ttk.Button(col3, text="Reset", command=self.reset_post_filter, bootstyle="secondary-outline").pack(fill=X)        # Buttons
+        apply_btn = ttk.Button(col3, text=self._t("Filter Anwenden"), command=self.apply_post_filter, bootstyle="primary")
+        apply_btn.pack(fill=X, pady=2)
+        self._attach_tooltip(apply_btn, self._t("Aktuelle Filterkriterien anwenden"))
+        reset_btn = ttk.Button(col3, text=self._t("Reset"), command=self.reset_post_filter, bootstyle="secondary-outline")
+        reset_btn.pack(fill=X)
+        self._attach_tooltip(reset_btn, self._t("Filterkriterien auf Standard zurücksetzen"))
 
         # =====================================================================
         # 5. COLLAPSIBLE BOTTOM SEKTION (Log & Export)
@@ -24116,10 +24192,18 @@ class App(ttk.Window):
         btn_grid = ttk.Frame(exp_frame)
         btn_grid.pack(fill=X)
         
-        ttk.Button(btn_grid, text="CSV", command=self.export_csv, width=8, bootstyle="secondary-outline").grid(row=0, column=0, padx=2, pady=2)
-        ttk.Button(btn_grid, text="Excel", command=self.export_excel, width=8, bootstyle="success-outline").grid(row=0, column=1, padx=2, pady=2)
-        ttk.Button(btn_grid, text="PDF", command=self.export_pdf, width=8, bootstyle="danger-outline").grid(row=1, column=0, padx=2, pady=2)
-        ttk.Button(btn_grid, text="VCF", command=self.export_vcf, width=8, bootstyle="warning").grid(row=1, column=1, padx=2, pady=2)
+        csv_btn = ttk.Button(btn_grid, text="CSV", command=self.export_csv, width=8, bootstyle="secondary-outline")
+        csv_btn.grid(row=0, column=0, padx=2, pady=2)
+        self._attach_tooltip(csv_btn, self._t("Tabelle als CSV-Datei exportieren"))
+        excel_btn = ttk.Button(btn_grid, text="Excel", command=self.export_excel, width=8, bootstyle="success-outline")
+        excel_btn.grid(row=0, column=1, padx=2, pady=2)
+        self._attach_tooltip(excel_btn, self._t("Tabelle als Excel-Arbeitsmappe exportieren"))
+        pdf_btn = ttk.Button(btn_grid, text="PDF", command=self.export_pdf, width=8, bootstyle="danger-outline")
+        pdf_btn.grid(row=1, column=0, padx=2, pady=2)
+        self._attach_tooltip(pdf_btn, self._t("Ergebnisse als PDF-Bericht exportieren"))
+        vcf_btn = ttk.Button(btn_grid, text="VCF", command=self.export_vcf, width=8, bootstyle="warning")
+        vcf_btn.grid(row=1, column=1, padx=2, pady=2)
+        self._attach_tooltip(vcf_btn, self._t("Varianten als VCF-Datei exportieren"))
 
     def open_general_settings(self):
         """NEU: Mit Column Link Templating System."""
@@ -24441,6 +24525,68 @@ class App(ttk.Window):
             self.logger.log(f"[Debug] Öffne DB mit {viewer}")
         except Exception as e:
             Messagebox.show_error(f"Fehler beim Starten des Viewers:\n{e}", "Fehler")
+
+    def show_shortcuts_dialog(self):
+        """Zeigt ein barrierefreies Hilfefenster für Tastaturkürzel und Bedienung."""
+        dlg = ttk.Toplevel(self)
+        dlg.title(self._t("Tastaturkürzel & Barrierefreiheit"))
+        dlg.geometry("620x520")
+        dlg.minsize(500, 400)
+        dlg.transient(self)
+        dlg.bind("<Escape>", lambda _e: dlg.destroy())
+
+        main_f = ttk.Frame(dlg, padding=16)
+        main_f.pack(fill=BOTH, expand=YES)
+
+        ttk.Label(
+            main_f,
+            text=self._t("Tastaturbedienung & Barrierefreiheit"),
+            font=("", 12, "bold"),
+            bootstyle="primary",
+        ).pack(anchor="w", pady=(0, 10))
+
+        ttk.Label(
+            main_f,
+            text=self._t("VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA."),
+            wraplength=580,
+        ).pack(anchor="w", pady=(0, 12))
+
+        table_frame = ttk.Labelframe(main_f, text=self._t("Verfügbare Tastaturkürzel"), padding=10)
+        table_frame.pack(fill=BOTH, expand=YES, pady=(0, 12))
+
+        cols = ("shortcut", "description")
+        tree = ttk.Treeview(table_frame, columns=cols, show="headings", height=8, bootstyle="info")
+        tree.heading("shortcut", text=self._t("Tastenkürzel"))
+        tree.heading("description", text=self._t("Funktion"))
+        tree.column("shortcut", width=170, anchor="w")
+        tree.column("description", width=370, anchor="w")
+
+        shortcuts = [
+            ("Strg+O / Ctrl+O", self._t("Eingabedatei auswählen")),
+            ("Strg+R / Ctrl+Return", self._t("Analyse der ausgewählten Datei starten")),
+            ("Escape", self._t("Laufende Analyse stoppen")),
+            ("F5", self._t("Ergebnisse neu laden")),
+            ("Eingabe / Return (Tabelle)", self._t("Primären Link der ausgewählten Variante öffnen")),
+            ("F1", self._t("Dieses Hilfefenster anzeigen")),
+            ("Tab / Umschalt+Tab", self._t("Zwischen allen Steuerelementen und Filtern navigieren")),
+        ]
+
+        for sc, desc in shortcuts:
+            tree.insert("", "end", values=(sc, desc))
+
+        tree.pack(fill=BOTH, expand=YES)
+
+        notes = ttk.Label(
+            main_f,
+            text=self._t("Hinweis: Alle Schaltflächen und Eingabefelder besitzen fokussierbare Hilfetexte (Tooltips)."),
+            font=("", 8),
+            bootstyle="secondary",
+        )
+        notes.pack(anchor="w", pady=(0, 10))
+
+        close_btn = ttk.Button(main_f, text=self._t("Schließen"), command=dlg.destroy, bootstyle="secondary")
+        close_btn.pack(anchor="e")
+        close_btn.focus_set()
             # ============== Main ==============
 
 if __name__ == "__main__":

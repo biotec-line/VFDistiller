@@ -423,3 +423,71 @@ def test_filtered_vcf_export_applies_alt_limiter_before_enrichment():
     assert "matched_alts.append((alt, (c_clean, pos, ref, alt_norm, current_build)))" in export_block
     assert "filtered_line = _limit_vcf_line_to_alt(line, matched_alt)" in export_block
     assert "self._enrich_vcf_line(filtered_line, anno, matched_key_full)" in export_block
+
+
+def test_keyboard_accessibility_and_shortcuts_contract():
+    src = _MODULE_PATH.read_text(encoding="utf-8")
+
+    # Treeview keyboard navigation
+    assert 'self.tree.bind("<Return>", self._on_tree_return)' in src
+    assert 'self.tree.bind("<KP_Enter>", self._on_tree_return)' in src
+    assert 'def _on_tree_return(self, event=None):' in src
+
+    # Global keyboard shortcuts
+    assert 'self.bind("<Control-o>", lambda _e: self.choose_file())' in src
+    assert 'self.bind("<Control-r>", lambda _e: self.on_start())' in src
+    assert 'self.bind("<Control-Return>", lambda _e: self.on_start())' in src
+    assert 'self.bind("<F5>", lambda _e: self.on_refresh())' in src
+    assert 'self.bind("<F1>", lambda _e: self.show_shortcuts_dialog())' in src
+    assert 'self.bind("<Escape>", self._handle_escape)' in src
+    assert 'def _handle_escape(self, event=None):' in src
+    assert 'def show_shortcuts_dialog(self):' in src
+
+    # Menubar Help
+    assert 'menubar.add_cascade(label=self._t("Hilfe"), menu=helpmenu)' in src
+    assert 'label=self._t("Tastaturkürzel & Barrierefreiheit")' in src
+
+    # Export & Filter Tooltips
+    assert 'self._attach_tooltip(csv_btn, self._t("Tabelle als CSV-Datei exportieren"))' in src
+    assert 'self._attach_tooltip(excel_btn, self._t("Tabelle als Excel-Arbeitsmappe exportieren"))' in src
+    assert 'self._attach_tooltip(pdf_btn, self._t("Ergebnisse als PDF-Bericht exportieren"))' in src
+    assert 'self._attach_tooltip(vcf_btn, self._t("Varianten als VCF-Datei exportieren"))' in src
+    assert 'self._attach_tooltip(apply_btn, self._t("Aktuelle Filterkriterien anwenden"))' in src
+    assert 'self._attach_tooltip(reset_btn, self._t("Filterkriterien auf Standard zurücksetzen"))' in src
+    assert 'self._attach_tooltip(cadd_post_entry, self._t("Minimaler CADD-Phred-Score für Ergebnisfilter"))' in src
+    assert 'self._attach_tooltip(wl_entry, self._t("Kommaseparierte Liste von Gensymbolen für Whitelist"))' in src
+    assert 'self._attach_tooltip(bl_entry, self._t("Kommaseparierte Liste von Gensymbolen für Blacklist"))' in src
+
+
+def test_accessibility_translation_keys_bilingual():
+    translations = json.loads(_TRANSLATIONS_PATH.read_text(encoding="utf-8"))
+
+    expected_keys = [
+        "Hilfe",
+        "Tastaturkürzel & Barrierefreiheit",
+        "Tastaturbedienung & Barrierefreiheit",
+        "Verfügbare Tastaturkürzel",
+        "Tastenkürzel",
+        "Funktion",
+        "Primären Link der ausgewählten Variante öffnen",
+        "Dieses Hilfefenster anzeigen",
+        "Zwischen allen Steuerelementen und Filtern navigieren",
+        "Hinweis: Alle Schaltflächen und Eingabefelder besitzen fokussierbare Hilfetexte (Tooltips).",
+        "Tabelle als CSV-Datei exportieren",
+        "Tabelle als Excel-Arbeitsmappe exportieren",
+        "Ergebnisse als PDF-Bericht exportieren",
+        "Varianten als VCF-Datei exportieren",
+        "Aktuelle Filterkriterien anwenden",
+        "Filterkriterien auf Standard zurücksetzen",
+        "Minimaler CADD-Phred-Score für Ergebnisfilter",
+        "Kommaseparierte Liste von Gensymbolen für Whitelist",
+        "Kommaseparierte Liste von Gensymbolen für Blacklist",
+    ]
+
+    for key in expected_keys:
+        assert key in translations, f"Missing key in translations: {key}"
+        assert "de" in translations[key], f"Missing 'de' for key: {key}"
+        assert "en" in translations[key], f"Missing 'en' for key: {key}"
+        assert translations[key]["de"], f"Empty 'de' for key: {key}"
+        assert translations[key]["en"], f"Empty 'en' for key: {key}"
+
