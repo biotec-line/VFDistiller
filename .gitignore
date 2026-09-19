@@ -110,7 +110,11 @@ LOCK
 LOCK.*
 *.lock
 LOCK*.txt
+LOCK.user.*
+LOCK.until.*
+LOCK.condition.*
 LOCK.permissions.json
+.automation-lock
 BUGREPORT.md
 BUG-DIFF.txt
 DIAGNOSE_REPORT.md
@@ -125,20 +129,32 @@ COMPLETE_PROJECT_CONTEXT.txt
 # ---------------------------------------------------------------------------
 # Multi-Host Synchronisationskonflikte (OneDrive / Cloud Sync)
 # ---------------------------------------------------------------------------
+*conflicted copy*
+* (Kopie)*
+* (Copy)*
 *-conflict-*
 *.sync-conflict-*
 *.conflict
 *-CONFLIT-*
 *.sync-temp-*
+*-ASUS*
 *-ASUS-GEI*
-*-WORKSTATION-LG*
 *-ASUS-GEI.*
+*-WORKSTATION*
+*-WORKSTATION-LG*
 *-WORKSTATION-LG.*
+*-LAPTOP*
+*-Mac Studio*
+*-MacBook*
 
 # ---------------------------------------------------------------------------
 # Test- & Packaging-Caches
 # ---------------------------------------------------------------------------
 .ruff_cache/
+.hypothesis/
+.turbo/
+.tox/
+!package-lock.json
 node_modules/
 .nyc_output/
 wheelhouse/

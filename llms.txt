@@ -7,9 +7,9 @@ License: AGPL-3.0-or-later
 Primary language: Python
 UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, Web Companion PWA, optional PyInstaller build
 Also known as: Variant Fusion Distiller
-Version: 17.0.1
-Last-checked: 2026-09-16
-Test Status: 142 passed, 10 subtests passed (100% green)
+Version: 17.0.2
+Last-checked: 2026-09-19
+Test Status: 155 passed, 10 subtests passed (100% green)
 
 ## Summary
 

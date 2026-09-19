@@ -8,7 +8,7 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Genom-Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genom--Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Tests: 148 passed](https://img.shields.io/badge/Tests-148%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Tests: 155 passed](https://img.shields.io/badge/Tests-155%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Sicherheit: 48h SLA](https://img.shields.io/badge/Sicherheit-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Datenschutz: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Laufzeit: RunAsInvoker](https://img.shields.io/badge/Laufzeit-RunAsInvoker-green?style=flat)](SECURITY.md)

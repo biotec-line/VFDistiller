@@ -3,6 +3,16 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [17.0.2] - 2026-09-19
+
+### Repository-Hygiene, CI-Härtung & PEP 621 Standardisierung (Pfad A)
+- **CI/Workflow Timeout- & Concurrency-Härtung**: Timeout-Grenzen für alle GitHub Actions Workflows verbindlich definiert: `.github/workflows/tests.yml` (`timeout-minutes: 15`), `.github/workflows/source-platform-smoke.yml` (`timeout-minutes: 15`), `.github/workflows/stale.yml` (`timeout-minutes: 10`) und `.github/workflows/welcome.yml` (`timeout-minutes: 5`). Concurrency-Cancellation (`group: ${{ github.workflow }}-${{ github.ref }}`, `cancel-in-progress: true`) in `welcome.yml` nachgerüstet.
+- **PEP 621 Standard-Lizenzmetadaten**: `pyproject.toml` mit standardisiertem `license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]` gemäß modernem Packaging-Standard ausgestattet.
+- **Multi-Host Cloud-Sync- & Fail-Closed Lock-Schutz**: `.gitignore` erweitert um Cloud-Konfliktmuster (`*conflicted copy*`, `* (Kopie)*`, `* (Copy)*`, `*-WORKSTATION*`, `*-LAPTOP*`, `*-ASUS*`, `*-Mac Studio*`, `*-MacBook*`), Fail-Closed Lock-Sperren (`LOCK.user.*`, `LOCK.until.*`, `LOCK.condition.*`, `.automation-lock`, `!package-lock.json`) und zusätzliche Tool-Caches (`.hypothesis/`, `.turbo/`, `.tox/`).
+- **Synchronisierte Versionsanhebung (17.0.2)**: Durchgängige Versionsharmonisierung auf `17.0.2` in `pyproject.toml`, Windows Store AppX-Metadaten `store_package.json` (`17.0.2.0`), `store_package/AppxManifest.xml` (`17.0.2.0`), `SECURITY.md`, `llms.txt` und `MARKETING-LOG.txt`.
+- **Drittanbieter-SBOM & Lizenzaudit**: Re-Audit der Third-Party-Lizenzdokumentation `THIRD_PARTY_LICENSES.md` mit Stempel `2026-09-19 (v17.0.2)`, Bestätigung von Zero-Copyleft für genomische Forschungsdaten und `RunAsInvoker`-Laufzeitgarantie.
+- **Automatisierte Vertragstests**: `tests/test_metadata.py` erweitert um Validierung von CI-Timeouts, Workflow-Concurrency, PEP 621 `license-files`, `.gitignore`-Ausschlussmustern und Release-Dokumentation.
+
 ## [17.0.1] - 2026-09-10
 
 ### Repository-Hygiene & CI-Matrix-Härtung (Pfad A)

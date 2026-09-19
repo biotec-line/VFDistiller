@@ -11,7 +11,7 @@
 
 | Version | Supported | Security Maintenance |
 | ------- | --------- | -------------------- |
-| 17.x / V17 | :white_check_mark: Yes | Active security support (current release: 17.0.1) |
+| 17.x / V17 | :white_check_mark: Yes | Active security support (current release: 17.0.2) |
 | < 17.0  | :x: No | End of life; upgrade required |
 
 Only the current major release series (`17.x`) receives active security patches. Users are strongly advised to run the latest available release.
@@ -66,7 +66,7 @@ The following areas are **out of scope**:
 
 | Version | Unterstützt | Sicherheitswartung |
 | ------- | ----------- | ------------------ |
-| 17.x / V17 | :white_check_mark: Ja | Aktiver Sicherheitssupport (aktuelle Version: 17.0.1) |
+| 17.x / V17 | :white_check_mark: Ja | Aktiver Sicherheitssupport (aktuelle Version: 17.0.2) |
 | < 17.0  | :x: Nein | End of Life; Aktualisierung erforderlich |
 
 ### Sicherheitslücke melden

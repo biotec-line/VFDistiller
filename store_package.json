@@ -3,7 +3,7 @@
   "publisher": "CN=52596601-BAB4-4F3F-B182-E8F3F273B202",
   "publisher_display": "Geiger",
   "identity_name": "Geiger.VariantFusion",
-  "version": "17.0.1.0",
+  "version": "17.0.2.0",
   "description": "Genomic variant analysis tool for VCF, gVCF and 23andMe files. Annotation, filtering and reporting.",
   "executable": "VFDistiller.exe",
   "capabilities": "internetClient",

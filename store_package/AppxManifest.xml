@@ -6,7 +6,7 @@
 
   <Identity Name="Geiger.VariantFusion"
             Publisher="CN=52596601-BAB4-4F3F-B182-E8F3F273B202"
-            Version="17.0.1.0"
+            Version="17.0.2.0"
             ProcessorArchitecture="x64" />
 
   <Properties>

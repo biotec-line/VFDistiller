@@ -99,3 +99,31 @@
 
 ### 8. Automatisierte Vertragstest-Suite
 - `tests/test_metadata.py` ausgebaut um Vertragstests für 18-Punkte-Navigation, Personas, 10-Dimensionen-Vergleichsmatrix, Lizenz-Audit, Invarianten, Pyproject URLs und Marketing-Log-Integrität.
+
+---
+
+## 2026-09-19 — Pfad A: Technische Hygiene, CI/Workflow-Härtung, PEP 621 Standardisierung & Version 17.0.2
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (C:\_Local_DEV\repos\VFDistiller)
+- Version: 17.0.2
+- Kategorie: Local-First Bioinformatics Desktop Application for Research-Grade Genetic Variant Analysis
+- Status: Arbeitsbaum sauber, 0 aktive Locks im kanonischen Lock-System (lock_status.py: UNLOCKED), Cooldown >24h seit letztem Kontakt eingehalten (31.5h Ruhezeit; Pfad A zuletzt am 2026-09-10 vor 9 Tagen, Pfad B am 2026-09-16).
+
+### 2. Umgesetzte Maßnahmen (Pfad A)
+1. CI/Workflow Timeout- und Concurrency-Härtung:
+   - `.github/workflows/tests.yml`: Job `test` mit `timeout-minutes: 15` gehärtet.
+   - `.github/workflows/source-platform-smoke.yml`: Job `smoke` mit `timeout-minutes: 15` gehärtet.
+   - `.github/workflows/stale.yml`: Job `stale` mit `timeout-minutes: 10` abgesichert.
+   - `.github/workflows/welcome.yml`: Concurrency-Gruppe (`group: ${{ github.workflow }}-${{ github.ref }}`, `cancel-in-progress: true`) und `timeout-minutes: 5` für Job `welcome` nachgerüstet.
+2. Multi-Host Cloud-Sync-, Lock- und Cache-Härtung in `.gitignore`:
+   - Ergänzung robuster Ausschlussmuster gegen Multi-Host-Konfliktdateien (`*conflicted copy*`, `* (Kopie)*`, `* (Copy)*`, `*-WORKSTATION*`, `*-LAPTOP*`, `*-ASUS*`, `*-Mac Studio*`, `*-MacBook*`).
+   - Härtung des Fail-Closed Lock-Schutzes (`LOCK.user.*`, `LOCK.until.*`, `LOCK.condition.*`, `.automation-lock`, `!package-lock.json`).
+   - Zusätzliche Test- und Packaging-Caches (.hypothesis/, .turbo/, .tox/) aufgenommen.
+3. PEP 621 Standardisierung & Paket-Metadaten:
+   - `license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]` in `pyproject.toml` nach PEP 621 standardisiert.
+   - Versions-Harmonisierung auf `17.0.2` in `pyproject.toml`, `store_package.json` (`17.0.2.0`), `store_package/AppxManifest.xml` (`17.0.2.0`), `SECURITY.md`, `llms.txt` und `CHANGELOG.md`.
+4. Drittanbieter-SBOM & Lizenzaudit:
+   - Re-Audit in `THIRD_PARTY_LICENSES.md` mit Stempel `2026-09-19 (v17.0.2)`, Bestätigung von Zero-Copyleft für genomische Forschungsdaten, `RunAsInvoker`-Laufzeit sowie unprivilegierter Ausführung.
+5. Automatisierte Vertragstest-Erweiterung:
+   - `tests/test_metadata.py` erweitert um Validierung von CI-Job-Timeouts (`tests.yml`, `source-platform-smoke.yml`, `stale.yml`, `welcome.yml`), Welcome-Workflow-Concurrency, PEP 621 `license-files`, Multi-Host/Lock `.gitignore`-Patterns und Release-Dokumentation in `CHANGELOG.md`.

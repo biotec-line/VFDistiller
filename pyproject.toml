@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vfdistiller"
-version = "17.0.1"
+version = "17.0.2"
 description = "Local-first bioinformatics desktop tool for research-grade genetic variant filtering, annotation, and conversion (VCF, gVCF, 23andMe, FASTA)."
 readme = "README.md"
 license = "AGPL-3.0-or-later"
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]
 requires-python = ">=3.10"
 authors = [
     {name = "Lukas Geiger", email = "support@lukasgeiger.com"},

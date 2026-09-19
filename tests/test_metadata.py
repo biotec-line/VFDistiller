@@ -21,9 +21,15 @@ def test_pyproject_toml_structure() -> None:
     # Project metadata
     project = data.get("project", {})
     assert project.get("name") == "vfdistiller"
-    assert project.get("version") == "17.0.1"
+    assert project.get("version") == "17.0.2"
     assert project.get("requires-python") == ">=3.10"
     assert project.get("license") == "AGPL-3.0-or-later"
+    assert project.get("license-files") == [
+        "LICENSE",
+        "NOTICE",
+        "THIRD_PARTY_LICENSES.md",
+        "THIRD_PARTY_LICENSES.txt",
+    ]
 
     # URLs
     urls = project.get("urls", {})
@@ -64,20 +70,36 @@ def test_gitignore_hygiene_patterns() -> None:
     content = gitignore_path.read_text(encoding="utf-8")
 
     # Multi-host sync conflicts
+    assert "*conflicted copy*" in content
+    assert "* (Kopie)*" in content
+    assert "* (Copy)*" in content
     assert "*-conflict-*" in content
     assert "*.sync-conflict-*" in content
+    assert "*-ASUS*" in content
     assert "*-ASUS-GEI.*" in content
+    assert "*-WORKSTATION*" in content
     assert "*-WORKSTATION-LG.*" in content
+    assert "*-LAPTOP*" in content
+    assert "*-Mac Studio*" in content
+    assert "*-MacBook*" in content
 
     # Multi-agent locks
     assert "LOCK" in content
     assert "LOCK.*" in content
     assert "*.lock" in content
     assert "LOCK*.txt" in content
+    assert "LOCK.user.*" in content
+    assert "LOCK.until.*" in content
+    assert "LOCK.condition.*" in content
     assert "LOCK.permissions.json" in content
+    assert ".automation-lock" in content
+    assert "!package-lock.json" in content
 
     # Test & packaging caches
     assert ".ruff_cache/" in content
+    assert ".hypothesis/" in content
+    assert ".turbo/" in content
+    assert ".tox/" in content
     assert "wheelhouse/" in content
     assert ".wheel-smoke/" in content
     assert "__pycache__/" in content
@@ -98,7 +120,7 @@ def test_security_policy_slas() -> None:
     assert "@lukisch" in content
     assert "#english" in content
     assert "#deutsch" in content
-    assert "17.0.1" in content
+    assert "17.0.2" in content
 
 
 def test_llms_txt_integrity() -> None:
@@ -111,20 +133,23 @@ def test_llms_txt_integrity() -> None:
     assert "https://github.com/biotec-line/VFDistiller" in content
     assert "biotec-line" in content
     assert "open-bricks" in content
+    assert "17.0.2" in content
 
 
 def test_changelog_release_section() -> None:
-    """Verify CHANGELOG.md documents version 17.0.1 and follows Keep a Changelog formatting."""
+    """Verify CHANGELOG.md documents version 17.0.2 and follows Keep a Changelog formatting."""
     changelog_path = REPO_ROOT / "CHANGELOG.md"
     assert changelog_path.exists(), "CHANGELOG.md must exist in repo root"
 
     content = changelog_path.read_text(encoding="utf-8")
+    assert "## [17.0.2]" in content
+    assert "2026-09-19" in content
     assert "## [17.0.1]" in content
     assert "2026-09-10" in content
 
 
 def test_ci_workflows_concurrency_and_matrix() -> None:
-    """Verify CI workflows include concurrency cancellation and testing matrices."""
+    """Verify CI workflows include concurrency cancellation, timeouts, and testing matrices."""
     workflows_dir = REPO_ROOT / ".github" / "workflows"
     assert workflows_dir.exists()
 
@@ -132,6 +157,7 @@ def test_ci_workflows_concurrency_and_matrix() -> None:
     assert tests_wf.exists(), "tests.yml workflow must exist"
     tests_content = tests_wf.read_text(encoding="utf-8")
     assert "cancel-in-progress: true" in tests_content
+    assert "timeout-minutes: 15" in tests_content
     assert "python-version" in tests_content
     assert "3.10" in tests_content
     assert "3.13" in tests_content
@@ -142,6 +168,18 @@ def test_ci_workflows_concurrency_and_matrix() -> None:
     assert smoke_wf.exists(), "source-platform-smoke.yml must exist"
     smoke_content = smoke_wf.read_text(encoding="utf-8")
     assert "cancel-in-progress: true" in smoke_content
+    assert "timeout-minutes: 15" in smoke_content
+
+    stale_wf = workflows_dir / "stale.yml"
+    assert stale_wf.exists(), "stale.yml workflow must exist"
+    stale_content = stale_wf.read_text(encoding="utf-8")
+    assert "timeout-minutes: 10" in stale_content
+
+    welcome_wf = workflows_dir / "welcome.yml"
+    assert welcome_wf.exists(), "welcome.yml workflow must exist"
+    welcome_content = welcome_wf.read_text(encoding="utf-8")
+    assert "cancel-in-progress: true" in welcome_content
+    assert "timeout-minutes: 5" in welcome_content
 
 
 def test_bilingual_readme_18_point_navigation_parity() -> None:
@@ -225,6 +263,7 @@ def test_marketing_log_audit_record() -> None:
 
     content = m_log.read_text(encoding="utf-8")
     assert "2026-09-10" in content
+    assert "2026-09-19" in content
     assert "Pfad A" in content
     assert "2026-09-16" in content
     assert "Pfad B" in content
