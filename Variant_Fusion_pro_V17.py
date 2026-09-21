@@ -1452,7 +1452,7 @@ RESOURCE_SETUP_INFO = {
         "group": "reference",
         "label": "Referenz-Genom GRCh37 / hg19",
         "size": "~3 GB (Download ~900 MB)",
-        "description": "Humanes Referenzgenom Build 37 fuer Allel-Validierung und 23andMe-Konvertierung.",
+        "description": "Humanes Referenzgenom Build 37 für Allel-Validierung und 23andMe-Konvertierung.",
         "without": "Fallback auf MyVariant API (langsamer, braucht Internet). Grundfunktionen bleiben erhalten.",
         "action": "download",
     },
@@ -1460,15 +1460,15 @@ RESOURCE_SETUP_INFO = {
         "group": "reference",
         "label": "Referenz-Genom GRCh38 / hg38",
         "size": "~3 GB (Download ~900 MB)",
-        "description": "Aktuelles Standard-Referenzgenom fuer neuere Datensaetze.",
-        "without": "Wie GRCh37: API-Fallback. Moderne Datensaetze werden langsamer verarbeitet.",
+        "description": "Aktuelles Standard-Referenzgenom für neuere Datensätze.",
+        "without": "Wie GRCh37: API-Fallback. Moderne Datensätze werden langsamer verarbeitet.",
         "action": "download",
     },
     "gnomad_db": {
         "group": "database",
         "label": "gnomAD Light Database",
         "size": "~30 GB Download, ~94 GB entpackt",
-        "description": "Lokale gnomAD-Allel-Frequenzen fuer Milliarden Varianten. Ermoeglicht Offline-AF-Abfragen.",
+        "description": "Lokale gnomAD-Allel-Frequenzen für Milliarden Varianten. Ermöglicht Offline-AF-Abfragen.",
         "without": "AF-Daten werden online geholt (Sekunden statt Millisekunden pro Variante). Funktional, aber deutlich langsamer.",
         "action": "download",
     },
@@ -1476,8 +1476,8 @@ RESOURCE_SETUP_INFO = {
         "group": "database",
         "label": "dbNSFP Light Database",
         "size": "-",
-        "description": "Pathogenitaets-Scores (SIFT, PolyPhen, REVEL). Wird automatisch erstellt wenn 23andMe-to-VCF genutzt wird.",
-        "without": "Keine Einschraenkung. Pathogenitaets-Daten kommen via API. Wird bei Bedarf automatisch erstellt.",
+        "description": "Pathogenitäts-Scores (SIFT, PolyPhen, REVEL). Wird automatisch erstellt wenn 23andMe-to-VCF genutzt wird.",
+        "without": "Keine Einschränkung. Pathogenitäts-Daten kommen via API. Wird bei Bedarf automatisch erstellt.",
         "action": "info",
     },
     "gtf_grch37": {
@@ -1485,7 +1485,7 @@ RESOURCE_SETUP_INFO = {
         "label": "Gen-Annotation GTF GRCh37",
         "size": "~50 MB",
         "description": "GENCODE Gen-Koordinaten. Wird beim ersten Lauf automatisch heruntergeladen.",
-        "without": "Gen-Annotation ueber API (langsamer). Protein-Coding-Filter eingeschraenkt.",
+        "without": "Gen-Annotation über API (langsamer). Protein-Coding-Filter eingeschränkt.",
         "action": "auto",
     },
     "gtf_grch38": {
@@ -1493,7 +1493,7 @@ RESOURCE_SETUP_INFO = {
         "label": "Gen-Annotation GTF GRCh38",
         "size": "~1.5 GB",
         "description": "GENCODE Gen-Koordinaten (aktuell). Automatischer Download beim ersten Lauf.",
-        "without": "Wie GRCh37: API-Fallback moeglich.",
+        "without": "Wie GRCh37: API-Fallback möglich.",
         "action": "auto",
     },
 }
@@ -20763,7 +20763,7 @@ def _on_browse_click(key, widgets, rm, logger_inst):
     else:
         ftypes = [("Alle Dateien", "*.*")]
 
-    path = filedialog.askopenfilename(title=f"Pfad fuer {RESOURCE_SETUP_INFO[key]['label']}", filetypes=ftypes)
+    path = filedialog.askopenfilename(title=f"Pfad für {RESOURCE_SETUP_INFO[key]['label']}", filetypes=ftypes)
     if path and os.path.exists(path):
         rm.register(key, path)
         widgets["status_lbl"].config(text="  Vorhanden", foreground="green")
