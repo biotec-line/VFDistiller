@@ -25,6 +25,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Internationalisierung (Tier-2 Policy P-006 Standard — 2026-09-23)
+- **Vollständige 6-Sprachen-Erweiterung (Tier-2 Parität)**: `locales/translations.json` auf 158 Schlüssel mit 100% Abdeckung für Deutsch (`de`), Englisch (`en`), Spanisch (`es`), Chinesisch (`zh`), Japanisch (`ja`) und Russisch (`ru`) erweitert (948 Übersetzungen, 0 Lücken).
+- **Modernisierte i18n-Engine (`translator.py`)**: Deterministische 4-stufige Fallback-Kette (`target -> en -> de -> key`), System-Locale-Erkennung (`detect_system_language`), kwargs-String-Interpolation, thread-sicherer Singleton-Zugriff (`get_translator`, `t`, `set_language`) und vollständige Rückwärtskompatibilität für PyInstaller (`sys._MEIPASS`) und JSONDecodeError-Regressionswächter.
+- **CI & Validierungs-CLI (`manage_translations.py`)**: Neuer CLI-Schalter `--check` zur automatisierten Validierung der 100%igen Übersetzungsparität aller 6 Sprachen im CI-Workflow; UTF-8-Encoding-Härtung für Windows-Konsolen.
+- **GUI-Sprachmenü & Persistenz (`Variant_Fusion_pro_V17.py`)**: Sprachauswahl-Menü auf alle 6 Sprachen (`Deutsch`, `English`, `Español`, `简体中文`, `日本語`, `Русский`) erweitert; die gewählte Sprache wird in `variant_fusion_settings.json` persistent gespeichert und beim App-Start automatisch wiederhergestellt.
+- **Umfassende Vertragstest-Suite (`tests/test_i18n.py`)**: 10 neue automatisierte Tests zur Überprüfung von Sprachkonstanten, 100% Katalog-Parität, 4-Ebenen-Fallback, Format-Interpolation, Singleton-Funktionen, System-Locale-Erkennung, CLI-Prüflauf und UTF-8/Umlaut-Integrität.
+
 ### Dokumentation & Auffindbarkeit / Discoverability (Pfad B — 2026-09-16)
 - **Zweisprachige 18-Punkte-Schnellnavigation**: Vollständige Strukturierung von `README.md` und `README.de.md` mit 18 durchnummerierten Hauptabschnitten und 100% wechselseitiger Anker-Parität (#1 bis #18 inklusive Alias-Ankern).
 - **Zielgruppen & High-Intent SEO Keywords**: 4 definierte Zielgruppen (`[PERSONA-01]` bis `[PERSONA-04]`: Klinische Genetiker, Bioinformatik-Core-Facility-Entwickler, Seltene-Krankheiten-Forscher, Datenschutzbeauftragte & Offline-Labor-IT) mit spezifischen High-Intent-Suchbegriffen in Englisch und Deutsch.

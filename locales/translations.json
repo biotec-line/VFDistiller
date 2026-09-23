@@ -1,558 +1,1266 @@
 {
+  "0/0 Genotypen ausfiltern (homozygote Referenz)": {
+    "de": "0/0 Genotypen ausfiltern (homozygote Referenz)",
+    "en": "Filter out 0/0 genotypes (homozygous reference)",
+    "es": "Filtrar genotipos 0/0 (referencia homocigota)",
+    "zh": "过滤 0/0 基因型（纯合参考）",
+    "ja": "0/0遺伝子型を除外（ホモ接合型参照）",
+    "ru": "Отфильтровать генотипы 0/0 (гомозиготный референс)"
+  },
   "AF=None einschließen": {
     "de": "AF=None einschließen",
-    "en": "Include AF=None"
+    "en": "Include AF=None",
+    "es": "Incluir AF=None",
+    "zh": "包含 AF=None",
+    "ja": "AF=Noneを含める",
+    "ru": "Включить AF=None"
   },
   "API Key speichern": {
     "de": "API Key speichern",
-    "en": "Save API key"
+    "en": "Save API key",
+    "es": "Guardar clave API",
+    "zh": "保存 API 密钥",
+    "ja": "APIキーを保存",
+    "ru": "Сохранить ключ API"
   },
   "Abbrechen": {
     "de": "Abbrechen",
-    "en": "Cancel"
+    "en": "Cancel",
+    "es": "Cancelar",
+    "zh": "取消",
+    "ja": "キャンセル",
+    "ru": "Отмена"
   },
   "Abgeschlossen": {
     "de": "Abgeschlossen",
-    "en": "Completed"
+    "en": "Completed",
+    "es": "Completado",
+    "zh": "已完成",
+    "ja": "完了",
+    "ru": "Завершено"
   },
   "Aktuelle Filterkriterien anwenden": {
     "de": "Aktuelle Filterkriterien anwenden",
-    "en": "Apply current filter criteria"
+    "en": "Apply current filter criteria",
+    "es": "Aplicar criterios de filtro actuales",
+    "zh": "应用当前筛选条件",
+    "ja": "現在のフィルター条件を適用",
+    "ru": "Применить текущие критерии фильтрации"
   },
   "Alle Dateien": {
     "de": "Alle Dateien",
-    "en": "All files"
+    "en": "All files",
+    "es": "Todos los archivos",
+    "zh": "所有文件",
+    "ja": "すべてのファイル",
+    "ru": "Все файлы"
   },
   "Allgemeine Einstellungen...": {
     "de": "Allgemeine Einstellungen...",
-    "en": "General Settings..."
+    "en": "General Settings...",
+    "es": "Configuración general...",
+    "zh": "通用设置...",
+    "ja": "一般設定...",
+    "ru": "Общие настройки..."
   },
   "Analyse der ausgewählten Datei starten": {
     "de": "Analyse der ausgewählten Datei starten",
-    "en": "Start analysis of the selected file"
+    "en": "Start analysis of the selected file",
+    "es": "Iniciar análisis del archivo seleccionado",
+    "zh": "开始分析所选文件",
+    "ja": "選択したファイルの解析を開始",
+    "ru": "Начать анализ выбранного файла"
   },
   "Angezeigt: 0 Varianten": {
     "de": "Angezeigt: 0 Varianten",
-    "en": "Displayed: 0 variants"
+    "en": "Displayed: 0 variants",
+    "es": "Mostradas: 0 variantes",
+    "zh": "已显示：0 个变异",
+    "ja": "表示中：0 バリアント",
+    "ru": "Отображено: 0 вариантов"
   },
   "Angezeigt: ? Varianten": {
     "de": "Angezeigt: ? Varianten",
-    "en": "Displayed: ? variants"
+    "en": "Displayed: ? variants",
+    "es": "Mostradas: ? variantes",
+    "zh": "已显示：? 个变异",
+    "ja": "表示中：? バリアント",
+    "ru": "Отображено: ? вариантов"
   },
   "Annotiertes VCF exportieren": {
     "de": "Annotiertes VCF exportieren",
-    "en": "Export annotated VCF"
+    "en": "Export annotated VCF",
+    "es": "Exportar VCF anotado",
+    "zh": "导出注释后的 VCF",
+    "ja": "アノテーション済みVCFをエクスポート",
+    "ru": "Экспортировать аннотированный VCF"
   },
   "Ansicht": {
     "de": "Ansicht",
-    "en": "View"
+    "en": "View",
+    "es": "Ver",
+    "zh": "视图",
+    "ja": "表示",
+    "ru": "Вид"
+  },
+  "Auf Standard zurücksetzen": {
+    "de": "Auf Standard zurücksetzen",
+    "en": "Reset to default",
+    "es": "Restablecer a valores predeterminados",
+    "zh": "恢复默认值",
+    "ja": "デフォルトに戻す",
+    "ru": "Сбросить на значения по умолчанию"
   },
   "Auslöser": {
     "de": "Auslöser",
-    "en": "Trigger"
+    "en": "Trigger",
+    "es": "Disparador",
+    "zh": "触发器",
+    "ja": "トリガー",
+    "ru": "Триггер"
   },
   "Auslöser:": {
     "de": "Auslöser:",
-    "en": "Trigger:"
+    "en": "Trigger:",
+    "es": "Disparador:",
+    "zh": "触发器：",
+    "ja": "トリガー：",
+    "ru": "Триггер:"
   },
   "BackgroundMaintainer aktiv": {
     "de": "BackgroundMaintainer aktiv",
-    "en": "BackgroundMaintainer active"
+    "en": "BackgroundMaintainer active",
+    "es": "BackgroundMaintainer activo",
+    "zh": "后台维护程序已激活",
+    "ja": "BackgroundMaintainer アクティブ",
+    "ru": "BackgroundMaintainer активен"
   },
   "BackofficeCrawler läuft": {
     "de": "BackofficeCrawler läuft",
-    "en": "BackofficeCrawler running"
+    "en": "BackofficeCrawler running",
+    "es": "BackofficeCrawler en ejecución",
+    "zh": "后台爬虫正在运行",
+    "ja": "BackofficeCrawler 実行中",
+    "ru": "BackofficeCrawler выполняется"
   },
   "Bearbeiten": {
     "de": "Bearbeiten",
-    "en": "Edit"
+    "en": "Edit",
+    "es": "Editar",
+    "zh": "编辑",
+    "ja": "編集",
+    "ru": "Правка"
   },
   "Beenden": {
     "de": "Beenden",
-    "en": "Quit"
+    "en": "Quit",
+    "es": "Salir",
+    "zh": "退出",
+    "ja": "終了",
+    "ru": "Выход"
   },
   "Blacklist (ausschließen):": {
     "de": "Blacklist (ausschließen):",
-    "en": "Blacklist (exclude):"
+    "en": "Blacklist (exclude):",
+    "es": "Lista negra (excluir):",
+    "zh": "黑名单（排除）：",
+    "ja": "ブラックリスト（除外）：",
+    "ru": "Черный список (исключить):"
   },
   "Blacklist laden": {
     "de": "Blacklist laden",
-    "en": "Load blacklist"
+    "en": "Load blacklist",
+    "es": "Cargar lista negra",
+    "zh": "加载黑名单",
+    "ja": "ブラックリストを読み込む",
+    "ru": "Загрузить черный список"
   },
   "Blacklist speichern": {
     "de": "Blacklist speichern",
-    "en": "Save blacklist"
+    "en": "Save blacklist",
+    "es": "Guardar lista negra",
+    "zh": "保存黑名单",
+    "ja": "ブラックリストを保存",
+    "ru": "Сохранить черный список"
   },
   "Blacklist:": {
     "de": "Blacklist:",
-    "en": "Blacklist:"
+    "en": "Blacklist:",
+    "es": "Lista negra:",
+    "zh": "黑名单：",
+    "ja": "ブラックリスト：",
+    "ru": "Черный список:"
   },
   "CADD Filter:": {
     "de": "CADD Filter:",
-    "en": "CADD filter:"
+    "en": "CADD filter:",
+    "es": "Filtro CADD:",
+    "zh": "CADD 筛选：",
+    "ja": "CADDフィルター：",
+    "ru": "Фильтр CADD:"
   },
   "CADD-Hervorhebungsschwelle setzen": {
     "de": "CADD-Hervorhebungsschwelle setzen",
-    "en": "Set CADD highlight threshold"
+    "en": "Set CADD highlight threshold",
+    "es": "Establecer umbral de resaltado CADD",
+    "zh": "设置 CADD 高亮阈值",
+    "ja": "CADD強調しきい値を設定",
+    "ru": "Установить порог выделения CADD"
   },
   "CSV Export": {
     "de": "CSV Export",
-    "en": "CSV export"
+    "en": "CSV export",
+    "es": "Exportación CSV",
+    "zh": "CSV 导出",
+    "ja": "CSVエクスポート",
+    "ru": "Экспорт CSV"
   },
   "CSV exportieren": {
     "de": "CSV exportieren",
-    "en": "Export CSV"
+    "en": "Export CSV",
+    "es": "Exportar CSV",
+    "zh": "导出 CSV",
+    "ja": "CSVをエクスポート",
+    "ru": "Экспортировать CSV"
   },
   "Custom: Eigene Einstellungen": {
     "de": "Custom: Eigene Einstellungen",
-    "en": "Custom: Own settings"
+    "en": "Custom: Own settings",
+    "es": "Personalizado: Configuración propia",
+    "zh": "自定义：自定设置",
+    "ja": "カスタム：個別設定",
+    "ru": "Пользовательские: Собственные настройки"
   },
   "DP-Filter aktivieren (Read Depth)": {
     "de": "DP-Filter aktivieren (Read Depth)",
-    "en": "Enable DP filter (Read Depth)"
+    "en": "Enable DP filter (Read Depth)",
+    "es": "Activar filtro DP (profundidad de lectura)",
+    "zh": "启用 DP 过滤（测序深度）",
+    "ja": "DPフィルターを有効化（リード深度）",
+    "ru": "Включить фильтр DP (глубина прочтения)"
   },
   "Datei auswählen": {
     "de": "Datei auswählen",
-    "en": "Select file"
+    "en": "Select file",
+    "es": "Seleccionar archivo",
+    "zh": "选择文件",
+    "ja": "ファイルを選択",
+    "ru": "Выбрать файл"
   },
   "Datei wählen": {
     "de": "Datei wählen",
-    "en": "Choose file"
+    "en": "Choose file",
+    "es": "Elegir archivo",
+    "zh": "选取文件",
+    "ja": "ファイルを選択",
+    "ru": "Выбрать файл"
   },
   "Datei:": {
     "de": "Datei:",
-    "en": "File:"
+    "en": "File:",
+    "es": "Archivo:",
+    "zh": "文件：",
+    "ja": "ファイル：",
+    "ru": "Файл:"
   },
   "Dateiauswahl": {
     "de": "Dateiauswahl",
-    "en": "File selection"
+    "en": "File selection",
+    "es": "Selección de archivo",
+    "zh": "文件选择",
+    "ja": "ファイル選択",
+    "ru": "Выбор файла"
+  },
+  "Daten-Export": {
+    "de": "Daten-Export",
+    "en": "Data Export",
+    "es": "Exportación de datos",
+    "zh": "数据导出",
+    "ja": "データエクスポート",
+    "ru": "Экспорт данных"
   },
   "Datenalter für Refresh (Tage):": {
     "de": "Datenalter für Refresh (Tage):",
-    "en": "Data age for refresh (days)"
+    "en": "Data age for refresh (days)",
+    "es": "Antigüedad de datos para actualización (días):",
+    "zh": "刷新数据时间（天）：",
+    "ja": "更新データ期間（日数）：",
+    "ru": "Возраст данных для обновления (дней):"
   },
   "Datenbank extern öffnen": {
     "de": "Datenbank extern öffnen",
-    "en": "Open database externally"
+    "en": "Open database externally",
+    "es": "Abrir base de datos externamente",
+    "zh": "在外部打开数据库",
+    "ja": "データベースを外部で開く",
+    "ru": "Открыть базу данных извне"
   },
   "Datenbankdatei:": {
     "de": "Datenbankdatei:",
-    "en": "Database file:"
+    "en": "Database file:",
+    "es": "Archivo de base de datos:",
+    "zh": "数据库文件：",
+    "ja": "データベースファイル：",
+    "ru": "Файл базы данных:"
   },
   "Debug": {
     "de": "Debug",
-    "en": "Debug"
+    "en": "Debug",
+    "es": "Depuración",
+    "zh": "调试",
+    "ja": "デバッグ",
+    "ru": "Отладка"
   },
   "Design": {
     "de": "Design",
-    "en": "Design"
+    "en": "Design",
+    "es": "Diseño",
+    "zh": "外观主题",
+    "ja": "デザイン",
+    "ru": "Оформление"
   },
   "Deutsch": {
     "de": "Deutsch",
-    "en": "Deutsch"
+    "en": "Deutsch",
+    "es": "Deutsch",
+    "zh": "Deutsch",
+    "ja": "Deutsch",
+    "ru": "Deutsch"
+  },
+  "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\n": {
+    "de": "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\n",
+    "en": "These improve speed and offline capability.\n",
+    "es": "Estos mejoran la velocidad y la capacidad sin conexión.\n",
+    "zh": "这些将提高速度和离线运行能力。\n",
+    "ja": "これらは処理速度とオフライン機能を向上させます。\n",
+    "ru": "Они улучшают скорость работы и автономность.\n"
   },
   "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\nAlles kann später unter Optionen > Einstellungen > Ressourcen nachgeholt werden.": {
     "de": "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\nAlles kann später unter Optionen > Einstellungen > Ressourcen nachgeholt werden.",
-    "en": "These improve speed and offline capability.\nEverything can be set up later under Options > Settings > Resources."
+    "en": "These improve speed and offline capability.\nEverything can be set up later under Options > Settings > Resources.",
+    "es": "Estos mejoran la velocidad y la capacidad sin conexión.\nTodo se puede configurar más tarde en Opciones > Configuración > Recursos.",
+    "zh": "这些将提高运行速度和离线能力。\n稍后亦可在“选项 > 设置 > 资源”中进行配置。",
+    "ja": "これらは処理速度とオフライン機能を向上させます。\n後から「オプション > 設定 > リソース」で設定することも可能です。",
+    "ru": "Они улучшают скорость работы и автономность.\nВсе можно настроить позже в меню Опции > Настройки > Ресурсы."
   },
   "Diesen Dialog nicht mehr anzeigen": {
     "de": "Diesen Dialog nicht mehr anzeigen",
-    "en": "Do not show this dialog again"
+    "en": "Do not show this dialog again",
+    "es": "No volver a mostrar este diálogo",
+    "zh": "不再显示此对话框",
+    "ja": "今後このダイアログを表示しない",
+    "ru": "Больше не показывать этот диалог"
   },
   "Dieses Hilfefenster anzeigen": {
     "de": "Dieses Hilfefenster anzeigen",
-    "en": "Display this help window"
+    "en": "Display this help window",
+    "es": "Mostrar esta ventana de ayuda",
+    "zh": "显示此帮助窗口",
+    "ja": "このヘルプウィンドウを表示",
+    "ru": "Показать это окно справки"
   },
   "Durchsuchen": {
     "de": "Durchsuchen",
-    "en": "Browse"
+    "en": "Browse",
+    "es": "Examinar",
+    "zh": "浏览",
+    "ja": "参照",
+    "ru": "Обзор"
+  },
+  "Eingabe-Datei:": {
+    "de": "Eingabe-Datei:",
+    "en": "Input file:",
+    "es": "Archivo de entrada:",
+    "zh": "输入文件：",
+    "ja": "入力ファイル：",
+    "ru": "Входной файл:"
   },
   "Eingabedatei auswählen": {
     "de": "Eingabedatei auswählen",
-    "en": "Select input file"
+    "en": "Select input file",
+    "es": "Seleccionar archivo de entrada",
+    "zh": "选择输入文件",
+    "ja": "入力ファイルを選択",
+    "ru": "Выбрать входной файл"
   },
   "Einstellungen gespeichert": {
     "de": "Einstellungen gespeichert",
-    "en": "Settings saved"
+    "en": "Settings saved",
+    "es": "Configuración guardada",
+    "zh": "设置已保存",
+    "ja": "設定が保存されました",
+    "ru": "Настройки сохранены"
   },
   "Einstellungen Übernehmen": {
     "de": "Einstellungen Übernehmen",
-    "en": "Apply Settings"
+    "en": "Apply Settings",
+    "es": "Aplicar configuración",
+    "zh": "应用设置",
+    "ja": "設定を適用",
+    "ru": "Применить настройки"
   },
   "English": {
     "de": "English",
-    "en": "English"
+    "en": "English",
+    "es": "English",
+    "zh": "English",
+    "ja": "English",
+    "ru": "English"
   },
   "Entpacke...": {
     "de": "Entpacke...",
-    "en": "Extracting..."
+    "en": "Extracting...",
+    "es": "Extrayendo...",
+    "zh": "正在解压...",
+    "ja": "解凍中...",
+    "ru": "Распаковка..."
   },
   "Ergebnisse als PDF-Bericht exportieren": {
     "de": "Ergebnisse als PDF-Bericht exportieren",
-    "en": "Export results as PDF report"
+    "en": "Export results as PDF report",
+    "es": "Exportar resultados como informe PDF",
+    "zh": "将结果导出为 PDF 报告",
+    "ja": "結果をPDFレポートとしてエクスポート",
+    "ru": "Экспортировать результаты в отчет PDF"
   },
   "Ergebnisse neu laden": {
     "de": "Ergebnisse neu laden",
-    "en": "Reload displayed results"
+    "en": "Reload displayed results",
+    "es": "Recargar resultados mostrados",
+    "zh": "重新加载显示的结果",
+    "ja": "表示された結果を再読み込み",
+    "ru": "Перезагрузить отображаемые результаты"
   },
   "Erstelle Index...": {
     "de": "Erstelle Index...",
-    "en": "Creating index..."
+    "en": "Creating index...",
+    "es": "Creando índice...",
+    "zh": "正在创建索引...",
+    "ja": "インデックス作成中...",
+    "ru": "Создание индекса..."
   },
   "Excel Export": {
     "de": "Excel Export",
-    "en": "Excel export"
+    "en": "Excel export",
+    "es": "Exportación Excel",
+    "zh": "Excel 导出",
+    "ja": "Excelエクスポート",
+    "ru": "Экспорт Excel"
   },
   "Excel exportieren": {
     "de": "Excel exportieren",
-    "en": "Export Excel"
+    "en": "Export Excel",
+    "es": "Exportar Excel",
+    "zh": "导出 Excel",
+    "ja": "Excelをエクスポート",
+    "ru": "Экспортировать Excel"
   },
   "Export": {
     "de": "Export",
-    "en": "Export"
+    "en": "Export",
+    "es": "Exportar",
+    "zh": "导出",
+    "ja": "エクスポート",
+    "ru": "Экспорт"
   },
   "Export Format wählen:": {
     "de": "Export Format wählen:",
-    "en": "Choose export format:"
+    "en": "Choose export format:",
+    "es": "Elegir formato de exportación:",
+    "zh": "选择导出格式：",
+    "ja": "エクスポート形式を選択：",
+    "ru": "Выберите формат экспорта:"
   },
   "FASTQ-Datei:": {
     "de": "FASTQ-Datei:",
-    "en": "FASTQ file:"
+    "en": "FASTQ file:",
+    "es": "Archivo FASTQ:",
+    "zh": "FASTQ 文件：",
+    "ja": "FASTQファイル：",
+    "ru": "Файл FASTQ:"
   },
   "FILTER=PASS": {
     "de": "FILTER=PASS",
-    "en": "FILTER=PASS"
+    "en": "FILTER=PASS",
+    "es": "FILTER=PASS",
+    "zh": "FILTER=PASS",
+    "ja": "FILTER=PASS",
+    "ru": "FILTER=PASS"
   },
   "Fehler": {
     "de": "Fehler",
-    "en": "Error"
+    "en": "Error",
+    "es": "Error",
+    "zh": "错误",
+    "ja": "エラー",
+    "ru": "Ошибка"
+  },
+  "Fehlerhafte Abrufe anzeigen (Technischer Fehler)": {
+    "de": "Fehlerhafte Abrufe anzeigen (Technischer Fehler)",
+    "en": "Show failed retrievals (technical error)",
+    "es": "Mostrar recuperaciones fallidas (error técnico)",
+    "zh": "显示获取失败项（技术错误）",
+    "ja": "取得に失敗した項目を表示（技術的エラー）",
+    "ru": "Показать ошибки запроса (техническая ошибка)"
   },
   "Fertig": {
     "de": "Fertig",
-    "en": "Done"
+    "en": "Done",
+    "es": "Listo",
+    "zh": "完成",
+    "ja": "完了",
+    "ru": "Готово"
   },
   "Fertig!": {
     "de": "Fertig!",
-    "en": "Done!"
+    "en": "Done!",
+    "es": "¡Listo!",
+    "zh": "完成！",
+    "ja": "完了！",
+    "ru": "Готово!"
   },
   "Filter Anwenden": {
     "de": "Filter Anwenden",
-    "en": "Apply Filter"
+    "en": "Apply Filter",
+    "es": "Aplicar filtro",
+    "zh": "应用筛选",
+    "ja": "フィルターを適用",
+    "ru": "Применить фильтр"
   },
   "Filter anwenden": {
     "de": "Filter anwenden",
-    "en": "Apply filter"
+    "en": "Apply filter",
+    "es": "Aplicar filtro",
+    "zh": "应用筛选",
+    "ja": "フィルターを適用",
+    "ru": "Применить фильтр"
   },
   "Filter zurücksetzen": {
     "de": "Filter zurücksetzen",
-    "en": "Reset filter"
+    "en": "Reset filter",
+    "es": "Restablecer filtro",
+    "zh": "重置筛选",
+    "ja": "フィルターをリセット",
+    "ru": "Сбросить фильтр"
   },
   "Filterkriterien auf Standard zurücksetzen": {
     "de": "Filterkriterien auf Standard zurücksetzen",
-    "en": "Reset filter criteria to default"
+    "en": "Reset filter criteria to default",
+    "es": "Restablecer criterios de filtro a valores predeterminados",
+    "zh": "将筛选条件重置为默认值",
+    "ja": "フィルター条件をデフォルトにリセット",
+    "ru": "Сбросить критерии фильтрации на значения по умолчанию"
   },
   "Funktion": {
     "de": "Funktion",
-    "en": "Action"
+    "en": "Action",
+    "es": "Función",
+    "zh": "功能",
+    "ja": "機能",
+    "ru": "Функция"
   },
   "GEN-Whitelist:": {
     "de": "GEN-Whitelist:",
-    "en": "GEN whitelist:"
+    "en": "GEN whitelist:",
+    "es": "Lista blanca de genes:",
+    "zh": "基因白名单：",
+    "ja": "遺伝子ホワイトリスト：",
+    "ru": "Белый список генов:"
+  },
+  "GTF-Dateien werden automatisch beim ersten Annotationslauf heruntergeladen.": {
+    "de": "GTF-Dateien werden automatisch beim ersten Annotationslauf heruntergeladen.",
+    "en": "GTF files are automatically downloaded during the first annotation run.",
+    "es": "Los archivos GTF se descargan automáticamente durante la primera ejecución de anotación.",
+    "zh": "GTF 文件将在首次注释运行期间自动下载。",
+    "ja": "GTFファイルは初回のアノテーション実行時に自動的にダウンロードされます。",
+    "ru": "Файлы GTF автоматически загружаются во время первого запуска аннотации."
+  },
+  "Gefiltert (Sichtbar)": {
+    "de": "Gefiltert (Sichtbar)",
+    "en": "Filtered (visible)",
+    "es": "Filtrado (visible)",
+    "zh": "已过滤（可见）",
+    "ja": "フィルタ適用済み（表示）",
+    "ru": "Отфильтровано (видимые)"
+  },
+  "Gen-Blacklist:": {
+    "de": "Gen-Blacklist:",
+    "en": "Gene blacklist:",
+    "es": "Lista negra de genes:",
+    "zh": "基因黑名单：",
+    "ja": "遺伝子ブラックリスト：",
+    "ru": "Черный список генов:"
+  },
+  "Gen-Whitelist:": {
+    "de": "Gen-Whitelist:",
+    "en": "Gene whitelist:",
+    "es": "Lista blanca de genes:",
+    "zh": "基因白名单：",
+    "ja": "遺伝子ホワイトリスト：",
+    "ru": "Белый список генов:"
   },
   "Globale Einstellungen": {
     "de": "Globale Einstellungen",
-    "en": "Global Settings"
+    "en": "Global Settings",
+    "es": "Configuración global",
+    "zh": "全局设置",
+    "ja": "グローバル設定",
+    "ru": "Глобальные настройки"
   },
   "Hauptfilter": {
     "de": "Hauptfilter",
-    "en": "Main filter"
+    "en": "Main filter",
+    "es": "Filtro principal",
+    "zh": "主要筛选",
+    "ja": "メインフィルター",
+    "ru": "Основной фильтр"
+  },
+  "Herunterladen": {
+    "de": "Herunterladen",
+    "en": "Download",
+    "es": "Descargar",
+    "zh": "下载",
+    "ja": "ダウンロード",
+    "ru": "Скачать"
+  },
+  "Herunterladen & Erstellen": {
+    "de": "Herunterladen & Erstellen",
+    "en": "Download & Create",
+    "es": "Descargar y crear",
+    "zh": "下载并创建",
+    "ja": "ダウンロードして作成",
+    "ru": "Скачать и создать"
   },
   "Hilfe": {
     "de": "Hilfe",
-    "en": "Help"
+    "en": "Help",
+    "es": "Ayuda",
+    "zh": "帮助",
+    "ja": "ヘルプ",
+    "ru": "Справка"
   },
   "Hinweis: Alle Schaltflächen und Eingabefelder besitzen fokussierbare Hilfetexte (Tooltips).": {
     "de": "Hinweis: Alle Schaltflächen und Eingabefelder besitzen fokussierbare Hilfetexte (Tooltips).",
-    "en": "Note: All buttons and input fields include focusable contextual tooltips."
+    "en": "Note: All buttons and input fields include focusable contextual tooltips.",
+    "es": "Nota: Todos los botones y campos de entrada incluyen información sobre herramientas contextual.",
+    "zh": "提示：所有按钮和输入字段均包含可获取焦点的上下文提示信息（工具提示）。",
+    "ja": "注：すべてのボタンと入力フィールドにはフォーカス可能なコンテキストツールチップが含まれています。",
+    "ru": "Примечание: Все кнопки и поля ввода содержат всплывающие подсказки."
   },
   "Hinweis: AlphaMissense Scores werden nur für gefilterte Varianten abgerufen.": {
     "de": "Hinweis: AlphaMissense Scores werden nur für gefilterte Varianten abgerufen.",
-    "en": "Note: AlphaMissense scores are retrieved only for filtered variants."
+    "en": "Note: AlphaMissense scores are retrieved only for filtered variants.",
+    "es": "Nota: Las puntuaciones de AlphaMissense solo se obtienen para las variantes filtradas.",
+    "zh": "提示：仅针对已筛选的变异检索 AlphaMissense 评分。",
+    "ja": "注：AlphaMissenseスコアはフィルタリングされたバリアントに対してのみ取得されます。",
+    "ru": "Примечание: Оценки AlphaMissense запрашиваются только для отфильтрованных вариантов."
   },
   "Idle": {
     "de": "Idle",
-    "en": "Idle"
+    "en": "Idle",
+    "es": "Inactivo",
+    "zh": "空闲",
+    "ja": "アイドル",
+    "ru": "Ожидание"
   },
   "Keine Datei ausgewählt": {
     "de": "Keine Datei ausgewählt",
-    "en": "No file selected"
+    "en": "No file selected",
+    "es": "Ningún archivo seleccionado",
+    "zh": "未选择文件",
+    "ja": "ファイルが選択されていません",
+    "ru": "Файл не выбран"
   },
   "Kommaseparierte Liste von Gensymbolen für Blacklist": {
     "de": "Kommaseparierte Liste von Gensymbolen für Blacklist",
-    "en": "Comma-separated list of gene symbols for blacklist"
+    "en": "Comma-separated list of gene symbols for blacklist",
+    "es": "Lista de símbolos genéticos separados por comas para lista negra",
+    "zh": "黑名单基因符号逗号分隔列表",
+    "ja": "ブラックリスト用のカンマ区切り遺伝子シンボルリスト",
+    "ru": "Список символов генов через запятую для черного списка"
   },
   "Kommaseparierte Liste von Gensymbolen für Whitelist": {
     "de": "Kommaseparierte Liste von Gensymbolen für Whitelist",
-    "en": "Comma-separated list of gene symbols for whitelist"
+    "en": "Comma-separated list of gene symbols for whitelist",
+    "es": "Lista de símbolos genéticos separados por comas para lista blanca",
+    "zh": "白名单基因符号逗号分隔列表",
+    "ja": "ホワイトリスト用のカンマ区切り遺伝子シンボルリスト",
+    "ru": "Список символов генов через запятую для белого списка"
   },
   "Laden": {
     "de": "Laden",
-    "en": "Load"
+    "en": "Load",
+    "es": "Cargar",
+    "zh": "加载",
+    "ja": "読み込み",
+    "ru": "Загрузить"
   },
   "Laufende Analyse stoppen": {
     "de": "Laufende Analyse stoppen",
-    "en": "Stop the running analysis"
+    "en": "Stop the running analysis",
+    "es": "Detener el análisis en curso",
+    "zh": "停止当前分析",
+    "ja": "実行中の解析を停止",
+    "ru": "Остановить текущий анализ"
   },
   "Log & Export": {
     "de": "Log & Export",
-    "en": "Log & Export"
+    "en": "Log & Export",
+    "es": "Registro y exportación",
+    "zh": "日志与导出",
+    "ja": "ログとエクスポート",
+    "ru": "Журнал и экспорт"
   },
   "Maximale Allelfrequenz vor dem Scan": {
     "de": "Maximale Allelfrequenz vor dem Scan",
-    "en": "Maximum allele frequency before the scan"
+    "en": "Maximum allele frequency before the scan",
+    "es": "Frecuencia alélica máxima antes del escaneo",
+    "zh": "扫描前的最大等位基因频率",
+    "ja": "スキャン前の最大対立遺伝子頻度",
+    "ru": "Максимальная частота аллелей перед сканированием"
   },
   "Migration läuft": {
     "de": "Migration läuft",
-    "en": "Migration running"
+    "en": "Migration running",
+    "es": "Migración en curso",
+    "zh": "迁移正在进行",
+    "ja": "移行中",
+    "ru": "Выполняется миграция"
   },
   "Migriere": {
     "de": "Migriere",
-    "en": "Migrating"
+    "en": "Migrating",
+    "es": "Migrando",
+    "zh": "正在迁移",
+    "ja": "移行中",
+    "ru": "Миграция"
   },
   "Minimaler CADD-Phred-Score für Ergebnisfilter": {
     "de": "Minimaler CADD-Phred-Score für Ergebnisfilter",
-    "en": "Minimum CADD phred score for result filtering"
+    "en": "Minimum CADD phred score for result filtering",
+    "es": "Puntuación mínima CADD Phred para filtro de resultados",
+    "zh": "结果筛选的最低 CADD Phred 评分",
+    "ja": "結果フィルターの最小CADD Phredスコア",
+    "ru": "Минимальный балл CADD Phred для фильтра результатов"
   },
   "Nachfilter": {
     "de": "Nachfilter",
-    "en": "Post-filter"
+    "en": "Post-filter",
+    "es": "Filtro posterior",
+    "zh": "后续筛选",
+    "ja": "事後フィルター",
+    "ru": "Постфильтр"
   },
   "Nachfilter anwenden": {
     "de": "Nachfilter anwenden",
-    "en": "Apply post-filter"
+    "en": "Apply post-filter",
+    "es": "Aplicar filtro posterior",
+    "zh": "应用后续筛选",
+    "ja": "事後フィルターを適用",
+    "ru": "Применить постфильтр"
   },
   "Nachgestellte Filter": {
     "de": "Nachgestellte Filter",
-    "en": "Subsequent filters"
+    "en": "Subsequent filters",
+    "es": "Filtros posteriores",
+    "zh": "后续过滤器",
+    "ja": "後続フィルター",
+    "ru": "Последующие фильтры"
   },
   "Nie geprüfte anzeigen (Status unbekannt)": {
     "de": "Nie geprüfte anzeigen (Status unbekannt)",
-    "en": "Show never checked (status unknown)"
+    "en": "Show never checked (status unknown)",
+    "es": "Mostrar nunca comprobados (estado desconocido)",
+    "zh": "显示从未检查项（状态未知）",
+    "ja": "未チェックの項目を表示（ステータス不明）",
+    "ru": "Показать непроверенные (статус неизвестен)"
   },
   "Nur PASS Filter": {
     "de": "Nur PASS Filter",
-    "en": "PASS filter only"
+    "en": "PASS filter only",
+    "es": "Solo filtro PASS",
+    "zh": "仅 PASS 筛选",
+    "ja": "PASSフィルターのみ",
+    "ru": "Только фильтр PASS"
   },
   "Nur PASS-Varianten akzeptieren (FILTER-Spalte)": {
     "de": "Nur PASS-Varianten akzeptieren (FILTER-Spalte)",
-    "en": "Accept only PASS variants (FILTER column)"
+    "en": "Accept only PASS variants (FILTER column)",
+    "es": "Aceptar solo variantes PASS (columna FILTER)",
+    "zh": "仅接受 PASS 变异（FILTER 列）",
+    "ja": "PASSバリアントのみを受け入れる（FILTER列）",
+    "ru": "Принимать только варианты PASS (колонка FILTER)"
   },
   "Optionen": {
     "de": "Optionen",
-    "en": "Options"
+    "en": "Options",
+    "es": "Opciones",
+    "zh": "选项",
+    "ja": "オプション",
+    "ru": "Опции"
   },
   "PDF Export": {
     "de": "PDF Export",
-    "en": "PDF export"
+    "en": "PDF export",
+    "es": "Exportación PDF",
+    "zh": "PDF 导出",
+    "ja": "PDFエクスポート",
+    "ru": "Экспорт PDF"
   },
   "PDF exportieren": {
     "de": "PDF exportieren",
-    "en": "Export PDF"
+    "en": "Export PDF",
+    "es": "Exportar PDF",
+    "zh": "导出 PDF",
+    "ja": "PDFをエクスポート",
+    "ru": "Экспортировать PDF"
   },
   "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei": {
     "de": "Pfad der VCF-, gVCF-, 23andMe- oder FASTA-Eingabedatei",
-    "en": "Path of the VCF, gVCF, 23andMe, or FASTA input file"
+    "en": "Path of the VCF, gVCF, 23andMe, or FASTA input file",
+    "es": "Ruta del archivo de entrada VCF, gVCF, 23andMe o FASTA",
+    "zh": "VCF、gVCF、23andMe 或 FASTA 输入文件路径",
+    "ja": "VCF、gVCF、23andMe、またはFASTA入力ファイルのパス",
+    "ru": "Путь к входному файлу VCF, gVCF, 23andMe или FASTA"
   },
   "Pfad wählen...": {
     "de": "Pfad wählen...",
-    "en": "Choose path..."
+    "en": "Choose path...",
+    "es": "Elegir ruta...",
+    "zh": "选择路径...",
+    "ja": "パスを選択...",
+    "ru": "Выбрать путь..."
+  },
+  "Phase: Abbruch eingeleitet...": {
+    "de": "Phase: Abbruch eingeleitet...",
+    "en": "Phase: Abort initiated...",
+    "es": "Fase: Cancelación iniciada...",
+    "zh": "阶段：正在中止...",
+    "ja": "フェーズ：中止処理中...",
+    "ru": "Фаза: Прерывание запущено..."
+  },
+  "Phase: Abgebrochen": {
+    "de": "Phase: Abgebrochen",
+    "en": "Phase: Aborted",
+    "es": "Fase: Cancelado",
+    "zh": "阶段：已中止",
+    "ja": "フェーズ：中止されました",
+    "ru": "Фаза: Прервано"
+  },
+  "Phase: Initialisierung...": {
+    "de": "Phase: Initialisierung...",
+    "en": "Phase: Initializing...",
+    "es": "Fase: Inicializando...",
+    "zh": "阶段：正在初始化...",
+    "ja": "フェーズ：初期化中...",
+    "ru": "Фаза: Инициализация..."
   },
   "Phase: –": {
     "de": "Phase: –",
-    "en": "Phase: –"
+    "en": "Phase: –",
+    "es": "Fase: –",
+    "zh": "阶段：–",
+    "ja": "フェーズ：–",
+    "ru": "Фаза: –"
   },
   "Phase: —": {
     "de": "Phase: —",
-    "en": "Phase: —"
+    "en": "Phase: —",
+    "es": "Fase: —",
+    "zh": "阶段：—",
+    "ja": "フェーズ：—",
+    "ru": "Фаза: —"
   },
   "Pipeline starten": {
     "de": "Pipeline starten",
-    "en": "Start pipeline"
+    "en": "Start pipeline",
+    "es": "Iniciar tubería",
+    "zh": "启动流水线",
+    "ja": "パイプラインを開始",
+    "ru": "Запустить конвейер"
   },
   "Platzhalter: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}": {
     "de": "Platzhalter: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}",
-    "en": "Placeholders: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}"
+    "en": "Placeholders: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}",
+    "es": "Marcadores: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}",
+    "zh": "占位符：{value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}",
+    "ja": "プレースホルダー：{value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}",
+    "ru": "Заполнители: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}"
   },
   "Primären Link der ausgewählten Variante öffnen": {
     "de": "Primären Link der ausgewählten Variante öffnen",
-    "en": "Open primary link of selected variant"
+    "en": "Open primary link of selected variant",
+    "es": "Abrir enlace primario de la variante seleccionada",
+    "zh": "打开所选变异的主要链接",
+    "ja": "選択したバリアントのプライマリリンクを開く",
+    "ru": "Открыть основную ссылку выбранного варианта"
   },
   "Quality-Filter Einstellungen": {
     "de": "Quality-Filter Einstellungen",
-    "en": "Quality Filter Settings"
+    "en": "Quality Filter Settings",
+    "es": "Configuración del filtro de calidad",
+    "zh": "质量筛选设置",
+    "ja": "品質フィルター設定",
+    "ru": "Настройки фильтра качества"
   },
   "Quality-Filter...": {
     "de": "Quality-Filter...",
-    "en": "Quality Filter..."
+    "en": "Quality Filter...",
+    "es": "Filtro de calidad...",
+    "zh": "质量筛选...",
+    "ja": "品質フィルター...",
+    "ru": "Фильтр качества..."
   },
   "Recycling der INFO-Felder überspringen": {
     "de": "Recycling der INFO-Felder überspringen",
-    "en": "Skip INFO field recycling"
+    "en": "Skip INFO field recycling",
+    "es": "Omitir reciclaje de campos INFO",
+    "zh": "跳过 INFO 字段重用",
+    "ja": "INFOフィールドの再利用をスキップ",
+    "ru": "Пропустить повторное использование полей INFO"
   },
   "Reset": {
     "de": "Reset",
-    "en": "Reset"
+    "en": "Reset",
+    "es": "Restablecer",
+    "zh": "重置",
+    "ja": "リセット",
+    "ru": "Сброс"
   },
   "Reset Spalten": {
     "de": "Reset Spalten",
-    "en": "Reset Columns"
+    "en": "Reset Columns",
+    "es": "Restablecer columnas",
+    "zh": "重置列",
+    "ja": "列をリセット",
+    "ru": "Сбросить столбцы"
   },
   "Ressourcen neu suchen": {
     "de": "Ressourcen neu suchen",
-    "en": "Re-scan resources"
+    "en": "Re-scan resources",
+    "es": "Volver a buscar recursos",
+    "zh": "重新扫描资源",
+    "ja": "リソースを再スキャン",
+    "ru": "Повторно сканировать ресурсы"
   },
   "Schließen": {
     "de": "Schließen",
-    "en": "Close"
+    "en": "Close",
+    "es": "Cerrar",
+    "zh": "关闭",
+    "ja": "閉じる",
+    "ru": "Закрыть"
   },
   "Spalte": {
     "de": "Spalte",
-    "en": "Column"
+    "en": "Column",
+    "es": "Columna",
+    "zh": "列",
+    "ja": "列",
+    "ru": "Столбец"
   },
   "Spalte:": {
     "de": "Spalte:",
-    "en": "Column:"
+    "en": "Column:",
+    "es": "Columna:",
+    "zh": "列：",
+    "ja": "列：",
+    "ru": "Столбец:"
   },
   "Spalten-Links": {
     "de": "Spalten-Links",
-    "en": "Column Links"
+    "en": "Column Links",
+    "es": "Enlaces de columna",
+    "zh": "列链接",
+    "ja": "列リンク",
+    "ru": "Ссылки столбцов"
   },
   "Speichern": {
     "de": "Speichern",
-    "en": "Save"
+    "en": "Save",
+    "es": "Guardar",
+    "zh": "保存",
+    "ja": "保存",
+    "ru": "Сохранить"
   },
   "Speichern & Schließen": {
     "de": "Speichern & Schließen",
-    "en": "Save & Close"
+    "en": "Save & Close",
+    "es": "Guardar y cerrar",
+    "zh": "保存并关闭",
+    "ja": "保存して閉じる",
+    "ru": "Сохранить и закрыть"
   },
   "Sprache / Language": {
     "de": "Sprache / Language",
-    "en": "Language"
+    "en": "Language",
+    "es": "Idioma",
+    "zh": "语言",
+    "ja": "言語",
+    "ru": "Язык"
   },
   "Später": {
     "de": "Später",
-    "en": "Later"
+    "en": "Later",
+    "es": "Más tarde",
+    "zh": "稍后",
+    "ja": "後で",
+    "ru": "Позже"
+  },
+  "Steuert, welche Varianten ohne AF-Wert angezeigt werden:": {
+    "de": "Steuert, welche Varianten ohne AF-Wert angezeigt werden:",
+    "en": "Controls which variants without AF value are displayed:",
+    "es": "Controla qué variantes sin valor AF se muestran:",
+    "zh": "控制显示哪些无 AF 值的变异：",
+    "ja": "AF値のないバリアントの表示を制御：",
+    "ru": "Определяет, какие варианты без значения AF будут показаны:"
   },
   "Stoppen": {
     "de": "Stoppen",
-    "en": "Stop"
+    "en": "Stop",
+    "es": "Detener",
+    "zh": "停止",
+    "ja": "停止",
+    "ru": "Остановить"
   },
   "Tabelle als CSV-Datei exportieren": {
     "de": "Tabelle als CSV-Datei exportieren",
-    "en": "Export table as CSV file"
+    "en": "Export table as CSV file",
+    "es": "Exportar tabla como archivo CSV",
+    "zh": "将表格导出为 CSV 文件",
+    "ja": "テーブルをCSVファイルとしてエクスポート",
+    "ru": "Экспортировать таблицу в файл CSV"
   },
   "Tabelle als Excel-Arbeitsmappe exportieren": {
     "de": "Tabelle als Excel-Arbeitsmappe exportieren",
-    "en": "Export table as Excel workbook"
+    "en": "Export table as Excel workbook",
+    "es": "Exportar tabla como libro de Excel",
+    "zh": "将表格导出为 Excel 工作簿",
+    "ja": "テーブルをExcelブックとしてエクスポート",
+    "ru": "Экспортировать таблицу в книгу Excel"
   },
   "Tastaturbedienung & Barrierefreiheit": {
     "de": "Tastaturbedienung & Barrierefreiheit",
-    "en": "Keyboard Navigation & Accessibility"
+    "en": "Keyboard Navigation & Accessibility",
+    "es": "Navegación por teclado y accesibilidad",
+    "zh": "键盘导航与无障碍",
+    "ja": "キーボード操作とアクセシビリティ",
+    "ru": "Управление с клавиатуры и доступность"
   },
   "Tastaturkürzel & Barrierefreiheit": {
     "de": "Tastaturkürzel & Barrierefreiheit",
-    "en": "Keyboard Shortcuts & Accessibility"
+    "en": "Keyboard Shortcuts & Accessibility",
+    "es": "Atajos de teclado y accesibilidad",
+    "zh": "快捷键与无障碍",
+    "ja": "キーボードショートカットとアクセシビリティ",
+    "ru": "Горячие клавиши и доступность"
   },
   "Tastenkürzel": {
     "de": "Tastenkürzel",
-    "en": "Keyboard Shortcut"
+    "en": "Keyboard Shortcut",
+    "es": "Atajo de teclado",
+    "zh": "快捷键",
+    "ja": "ショートカットキー",
+    "ru": "Сочетание клавиш"
   },
   "VCF Export": {
     "de": "VCF Export",
-    "en": "VCF export"
+    "en": "VCF export",
+    "es": "Exportación VCF",
+    "zh": "VCF 导出",
+    "ja": "VCFエクスポート",
+    "ru": "Экспорт VCF"
+  },
+  "VCF-Scan Filter (Pre)": {
+    "de": "VCF-Scan Filter (Pre)",
+    "en": "VCF scan filter (pre)",
+    "es": "Filtro de escaneo VCF (previo)",
+    "zh": "VCF 扫描过滤（预处理）",
+    "ja": "VCFスキャンフィルター（事前）",
+    "ru": "Фильтр сканирования VCF (предварительный)"
   },
   "VF Distiller - Ressourcen-Einrichtung": {
     "de": "VF Distiller - Ressourcen-Einrichtung",
-    "en": "VF Distiller - Resource Setup"
+    "en": "VF Distiller - Resource Setup",
+    "es": "VF Distiller - Configuración de recursos",
+    "zh": "VF Distiller - 资源设置",
+    "ja": "VF Distiller - リソースセットアップ",
+    "ru": "VF Distiller - Настройка ресурсов"
   },
   "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.": {
     "de": "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.",
-    "en": "VFDistiller supports full keyboard and screen reader operation per BITV 2.0 / WCAG 2.1 AA."
+    "en": "VFDistiller supports full keyboard and screen reader operation per BITV 2.0 / WCAG 2.1 AA.",
+    "es": "VFDistiller es totalmente compatible con el manejo por teclado y lectores de pantalla según BITV 2.0 / WCAG 2.1 AA.",
+    "zh": "VFDistiller 符合 BITV 2.0 / WCAG 2.1 AA 标准，完全支持键盘和屏幕阅读器操作。",
+    "ja": "VFDistillerはBITV 2.0 / WCAG 2.1 AAに準拠し、完全なキーボードおよびスクリーンリーダー操作をサポートしています。",
+    "ru": "VFDistiller полностью поддерживает управление с клавиатуры и работу с программами чтения с экрана в соответствии с BITV 2.0 / WCAG 2.1 AA."
   },
   "Varianten als VCF-Datei exportieren": {
     "de": "Varianten als VCF-Datei exportieren",
-    "en": "Export variants as VCF file"
+    "en": "Export variants as VCF file",
+    "es": "Exportar variantes como archivo VCF",
+    "zh": "将变异导出为 VCF 文件",
+    "ja": "バリアントをVCFファイルとしてエクスポート",
+    "ru": "Экспортировать варианты в файл VCF"
   },
   "Varianten ohne AF-Wert können verschiedene Gründe haben:": {
     "de": "Varianten ohne AF-Wert können verschiedene Gründe haben:",
-    "en": "Variants without AF value may have different reasons:"
+    "en": "Variants without AF value may have different reasons:",
+    "es": "Las variantes sin valor AF pueden deberse a diferentes razones:",
+    "zh": "缺少 AF 值的变异可能由不同原因导致：",
+    "ja": "AF値のないバリアントにはさまざまな理由が考えられます：",
+    "ru": "Отсутствие значения AF у вариантов может иметь разные причины:"
   },
   "Verarbeitung läuft...": {
     "de": "Verarbeitung läuft...",
-    "en": "Processing..."
+    "en": "Processing...",
+    "es": "Procesando...",
+    "zh": "正在处理...",
+    "ja": "処理中...",
+    "ru": "Обработка..."
   },
   "Verfügbare Tastaturkürzel": {
     "de": "Verfügbare Tastaturkürzel",
-    "en": "Available Keyboard Shortcuts"
+    "en": "Available Keyboard Shortcuts",
+    "es": "Atajos de teclado disponibles",
+    "zh": "可用快捷键",
+    "ja": "利用可能なキーボードショートカット",
+    "ru": "Доступные горячие клавиши"
   },
   "Vorhanden": {
     "de": "  Vorhanden",
-    "en": "  Available"
+    "en": "  Available",
+    "es": "  Disponible",
+    "zh": "  可用",
+    "ja": "  利用可能",
+    "ru": "  Доступно"
   },
   "Whitelist (einschließen):": {
     "de": "Whitelist (einschließen):",
-    "en": "Whitelist (include):"
+    "en": "Whitelist (include):",
+    "es": "Lista blanca (incluir):",
+    "zh": "白名单（包含）：",
+    "ja": "ホワイトリスト（含める）：",
+    "ru": "Белый список (включить):"
   },
   "Whitelist laden": {
     "de": "Whitelist laden",
-    "en": "Load whitelist"
+    "en": "Load whitelist",
+    "es": "Cargar lista blanca",
+    "zh": "加载白名单",
+    "ja": "ホワイトリストを読み込む",
+    "ru": "Загрузить белый список"
   },
   "Whitelist speichern": {
     "de": "Whitelist speichern",
-    "en": "Save whitelist"
+    "en": "Save whitelist",
+    "es": "Guardar lista blanca",
+    "zh": "保存白名单",
+    "ja": "ホワイトリストを保存",
+    "ru": "Сохранить белый список"
   },
   "Willkommen! Einige optionale Ressourcen fehlen.": {
     "de": "Willkommen! Einige optionale Ressourcen fehlen.",
-    "en": "Welcome! Some optional resources are missing."
+    "en": "Welcome! Some optional resources are missing.",
+    "es": "¡Bienvenido! Faltan algunos recursos opcionales.",
+    "zh": "欢迎！部分可选资源缺失。",
+    "ja": "ようこそ！一部のオプションリソースが見つかりません。",
+    "ru": "Добро пожаловать! Некоторые необязательные ресурсы отсутствуют."
   },
   "Wähle DB-Browser Executable": {
     "de": "Wähle DB-Browser Executable",
-    "en": "Select DB Browser Executable"
+    "en": "Select DB Browser Executable",
+    "es": "Seleccionar ejecutable de explorador de base de datos",
+    "zh": "选择数据库浏览器可执行文件",
+    "ja": "DBブラウザ実行ファイルを選択",
+    "ru": "Выберите исполняемый файл браузера базы данных"
   },
   "Wählen": {
     "de": "Wählen",
-    "en": "Select"
+    "en": "Select",
+    "es": "Seleccionar",
+    "zh": "选择",
+    "ja": "選択",
+    "ru": "Выбрать"
   },
   "Zwischen allen Steuerelementen und Filtern navigieren": {
     "de": "Zwischen allen Steuerelementen und Filtern navigieren",
-    "en": "Navigate between all controls and filters"
+    "en": "Navigate between all controls and filters",
+    "es": "Navegar entre todos los controles y filtros",
+    "zh": "在所有控件和筛选器之间导航",
+    "ja": "すべてのコントロールとフィルター間を移動",
+    "ru": "Перемещение между всеми элементами управления и фильтрами"
   },
   "Übernehmen": {
     "de": "Übernehmen",
-    "en": "Apply"
+    "en": "Apply",
+    "es": "Aplicar",
+    "zh": "应用",
+    "ja": "適用",
+    "ru": "Применить"
   },
   "⚠️ Deaktivieren für RMA-Analyse (Reference Minor Allele)": {
     "de": "⚠️ Deaktivieren für RMA-Analyse (Reference Minor Allele)",
-    "en": "⚠️ Disable for RMA analysis (Reference Minor Allele)"
+    "en": "⚠️ Disable for RMA analysis (Reference Minor Allele)",
+    "es": "⚠️ Desactivar para análisis RMA (Reference Minor Allele)",
+    "zh": "⚠️ 禁用以进行 RMA 分析（参考次要等位基因）",
+    "ja": "⚠️ RMA解析（リファレンスマイナーアレル）のために無効化",
+    "ru": "⚠️ Отключить для анализа RMA (Reference Minor Allele)"
   },
   "⚠️ EMPFOHLEN: Immer aktiviert lassen für klinische Analyse!": {
     "de": "⚠️ EMPFOHLEN: Immer aktiviert lassen für klinische Analyse!",
-    "en": "⚠️ RECOMMENDED: Keep always enabled for clinical analysis!"
+    "en": "⚠️ RECOMMENDED: Keep always enabled for clinical analysis!",
+    "es": "⚠️ RECOMENDADO: ¡Mantener siempre activado para análisis clínico!",
+    "zh": "⚠️ 推荐：对于临床分析，请始终保持启用！",
+    "ja": "⚠️ 推奨：臨床分析では常に有効にしておくことを推奨します！",
+    "ru": "⚠️ РЕКОМЕНДУЕТСЯ: Всегда оставлять включенным для клинического анализа!"
   },
   "🔍 AF-None-Behandlung (Anzeige-Filterung)": {
     "de": "🔍 AF-None-Behandlung (Anzeige-Filterung)",
-    "en": "🔍 AF-None handling (display filtering)"
+    "en": "🔍 AF-None handling (display filtering)",
+    "es": "🔍 Manejo de AF-None (filtrado de visualización)",
+    "zh": "🔍 AF-None 处理（显示过滤）",
+    "ja": "🔍 AF-Noneの処理（表示フィルタリング）",
+    "ru": "🔍 Обработка AF-None (фильтрация отображения)"
   },
   "🔵 Nie geprüfte in Anzeige einschließen": {
     "de": "🔵 Nie geprüfte in Anzeige einschließen",
-    "en": "🔵 Include never-checked in display"
+    "en": "🔵 Include never-checked in display",
+    "es": "🔵 Incluir nunca comprobados en la visualización",
+    "zh": "🔵 在显示中包含从未检查项",
+    "ja": "🔵 未チェックの項目を表示に含める",
+    "ru": "🔵 Включить непроверенные в отображение"
   },
   "🟠 Fehlerhafte Abrufe in Anzeige einschließen": {
     "de": "🟠 Fehlerhafte Abrufe in Anzeige einschließen",
-    "en": "🟠 Include failed retrievals in display"
+    "en": "🟠 Include failed retrievals in display",
+    "es": "🟠 Incluir recuperaciones fallidas en la visualización",
+    "zh": "🟠 在显示中包含获取失败项",
+    "ja": "🟠 取得失敗項目を表示に含める",
+    "ru": "🟠 Включить ошибки запроса в отображение"
+  },
+  "🟢 Validiert seltene anzeigen (Empfohlen!)": {
+    "de": "🟢 Validiert seltene anzeigen (Empfohlen!)",
+    "en": "🟢 Show validated rare (recommended!)",
+    "es": "🟢 Mostrar raras validadas (¡recomendado!)",
+    "zh": "🟢 显示已验证罕见项（推荐！）",
+    "ja": "🟢 検証済み希少バリアントを表示（推奨！）",
+    "ru": "🟢 Показать подтвержденные редкие (рекомендуется!)"
   },
   "🟢 Validiert seltene in Anzeige einschließen": {
     "de": "🟢 Validiert seltene in Anzeige einschließen",
-    "en": "🟢 Include validated rare in display"
+    "en": "🟢 Include validated rare in display",
+    "es": "🟢 Incluir raras validadas en la visualización",
+    "zh": "🟢 在显示中包含已验证罕见项",
+    "ja": "🟢 検証済み希少バリアントを表示に含める",
+    "ru": "🟢 Включить подтвержденные редкие в отображение"
+  },
+  "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\\n": {
+    "de": "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\\n",
+    "en": "These improve speed and offline capability.\n",
+    "es": "Estos mejoran la velocidad y la capacidad sin conexión.\n",
+    "zh": "这些将提高运行速度和离线能力。\n",
+    "ja": "これらは処理速度とオフライン機能を向上させます。\n",
+    "ru": "Они улучшают скорость работы и автономность.\n"
   }
 }

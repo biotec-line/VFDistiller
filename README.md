@@ -8,7 +8,7 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Tests: 155 passed](https://img.shields.io/badge/Tests-155%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Tests: 165 passed](https://img.shields.io/badge/Tests-167%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Privacy: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Runtime: RunAsInvoker](https://img.shields.io/badge/Runtime-RunAsInvoker-green?style=flat)](SECURITY.md)
@@ -16,7 +16,7 @@
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active-indigo?style=flat)](MARKETING-LOG.txt)
 [![LLM Ready](https://img.shields.io/badge/LLM%20Ready-llms.txt-orange?style=flat)](llms.txt)
 
-**[English](README.md)** • **[Deutsch](README.de.md)**
+**[English](README.md)** • **[Deutsch](README.de.md)** • **[Español](README.es.md)**
 
 </div>
 

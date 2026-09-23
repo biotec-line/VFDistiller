@@ -21790,7 +21790,9 @@ class App(ttk.Window):
             threading.Thread(target=worker, daemon=True).start()
 
     def change_language(self, lang):
-        self.translator.set_lang(lang)
+        if getattr(self, "translator", None):
+            self.translator.set_lang(lang)
+            self._save_settings()
         # komplettes GUI neu aufbauen
         for widget in self.winfo_children():
             widget.destroy()
@@ -23748,6 +23750,9 @@ class App(ttk.Window):
                     use_dp_filter=True, min_dp=10, max_dp=None
                 )
             
+            saved_lang = data.get("language")
+            if saved_lang and getattr(self, "translator", None):
+                self.translator.set_lang(saved_lang)
         except Exception as e:
             self.logger.log(f"[App] ⚠️ Fehler beim Laden der Settings: {e}")
 
@@ -23777,6 +23782,8 @@ class App(ttk.Window):
         data["visible_columns"] = list(self.visible_columns)
         data["cloud_warning_dismissed"] = getattr(self, "cloud_warning_dismissed", False)
         data["setup_dialog_suppressed"] = getattr(self, "setup_dialog_suppressed", False)
+        if getattr(self, "translator", None):
+            data["language"] = self.translator.get_lang()
         
         if theme:
             data["theme"] = theme
@@ -23930,8 +23937,15 @@ class App(ttk.Window):
         optionsmenu.add_separator()
         langmenu = tk.Menu(optionsmenu, tearoff=0)
         optionsmenu.add_cascade(label=self._t("Sprache / Language"), menu=langmenu)
-        langmenu.add_command(label="Deutsch", command=lambda: self.change_language("de"))
-        langmenu.add_command(label="English", command=lambda: self.change_language("en"))
+        for code, label in [
+            ("de", "Deutsch"),
+            ("en", "English"),
+            ("es", "Español"),
+            ("zh", "简体中文"),
+            ("ja", "日本語"),
+            ("ru", "Русский"),
+        ]:
+            langmenu.add_command(label=label, command=lambda c=code: self.change_language(c))
 
         # Design-Menü
         designmenu = tk.Menu(menubar, tearoff=0)
