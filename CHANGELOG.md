@@ -25,6 +25,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Fehlerbehebung & Datenintegrität (Bugsweep Block 9 — 2026-09-26)
+- **Spalten-Index-Synchronisation & TSV-Clipboard-Export**: Behebung eines kritischen Spaltenversatz-Bugs in `_copy_selection_to_clipboard`, `_on_tree_return` und `_generic_click_handler`. Da `Treeview.item().get("values")` stets der Gesamtspaltenliste `self.columns` folgt, führte das Indizieren nach `visible_columns` bei ausgeblendeten Spalten zu Datenverschiebungen (z. B. Referenz-/Alternativ-Allel anstelle von dbSNP/Genotyp).
+- **TSV-Sanitisierung & Härtung**: Tabulatoren und Zeilenumbrüche innerhalb von Zellwerten werden vor der TSV-Zwischenablage-Generierung defensiv zu Leerzeichen normalisiert, um Tabellenstrukturen im Zielprogramm (z. B. Excel) nicht zu zerschlagen.
+- **Defensive DB-Absicherung in Klick-Handlern**: Guard `hasattr(self, "db") and self.db` in `_generic_click_handler` verhindert `AttributeError` bei Klick auf externe Links vor initialisierter SQLite-Varianten-Datenbank.
+- **Vertragstests (`tests/test_bugsweep_partial9_20260926.py`)**: 7 neue automatisierte Regressionstests decken Spaltensynchronisation bei ausgeblendeten Spalten, TSV-Clipboard-Sanitisierung, Return-Aktivierung und Klick-Handler-Integrität isoliert ab.
+
 ### Barrierefreiheit, Tastatur-Ergonomie & UX-Review (WCAG 2.1 AA / BITV 2.0 — 2026-09-26)
 - **Tastatur-Kurzbefehle & globale Ergonomie (WCAG 2.1 AA / BITV 2.0)**: Vollständige Tastaturbedienbarkeit des Hauptfensters ohne Mauszwang implementiert (`Strg+O` VCF-Datei wählen, `Strg+R` / `Strg+Eingabe` Analyse starten, `Escape` Analyse stoppen / Fokus zurücksetzen, `F5` Ansicht aktualisieren, `Strg+E` CSV-Export, `Strg+Umschalt+E` Excel-Export, `Strg+P` PDF-Export, `F1` Tastaturkürzel-Übersicht).
 - **Varianten-Tabelle & Zwischenablage**:

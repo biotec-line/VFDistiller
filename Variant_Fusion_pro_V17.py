@@ -22656,7 +22656,11 @@ class App(ttk.Window):
         lines = ["\t".join(headers)]
         for row_id in selection:
             values = self.tree.item(row_id).get("values", [])
-            row_vals = [str(values[i]) if i < len(values) else "" for i in range(len(visible_cols))]
+            col_to_val = {col: values[idx] for idx, col in enumerate(self.columns) if idx < len(values)}
+            row_vals = [
+                str(col_to_val.get(col, "")).replace("\t", " ").replace("\r\n", " ").replace("\n", " ")
+                for col in visible_cols
+            ]
             lines.append("\t".join(row_vals))
         tsv_text = "\n".join(lines)
         try:
@@ -22703,13 +22707,8 @@ class App(ttk.Window):
         values = self.tree.item(row_id).get("values", [])
         if not values:
             return
-        visible_cols = self._current_displaycolumns()
-        row_data = {}
-        for i, vc in enumerate(visible_cols):
-            if i < len(values):
-                row_data[vc] = values[i]
-            else:
-                row_data[vc] = ""
+        col_to_val = {col: values[idx] for idx, col in enumerate(self.columns) if idx < len(values)}
+        row_data = {col: col_to_val.get(col, "") for col in self.columns}
 
         # PubMed consequence Anreicherung falls nötig
         iid = row_id
@@ -22818,12 +22817,8 @@ class App(ttk.Window):
         values = self.tree.item(row_id).get("values", [])
         if not values:
             return
-        row_data = {}
-        for i, vc in enumerate(visible_cols):
-            if i < len(values):
-                row_data[vc] = values[i]
-            else:
-                row_data[vc] = ""
+        col_to_val = {col: values[idx] for idx, col in enumerate(self.columns) if idx < len(values)}
+        row_data = {col: col_to_val.get(col, "") for col in self.columns}
         if col_name == "pubmed":
             iid = row_id
             parts = iid.split("|")
@@ -22831,7 +22826,7 @@ class App(ttk.Window):
                 try:
                     chr_, pos_, ref_, alt_, build_ = parts
                     key = (chr_, int(pos_), ref_, alt_, build_)
-                    db_row = self.db.get_variant(key) if key else {}
+                    db_row = self.db.get_variant(key) if key and hasattr(self, "db") and self.db else {}
                     row_data['consequence'] = db_row.get('consequence', '')
                 except Exception:
                     pass
