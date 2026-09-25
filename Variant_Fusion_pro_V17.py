@@ -20211,6 +20211,11 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.create_widgets()
         self.load_current_settings()
         
+        # Tastatur-Bedienung (WCAG 2.1 AA): Escape bricht ab, Return/Ctrl-Return übernimmt
+        self.bind("<Escape>", lambda _e: self.on_cancel())
+        self.bind("<Control-Return>", lambda _e: self.on_apply())
+        self.bind("<Return>", lambda _e: self.on_apply())
+
         # Fenster zentrieren
         self.place_window_center()
     
@@ -20239,9 +20244,9 @@ class QualitySettingsDialog(ttk.Toplevel):
         # ============================================================
         # ✅ FIX: Labelframe statt LabelFrame
         preset_frame = ttk.Labelframe(
-            content, 
-            text="📋 Vordefinierte Profile", 
-            padding=15, 
+            content,
+            text=f"📋 {self._t('Vordefinierte Profile')}",
+            padding=15,
             bootstyle="info"
         )
         preset_frame.pack(fill=X, pady=(0, 15), padx=5)
@@ -20271,7 +20276,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         # Custom (Manuell)
         custom_rb = ttk.Radiobutton(
             preset_frame,
-            text="Custom: Eigene Einstellungen",
+            text=self._t("Custom: Eigene Einstellungen"),
             variable=self.preset_var,
             value="custom",
             command=self.on_preset_change,
@@ -20285,9 +20290,9 @@ class QualitySettingsDialog(ttk.Toplevel):
         # ============================================================
         # ✅ FIX: Labelframe statt LabelFrame
         quality_frame = ttk.Labelframe(
-            content, 
-            text="⚙️ Quality-Gates", 
-            padding=15, 
+            content,
+            text=f"⚙️ {self._t('Quality-Gates')}",
+            padding=15,
             bootstyle="primary"
         )
         quality_frame.pack(fill=X, pady=(0, 15), padx=5)
@@ -20296,7 +20301,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.filter_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             quality_frame,
-            text="Nur PASS-Varianten akzeptieren (FILTER-Spalte)",
+            text=self._t("Nur PASS-Varianten akzeptieren (FILTER-Spalte)"),
             variable=self.filter_var,
             command=self.on_custom_change,
             bootstyle="primary-round-toggle"
@@ -20324,7 +20329,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.dp_filter_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             quality_frame,
-            text="DP-Filter aktivieren (Read Depth)",
+            text=self._t("DP-Filter aktivieren (Read Depth)"),
             variable=self.dp_filter_var,
             command=self.on_custom_change,
             bootstyle="primary-round-toggle"
@@ -20369,16 +20374,16 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.homref_filter_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             quality_frame,
-            text="0/0 Genotypen ausfiltern (homozygote Referenz)",
+            text=self._t("0/0 Genotypen ausfiltern (homozygote Referenz)"),
             variable=self.homref_filter_var,
             command=self.on_custom_change,
             bootstyle="warning-round-toggle"
         ).pack(anchor="w", pady=2)
         
         ttk.Label(
-            quality_frame, 
-            text="⚠️ Deaktivieren für RMA-Analyse (Reference Minor Allele)", 
-            font=("", 8), 
+            quality_frame,
+            text=self._t("⚠️ Deaktivieren für RMA-Analyse (Reference Minor Allele)"),
+            font=("", 8),
             bootstyle="inverse-warning"
         ).pack(anchor="w", padx=25)
 
@@ -20387,16 +20392,16 @@ class QualitySettingsDialog(ttk.Toplevel):
         # ============================================================
         # ✅ FIX: Labelframe statt LabelFrame
         none_frame = ttk.Labelframe(
-            content, 
-            text="🔍 AF-None-Behandlung (Anzeige)", 
-            padding=15, 
+            content,
+            text=f"🔍 {self._t('AF-None-Behandlung (Anzeige)')}",
+            padding=15,
             bootstyle="secondary"
         )
         none_frame.pack(fill=X, pady=(0, 15), padx=5)
         
         info_lbl = ttk.Label(
             none_frame,
-            text="Steuert, welche Varianten ohne AF-Wert angezeigt werden:",
+            text=self._t("Steuert, welche Varianten ohne AF-Wert angezeigt werden:"),
             font=("", 9, "bold")
         )
         info_lbl.pack(anchor="w", pady=(0, 10))
@@ -20405,7 +20410,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.never_fetched_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(
             none_frame,
-            text="Nie geprüfte anzeigen (Status unbekannt)",
+            text=self._t("Nie geprüfte anzeigen (Status unbekannt)"),
             variable=self.never_fetched_var,
             command=self.on_custom_change,
             bootstyle="round-toggle"
@@ -20415,7 +20420,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.fetch_failed_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(
             none_frame,
-            text="Fehlerhafte Abrufe anzeigen (Technischer Fehler)",
+            text=self._t("Fehlerhafte Abrufe anzeigen (Technischer Fehler)"),
             variable=self.fetch_failed_var,
             command=self.on_custom_change,
             bootstyle="round-toggle"
@@ -20425,7 +20430,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         self.true_none_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             none_frame,
-            text="🟢 Validiert seltene anzeigen (Empfohlen!)",
+            text=self._t("🟢 Validiert seltene anzeigen (Empfohlen!)"),
             variable=self.true_none_var,
             command=self.on_custom_change,
             bootstyle="success-round-toggle"
@@ -20435,7 +20440,7 @@ class QualitySettingsDialog(ttk.Toplevel):
         # VORSCHAU
         # ============================================================
         # ✅ FIX: Labelframe statt LabelFrame
-        preview_frame = ttk.Labelframe(content, text="👁️ Vorschau", padding=10)
+        preview_frame = ttk.Labelframe(content, text=f"👁️ {self._t('Vorschau')}", padding=10)
         preview_frame.pack(fill=X, pady=(0, 20), padx=5)
         
         self.preview_text = tk.Text(
@@ -20453,16 +20458,16 @@ class QualitySettingsDialog(ttk.Toplevel):
         # BUTTONS (im feststehenden Frame unten)
         # ============================================================
         ttk.Button(
-            btn_frame, 
-            text="Abbrechen", 
-            command=self.on_cancel, 
+            btn_frame,
+            text=self._t("Abbrechen"),
+            command=self.on_cancel,
             bootstyle="secondary"
         ).pack(side=RIGHT, padx=5)
         
         ttk.Button(
-            btn_frame, 
-            text="Einstellungen Übernehmen", 
-            command=self.on_apply, 
+            btn_frame,
+            text=self._t("Einstellungen Übernehmen"),
+            command=self.on_apply,
             bootstyle="success"
         ).pack(side=RIGHT)
 
@@ -20971,6 +20976,11 @@ class ResourceSetupDialog:
         self.win.geometry("780x620")
         self.win.transient(parent)
         self.win.grab_set()
+
+        # Tastatur-Bedienung (WCAG 2.1 AA): Escape und Return schließen Dialog
+        self.win.bind("<Escape>", lambda _e: self._on_close())
+        self.win.bind("<Return>", lambda _e: self._on_close())
+
         try:
             self.win.place_window_center()
         except Exception:
@@ -20999,12 +21009,12 @@ class ResourceSetupDialog:
         footer.pack(fill=X, side=BOTTOM)
 
         self.suppress_var = tk.BooleanVar(value=False)
-        ttk.Checkbutton(footer, text="Diesen Dialog nicht mehr anzeigen",
+        ttk.Checkbutton(footer, text=self._t("Diesen Dialog nicht mehr anzeigen"),
                         variable=self.suppress_var).pack(side=LEFT)
 
-        ttk.Button(footer, text="Schließen", command=self._on_close,
+        ttk.Button(footer, text=self._t("Schließen"), command=self._on_close,
                    bootstyle="success").pack(side=RIGHT, padx=5)
-        ttk.Button(footer, text="Später", command=self._on_later,
+        ttk.Button(footer, text=self._t("Später"), command=self._on_later,
                    bootstyle="secondary").pack(side=RIGHT, padx=5)
 
     def _on_later(self):
@@ -22609,9 +22619,16 @@ class App(ttk.Window):
         self.tree.bind("<Double-1>", self._on_double_click)
         # Optional: einfacher Klick für RSID
         self.tree.bind("<Button-1>", self._on_click_single)
-        # Barrierefreie Tastatur-Aktivierung für Tabellenzeilen
+        # Barrierefreie Tastatur-Aktivierung für Tabellenzeilen (Return, KP_Enter, Leertaste)
         self.tree.bind("<Return>", self._on_tree_return)
         self.tree.bind("<KP_Enter>", self._on_tree_return)
+        self.tree.bind("<space>", self._on_tree_return)
+        # Zwischenablage & Auswahl-Shortcuts für Tabelle (WCAG 2.1 AA)
+        self.tree.bind("<Control-c>", self._copy_selection_to_clipboard)
+        self.tree.bind("<Control-C>", self._copy_selection_to_clipboard)
+        self.tree.bind("<Control-a>", self._select_all_variants)
+        self.tree.bind("<Control-A>", self._select_all_variants)
+        self.tree.bind("<Escape>", self._clear_table_selection)
 
         # Globale Tastaturkürzel (WCAG 2.1 AA / Tastatur-Ergonomie)
         self.bind("<Control-o>", lambda _e: self.choose_file())
@@ -22619,9 +22636,58 @@ class App(ttk.Window):
         self.bind("<Control-r>", lambda _e: self.on_start())
         self.bind("<Control-R>", lambda _e: self.on_start())
         self.bind("<Control-Return>", lambda _e: self.on_start())
+        self.bind("<Control-e>", lambda _e: self.export_csv())
+        self.bind("<Control-E>", lambda _e: self.export_csv())
+        self.bind("<Control-Shift-E>", lambda _e: self.export_excel())
+        self.bind("<Control-Shift-e>", lambda _e: self.export_excel())
+        self.bind("<Control-p>", lambda _e: self.export_pdf())
+        self.bind("<Control-P>", lambda _e: self.export_pdf())
         self.bind("<F5>", lambda _e: self.on_refresh())
         self.bind("<F1>", lambda _e: self.show_shortcuts_dialog())
         self.bind("<Escape>", self._handle_escape)
+
+    def _copy_selection_to_clipboard(self, event=None):
+        """Kopiert markierte Tabellenzeilen als tab-separierten Text (TSV) in die Zwischenablage."""
+        selection = self.tree.selection()
+        if not selection:
+            return "break"
+        visible_cols = self._current_displaycolumns()
+        headers = [COLUMN_LABELS.get(col, col) for col in visible_cols]
+        lines = ["\t".join(headers)]
+        for row_id in selection:
+            values = self.tree.item(row_id).get("values", [])
+            row_vals = [str(values[i]) if i < len(values) else "" for i in range(len(visible_cols))]
+            lines.append("\t".join(row_vals))
+        tsv_text = "\n".join(lines)
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(tsv_text)
+            self.update()
+            count = len(selection)
+            msg = self._t("{count} Variante(n) in Zwischenablage kopiert", count=count)
+            if hasattr(self, "logger") and self.logger:
+                self.logger.log(f"[A11y] 📋 {msg}")
+        except Exception as e:
+            if hasattr(self, "logger") and self.logger:
+                self.logger.log(f"[A11y] Fehler beim Kopieren in Zwischenablage: {e}")
+        return "break"
+
+    def _select_all_variants(self, event=None):
+        """Wählt alle aktuell angezeigten Tabellenzeilen aus."""
+        children = self.tree.get_children()
+        if children:
+            self.tree.selection_set(children)
+            if hasattr(self, "logger") and self.logger:
+                self.logger.log(f"[A11y] 🔍 {len(children)} {self._t('Varianten ausgewählt')}")
+        return "break"
+
+    def _clear_table_selection(self, event=None):
+        """Hebt die Tabellenauswahl auf (Standard Windows-Verhalten für Escape)."""
+        selection = self.tree.selection()
+        if selection:
+            self.tree.selection_remove(selection)
+            return "break"
+        self._handle_escape(event)
 
     def _handle_escape(self, event=None):
         """Escape bricht eine laufende Analyse ab, wenn aktiv."""
@@ -24083,6 +24149,11 @@ class App(ttk.Window):
             self.tree.heading(col, text=COLUMN_LABELS.get(col, col), command=lambda c=col: self._sort_by(c, False))
             self.tree.column(col, width=90, anchor="w")
             
+        self._attach_tooltip(
+            self.tree,
+            self._t("Tabelle: Pfeiltasten navigieren, Return/Leertaste öffnet primären Link, Strg+C kopiert Auswahl, Strg+A wählt alle aus, Escape hebt Markierung auf.")
+        )
+
         # =====================================================================
         # 3. COUNT LABEL
         # =====================================================================
@@ -24199,6 +24270,7 @@ class App(ttk.Window):
         
         self.log_text = tk.Text(log_frame, height=6, state="normal", font=("Consolas", 8))
         self.log_text.pack(side=LEFT, fill=BOTH, expand=YES)
+        self._attach_tooltip(self.log_text, self._t("Systemprotokoll: Zeigt Echtzeit-Meldungen des Analyse- und Filterprozesses."))
         sb_log = ttk.Scrollbar(log_frame, command=self.log_text.yview)
         sb_log.pack(side=RIGHT, fill=Y)
         self.log_text.config(yscrollcommand=sb_log.set)
@@ -24208,8 +24280,12 @@ class App(ttk.Window):
         exp_frame.pack(side=RIGHT, fill=Y)
         
         ttk.Label(exp_frame, text="VCF-Modus:", font=("", 8)).pack(anchor="w")
-        ttk.Radiobutton(exp_frame, text="Original (+Anno)", variable=self.vcf_export_mode, value="complete").pack(anchor="w")
-        ttk.Radiobutton(exp_frame, text="Gefiltert (Sichtbar)", variable=self.vcf_export_mode, value="filtered").pack(anchor="w")
+        rb_complete = ttk.Radiobutton(exp_frame, text=self._t("Original (+Anno)"), variable=self.vcf_export_mode, value="complete")
+        rb_complete.pack(anchor="w")
+        self._attach_tooltip(rb_complete, self._t("Exportiert alle Varianten mit Annotationen im Original-VCF-Format"))
+        rb_filtered = ttk.Radiobutton(exp_frame, text=self._t("Gefiltert (Sichtbar)"), variable=self.vcf_export_mode, value="filtered")
+        rb_filtered.pack(anchor="w")
+        self._attach_tooltip(rb_filtered, self._t("Exportiert nur die aktuell sichtbaren und gefilterten Varianten"))
         
         ttk.Separator(exp_frame).pack(fill=X, pady=5)
         
@@ -24232,7 +24308,7 @@ class App(ttk.Window):
     def open_general_settings(self):
         """NEU: Mit Column Link Templating System."""
         settings_window = ttk.Toplevel(self)
-        settings_window.title("Allgemeine Einstellungen & Links")
+        settings_window.title(self._t("Allgemeine Einstellungen & Links"))
         settings_window.geometry("850x700")
         settings_window.transient(self)
         settings_window.withdraw()
@@ -24240,13 +24316,16 @@ class App(ttk.Window):
         settings_window.place_window_center()
         settings_window.deiconify()
         settings_window.grab_set()
+
+        # Tastatur-Bedienung (WCAG 2.1 AA): Escape schließt Einstellungen
+        settings_window.bind("<Escape>", lambda _e: settings_window.destroy())
         
         notebook = ttk.Notebook(settings_window)
         notebook.pack(fill=BOTH, expand=YES, padx=10, pady=10)
         
         # TAB 1: Allgemein
         tab_general = ttk.Frame(notebook, padding=10)
-        notebook.add(tab_general, text="Allgemein")
+        notebook.add(tab_general, text=self._t("Allgemein"))
         
         ag_frame = ttk.Labelframe(tab_general, text="AlphaGenome AI", padding=10)
         ag_frame.pack(fill=X, pady=5)
@@ -24269,7 +24348,7 @@ class App(ttk.Window):
         
         # TAB 2: Ressourcen
         tab_resources = ttk.Frame(notebook, padding=10)
-        notebook.add(tab_resources, text="Ressourcen")
+        notebook.add(tab_resources, text=self._t("Ressourcen"))
         res_sf = ScrolledFrame(tab_resources, autohide=True, padding=5)
         res_sf.pack(fill=BOTH, expand=YES)
         self._settings_resource_widgets = {}
@@ -24292,7 +24371,7 @@ class App(ttk.Window):
 
         # TAB 3: Spalten-Links
         tab_links = ttk.Frame(notebook, padding=10)
-        notebook.add(tab_links, text="Spalten-Links")
+        notebook.add(tab_links, text=self._t("Spalten-Links"))
         
         ttk.Label(tab_links, text="Platzhalter: {value}, {chr}, {pos}, {ref}, {alt}, {gene}, {rsid}").pack(anchor="w", pady=(0, 10))
         
@@ -24389,7 +24468,7 @@ class App(ttk.Window):
         # TAB 4: APIs & Services
         # ==================================================================
         tab_api = ttk.Frame(notebook, padding=10)
-        notebook.add(tab_api, text="APIs & Services")
+        notebook.add(tab_api, text=self._t("APIs & Services"))
 
         api_sf = ScrolledFrame(tab_api, autohide=True, padding=5)
         api_sf.pack(fill=BOTH, expand=YES)
@@ -24510,7 +24589,7 @@ class App(ttk.Window):
 
         api_reset_frame = ttk.Frame(api_inner)
         api_reset_frame.pack(fill=X, pady=10)
-        ttk.Button(api_reset_frame, text="Auf Standard zurücksetzen",
+        ttk.Button(api_reset_frame, text=self._t("Auf Standard zurücksetzen"),
                    command=_reset_api_defaults, bootstyle="warning-outline").pack(anchor="center")
 
         btn_main = ttk.Frame(settings_window, padding=10)
@@ -24519,9 +24598,12 @@ class App(ttk.Window):
         def save_all():
             self._save_settings()
             settings_window.destroy()
+
+        # Tastatur-Bedienung: Strg+Eingabe speichert Einstellungen
+        settings_window.bind("<Control-Return>", lambda _e: save_all())
         
-        ttk.Button(btn_main, text="Speichern & Schließen", command=save_all, bootstyle="success").pack(side=RIGHT)
-        ttk.Button(btn_main, text="Abbrechen", command=settings_window.destroy, bootstyle="secondary").pack(side=RIGHT, padx=5)
+        ttk.Button(btn_main, text=self._t("Speichern & Schließen"), command=save_all, bootstyle="success").pack(side=RIGHT)
+        ttk.Button(btn_main, text=self._t("Abbrechen"), command=settings_window.destroy, bootstyle="secondary").pack(side=RIGHT, padx=5)
 
     def choose_db_viewer(self):
         """Dateidialog für DB-Viewer."""
@@ -24554,8 +24636,8 @@ class App(ttk.Window):
         """Zeigt ein barrierefreies Hilfefenster für Tastaturkürzel und Bedienung."""
         dlg = ttk.Toplevel(self)
         dlg.title(self._t("Tastaturkürzel & Barrierefreiheit"))
-        dlg.geometry("620x520")
-        dlg.minsize(500, 400)
+        dlg.geometry("680x580")
+        dlg.minsize(540, 420)
         dlg.transient(self)
         dlg.bind("<Escape>", lambda _e: dlg.destroy())
 
@@ -24572,25 +24654,31 @@ class App(ttk.Window):
         ttk.Label(
             main_f,
             text=self._t("VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA."),
-            wraplength=580,
+            wraplength=640,
         ).pack(anchor="w", pady=(0, 12))
 
         table_frame = ttk.Labelframe(main_f, text=self._t("Verfügbare Tastaturkürzel"), padding=10)
         table_frame.pack(fill=BOTH, expand=YES, pady=(0, 12))
 
         cols = ("shortcut", "description")
-        tree = ttk.Treeview(table_frame, columns=cols, show="headings", height=8, bootstyle="info")
+        tree = ttk.Treeview(table_frame, columns=cols, show="headings", height=13, bootstyle="info")
         tree.heading("shortcut", text=self._t("Tastenkürzel"))
         tree.heading("description", text=self._t("Funktion"))
-        tree.column("shortcut", width=170, anchor="w")
-        tree.column("description", width=370, anchor="w")
+        tree.column("shortcut", width=200, anchor="w")
+        tree.column("description", width=420, anchor="w")
 
         shortcuts = [
             ("Strg+O / Ctrl+O", self._t("Eingabedatei auswählen")),
             ("Strg+R / Ctrl+Return", self._t("Analyse der ausgewählten Datei starten")),
             ("Escape", self._t("Laufende Analyse stoppen")),
             ("F5", self._t("Ergebnisse neu laden")),
-            ("Eingabe / Return (Tabelle)", self._t("Primären Link der ausgewählten Variante öffnen")),
+            (self._t("Strg+E / Ctrl+E"), self._t("Tabelle als CSV-Datei exportieren")),
+            (self._t("Strg+Umschalt+E"), self._t("Tabelle als Excel-Arbeitsmappe exportieren")),
+            (self._t("Strg+P / Ctrl+P"), self._t("Ergebnisse als PDF-Bericht exportieren")),
+            (self._t("Strg+C / Ctrl+C (Tabelle)"), self._t("Ausgewählte Varianten in Zwischenablage kopieren")),
+            (self._t("Strg+A / Ctrl+A (Tabelle)"), self._t("Alle Varianten in Tabelle auswählen")),
+            (self._t("Escape (Tabelle)"), self._t("Auswahl in Tabelle aufheben")),
+            (self._t("Eingabe / Leertaste (Tabelle)"), self._t("Primären Link der ausgewählten Variante öffnen")),
             ("F1", self._t("Dieses Hilfefenster anzeigen")),
             ("Tab / Umschalt+Tab", self._t("Zwischen allen Steuerelementen und Filtern navigieren")),
         ]

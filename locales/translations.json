@@ -7,22 +7,6 @@
     "ja": "0/0遺伝子型を除外（ホモ接合型参照）",
     "ru": "Отфильтровать генотипы 0/0 (гомозиготный референс)"
   },
-  "AF=None einschließen": {
-    "de": "AF=None einschließen",
-    "en": "Include AF=None",
-    "es": "Incluir AF=None",
-    "zh": "包含 AF=None",
-    "ja": "AF=Noneを含める",
-    "ru": "Включить AF=None"
-  },
-  "API Key speichern": {
-    "de": "API Key speichern",
-    "en": "Save API key",
-    "es": "Guardar clave API",
-    "zh": "保存 API 密钥",
-    "ja": "APIキーを保存",
-    "ru": "Сохранить ключ API"
-  },
   "Abbrechen": {
     "de": "Abbrechen",
     "en": "Cancel",
@@ -39,6 +23,14 @@
     "ja": "完了",
     "ru": "Завершено"
   },
+  "AF=None einschließen": {
+    "de": "AF=None einschließen",
+    "en": "Include AF=None",
+    "es": "Incluir AF=None",
+    "zh": "包含 AF=None",
+    "ja": "AF=Noneを含める",
+    "ru": "Включить AF=None"
+  },
   "Aktuelle Filterkriterien anwenden": {
     "de": "Aktuelle Filterkriterien anwenden",
     "en": "Apply current filter criteria",
@@ -54,6 +46,30 @@
     "zh": "所有文件",
     "ja": "すべてのファイル",
     "ru": "Все файлы"
+  },
+  "Alle Varianten in Tabelle auswählen": {
+    "de": "Alle Varianten in Tabelle auswählen",
+    "en": "Select all variants in table",
+    "es": "Seleccionar todas las variantes de la tabla",
+    "zh": "选择表格中的所有变异",
+    "ja": "テーブル内の全バリアントを選択",
+    "ru": "Выбрать все варианты в таблице"
+  },
+  "Allgemein": {
+    "de": "Allgemein",
+    "en": "General",
+    "es": "General",
+    "zh": "通用",
+    "ja": "全般",
+    "ru": "Общие"
+  },
+  "Allgemeine Einstellungen & Links": {
+    "de": "Allgemeine Einstellungen & Links",
+    "en": "General Settings & Links",
+    "es": "Configuración general y enlaces",
+    "zh": "通用设置与链接",
+    "ja": "一般設定とリンク",
+    "ru": "Общие настройки и ссылки"
   },
   "Allgemeine Einstellungen...": {
     "de": "Allgemeine Einstellungen...",
@@ -103,6 +119,22 @@
     "ja": "表示",
     "ru": "Вид"
   },
+  "API Key speichern": {
+    "de": "API Key speichern",
+    "en": "Save API key",
+    "es": "Guardar clave API",
+    "zh": "保存 API 密钥",
+    "ja": "APIキーを保存",
+    "ru": "Сохранить ключ API"
+  },
+  "APIs & Services": {
+    "de": "APIs & Services",
+    "en": "APIs & Services",
+    "es": "APIs y servicios",
+    "zh": "API 与服务",
+    "ja": "APIとサービス",
+    "ru": "API и сервисы"
+  },
   "Auf Standard zurücksetzen": {
     "de": "Auf Standard zurücksetzen",
     "en": "Reset to default",
@@ -110,6 +142,14 @@
     "zh": "恢复默认值",
     "ja": "デフォルトに戻す",
     "ru": "Сбросить на значения по умолчанию"
+  },
+  "Ausgewählte Varianten in Zwischenablage kopiert": {
+    "de": "Ausgewählte Varianten in Zwischenablage kopiert",
+    "en": "Selected variants copied to clipboard",
+    "es": "Variantes seleccionadas copiadas al portapapeles",
+    "zh": "所选变异已复制到剪贴板",
+    "ja": "選択したバリアントをクリップボードにコピーしました",
+    "ru": "Выбранные варианты скопированы в буфер обмена"
   },
   "Auslöser": {
     "de": "Auslöser",
@@ -126,6 +166,14 @@
     "zh": "触发器：",
     "ja": "トリガー：",
     "ru": "Триггер:"
+  },
+  "Auswahl in Tabelle aufheben": {
+    "de": "Auswahl in Tabelle aufheben",
+    "en": "Clear selection in table",
+    "es": "Deseleccionar variantes en la tabla",
+    "zh": "清除表格中的选择",
+    "ja": "テーブルの選択を解除",
+    "ru": "Снять выбор в таблице"
   },
   "BackgroundMaintainer aktiv": {
     "de": "BackgroundMaintainer aktiv",
@@ -231,14 +279,6 @@
     "ja": "カスタム：個別設定",
     "ru": "Пользовательские: Собственные настройки"
   },
-  "DP-Filter aktivieren (Read Depth)": {
-    "de": "DP-Filter aktivieren (Read Depth)",
-    "en": "Enable DP filter (Read Depth)",
-    "es": "Activar filtro DP (profundidad de lectura)",
-    "zh": "启用 DP 过滤（测序深度）",
-    "ja": "DPフィルターを有効化（リード深度）",
-    "ru": "Включить фильтр DP (глубина прочтения)"
-  },
   "Datei auswählen": {
     "de": "Datei auswählen",
     "en": "Select file",
@@ -343,6 +383,14 @@
     "ja": "これらは処理速度とオフライン機能を向上させます。\n後から「オプション > 設定 > リソース」で設定することも可能です。",
     "ru": "Они улучшают скорость работы и автономность.\nВсе можно настроить позже в меню Опции > Настройки > Ресурсы."
   },
+  "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\\n": {
+    "de": "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\\n",
+    "en": "These improve speed and offline capability.\n",
+    "es": "Estos mejoran la velocidad y la capacidad sin conexión.\n",
+    "zh": "这些将提高运行速度和离线能力。\n",
+    "ja": "これらは処理速度とオフライン機能を向上させます。\n",
+    "ru": "Они улучшают скорость работы и автономность.\n"
+  },
   "Diesen Dialog nicht mehr anzeigen": {
     "de": "Diesen Dialog nicht mehr anzeigen",
     "en": "Do not show this dialog again",
@@ -359,6 +407,14 @@
     "ja": "このヘルプウィンドウを表示",
     "ru": "Показать это окно справки"
   },
+  "DP-Filter aktivieren (Read Depth)": {
+    "de": "DP-Filter aktivieren (Read Depth)",
+    "en": "Enable DP filter (Read Depth)",
+    "es": "Activar filtro DP (profundidad de lectura)",
+    "zh": "启用 DP 过滤（测序深度）",
+    "ja": "DPフィルターを有効化（リード深度）",
+    "ru": "Включить фильтр DP (глубина прочтения)"
+  },
   "Durchsuchen": {
     "de": "Durchsuchen",
     "en": "Browse",
@@ -366,6 +422,14 @@
     "zh": "浏览",
     "ja": "参照",
     "ru": "Обзор"
+  },
+  "Eingabe / Leertaste (Tabelle)": {
+    "de": "Eingabe / Leertaste (Tabelle)",
+    "en": "Enter / Space (Table)",
+    "es": "Enter / Espacio (Tabla)",
+    "zh": "回车 / 空格（表格）",
+    "ja": "Enter / スペース（テーブル）",
+    "ru": "Enter / Пробел (Таблица)"
   },
   "Eingabe-Datei:": {
     "de": "Eingabe-Datei:",
@@ -423,6 +487,14 @@
     "ja": "結果をPDFレポートとしてエクスポート",
     "ru": "Экспортировать результаты в отчет PDF"
   },
+  "Ergebnisse als PDF-Bericht exportieren (Strg+P)": {
+    "de": "Ergebnisse als PDF-Bericht exportieren (Strg+P)",
+    "en": "Export results as PDF report (Ctrl+P)",
+    "es": "Exportar resultados como informe PDF (Ctrl+P)",
+    "zh": "将结果导出为 PDF 报告 (Ctrl+P)",
+    "ja": "結果をPDFレポートとしてエクスポート (Ctrl+P)",
+    "ru": "Экспортировать результаты в отчет PDF (Ctrl+P)"
+  },
   "Ergebnisse neu laden": {
     "de": "Ergebnisse neu laden",
     "en": "Reload displayed results",
@@ -438,6 +510,14 @@
     "zh": "正在创建索引...",
     "ja": "インデックス作成中...",
     "ru": "Создание индекса..."
+  },
+  "Escape (Tabelle)": {
+    "de": "Escape (Tabelle)",
+    "en": "Escape (Table)",
+    "es": "Escape (Tabla)",
+    "zh": "Escape（表格）",
+    "ja": "Escape（テーブル）",
+    "ru": "Escape (Таблица)"
   },
   "Excel Export": {
     "de": "Excel Export",
@@ -471,6 +551,22 @@
     "ja": "エクスポート形式を選択：",
     "ru": "Выберите формат экспорта:"
   },
+  "Exportiert alle Varianten mit Annotationen im Original-VCF-Format": {
+    "de": "Exportiert alle Varianten mit Annotationen im Original-VCF-Format",
+    "en": "Exports all variants with annotations in original VCF format",
+    "es": "Exporta todas las variantes con anotaciones en formato VCF original",
+    "zh": "导出原始 VCF 格式中包含注释的所有变异",
+    "ja": "元のVCF形式で注釈付きの全バリアントをエクスポートします",
+    "ru": "Экспортирует все варианты с аннотациями в исходном формате VCF"
+  },
+  "Exportiert nur die aktuell sichtbaren und gefilterten Varianten": {
+    "de": "Exportiert nur die aktuell sichtbaren und gefilterten Varianten",
+    "en": "Exports only currently visible and filtered variants",
+    "es": "Exporta únicamente las variantes actualmente visibles y filtradas",
+    "zh": "仅导出当前可见和过滤的变异",
+    "ja": "現在表示およびフィルタリングされているバリアントのみをエクスポートします",
+    "ru": "Экспортирует только текущие видимые и отфильтрованные варианты"
+  },
   "FASTQ-Datei:": {
     "de": "FASTQ-Datei:",
     "en": "FASTQ file:",
@@ -478,14 +574,6 @@
     "zh": "FASTQ 文件：",
     "ja": "FASTQファイル：",
     "ru": "Файл FASTQ:"
-  },
-  "FILTER=PASS": {
-    "de": "FILTER=PASS",
-    "en": "FILTER=PASS",
-    "es": "FILTER=PASS",
-    "zh": "FILTER=PASS",
-    "ja": "FILTER=PASS",
-    "ru": "FILTER=PASS"
   },
   "Fehler": {
     "de": "Fehler",
@@ -543,6 +631,14 @@
     "ja": "フィルターをリセット",
     "ru": "Сбросить фильтр"
   },
+  "FILTER=PASS": {
+    "de": "FILTER=PASS",
+    "en": "FILTER=PASS",
+    "es": "FILTER=PASS",
+    "zh": "FILTER=PASS",
+    "ja": "FILTER=PASS",
+    "ru": "FILTER=PASS"
+  },
   "Filterkriterien auf Standard zurücksetzen": {
     "de": "Filterkriterien auf Standard zurücksetzen",
     "en": "Reset filter criteria to default",
@@ -558,22 +654,6 @@
     "zh": "功能",
     "ja": "機能",
     "ru": "Функция"
-  },
-  "GEN-Whitelist:": {
-    "de": "GEN-Whitelist:",
-    "en": "GEN whitelist:",
-    "es": "Lista blanca de genes:",
-    "zh": "基因白名单：",
-    "ja": "遺伝子ホワイトリスト：",
-    "ru": "Белый список генов:"
-  },
-  "GTF-Dateien werden automatisch beim ersten Annotationslauf heruntergeladen.": {
-    "de": "GTF-Dateien werden automatisch beim ersten Annotationslauf heruntergeladen.",
-    "en": "GTF files are automatically downloaded during the first annotation run.",
-    "es": "Los archivos GTF se descargan automáticamente durante la primera ejecución de anotación.",
-    "zh": "GTF 文件将在首次注释运行期间自动下载。",
-    "ja": "GTFファイルは初回のアノテーション実行時に自動的にダウンロードされます。",
-    "ru": "Файлы GTF автоматически загружаются во время первого запуска аннотации."
   },
   "Gefiltert (Sichtbar)": {
     "de": "Gefiltert (Sichtbar)",
@@ -591,6 +671,14 @@
     "ja": "遺伝子ブラックリスト：",
     "ru": "Черный список генов:"
   },
+  "GEN-Whitelist:": {
+    "de": "GEN-Whitelist:",
+    "en": "GEN whitelist:",
+    "es": "Lista blanca de genes:",
+    "zh": "基因白名单：",
+    "ja": "遺伝子ホワイトリスト：",
+    "ru": "Белый список генов:"
+  },
   "Gen-Whitelist:": {
     "de": "Gen-Whitelist:",
     "en": "Gene whitelist:",
@@ -606,6 +694,14 @@
     "zh": "全局设置",
     "ja": "グローバル設定",
     "ru": "Глобальные настройки"
+  },
+  "GTF-Dateien werden automatisch beim ersten Annotationslauf heruntergeladen.": {
+    "de": "GTF-Dateien werden automatisch beim ersten Annotationslauf heruntergeladen.",
+    "en": "GTF files are automatically downloaded during the first annotation run.",
+    "es": "Los archivos GTF se descargan automáticamente durante la primera ejecución de anotación.",
+    "zh": "GTF 文件将在首次注释运行期间自动下载。",
+    "ja": "GTFファイルは初回のアノテーション実行時に自動的にダウンロードされます。",
+    "ru": "Файлы GTF автоматически загружаются во время первого запуска аннотации."
   },
   "Hauptfilter": {
     "de": "Hauptfilter",
@@ -799,6 +895,14 @@
     "ja": "オプション",
     "ru": "Опции"
   },
+  "Original (+Anno)": {
+    "de": "Original (+Anno)",
+    "en": "Original (+Anno)",
+    "es": "Original (+Anno)",
+    "zh": "原始（+注释）",
+    "ja": "オリジナル（+注釈）",
+    "ru": "Оригинал (+Анно)"
+  },
   "PDF Export": {
     "de": "PDF Export",
     "en": "PDF export",
@@ -911,6 +1015,14 @@
     "ja": "品質フィルター...",
     "ru": "Фильтр качества..."
   },
+  "Quality-Gates": {
+    "de": "Quality-Gates",
+    "en": "Quality Gates",
+    "es": "Puertas de calidad",
+    "zh": "质量门禁",
+    "ja": "品質ゲート",
+    "ru": "Шлюзы качества"
+  },
   "Recycling der INFO-Felder überspringen": {
     "de": "Recycling der INFO-Felder überspringen",
     "en": "Skip INFO field recycling",
@@ -934,6 +1046,14 @@
     "zh": "重置列",
     "ja": "列をリセット",
     "ru": "Сбросить столбцы"
+  },
+  "Ressourcen": {
+    "de": "Ressourcen",
+    "en": "Resources",
+    "es": "Recursos",
+    "zh": "资源",
+    "ja": "リソース",
+    "ru": "Ресурсы"
   },
   "Ressourcen neu suchen": {
     "de": "Ressourcen neu suchen",
@@ -1023,6 +1143,54 @@
     "ja": "停止",
     "ru": "Остановить"
   },
+  "Strg+A / Ctrl+A (Tabelle)": {
+    "de": "Strg+A / Ctrl+A (Tabelle)",
+    "en": "Ctrl+A (Table)",
+    "es": "Ctrl+A (Tabla)",
+    "zh": "Ctrl+A（表格）",
+    "ja": "Ctrl+A（テーブル）",
+    "ru": "Ctrl+A (Таблица)"
+  },
+  "Strg+C / Ctrl+C (Tabelle)": {
+    "de": "Strg+C / Ctrl+C (Tabelle)",
+    "en": "Ctrl+C (Table)",
+    "es": "Ctrl+C (Tabla)",
+    "zh": "Ctrl+C（表格）",
+    "ja": "Ctrl+C（テーブル）",
+    "ru": "Ctrl+C (Таблица)"
+  },
+  "Strg+E / Ctrl+E": {
+    "de": "Strg+E / Ctrl+E",
+    "en": "Ctrl+E",
+    "es": "Ctrl+E",
+    "zh": "Ctrl+E",
+    "ja": "Ctrl+E",
+    "ru": "Ctrl+E"
+  },
+  "Strg+P / Ctrl+P": {
+    "de": "Strg+P / Ctrl+P",
+    "en": "Ctrl+P",
+    "es": "Ctrl+P",
+    "zh": "Ctrl+P",
+    "ja": "Ctrl+P",
+    "ru": "Ctrl+P"
+  },
+  "Strg+Umschalt+E": {
+    "de": "Strg+Umschalt+E",
+    "en": "Ctrl+Shift+E",
+    "es": "Ctrl+Mayús+E",
+    "zh": "Ctrl+Shift+E",
+    "ja": "Ctrl+Shift+E",
+    "ru": "Ctrl+Shift+E"
+  },
+  "Systemprotokoll: Zeigt Echtzeit-Meldungen des Analyse- und Filterprozesses.": {
+    "de": "Systemprotokoll: Zeigt Echtzeit-Meldungen des Analyse- und Filterprozesses.",
+    "en": "System Log: Displays real-time messages from the analysis and filtering pipeline.",
+    "es": "Registro del sistema: Muestra mensajes en tiempo real del proceso de análisis y filtrado.",
+    "zh": "系统日志：显示分析和过滤流程的实时消息。",
+    "ja": "システムログ：分析およびフィルタリングプロセスのリアルタイムメッセージを表示します。",
+    "ru": "Системный журнал: отображает сообщения конвейера анализа и фильтрации в реальном времени."
+  },
   "Tabelle als CSV-Datei exportieren": {
     "de": "Tabelle als CSV-Datei exportieren",
     "en": "Export table as CSV file",
@@ -1031,6 +1199,14 @@
     "ja": "テーブルをCSVファイルとしてエクスポート",
     "ru": "Экспортировать таблицу в файл CSV"
   },
+  "Tabelle als CSV-Datei exportieren (Strg+E)": {
+    "de": "Tabelle als CSV-Datei exportieren (Strg+E)",
+    "en": "Export table as CSV file (Ctrl+E)",
+    "es": "Exportar tabla como archivo CSV (Ctrl+E)",
+    "zh": "将表格导出为 CSV 文件 (Ctrl+E)",
+    "ja": "テーブルをCSVファイルとしてエクスポート (Ctrl+E)",
+    "ru": "Экспортировать таблицу в файл CSV (Ctrl+E)"
+  },
   "Tabelle als Excel-Arbeitsmappe exportieren": {
     "de": "Tabelle als Excel-Arbeitsmappe exportieren",
     "en": "Export table as Excel workbook",
@@ -1038,6 +1214,22 @@
     "zh": "将表格导出为 Excel 工作簿",
     "ja": "テーブルをExcelブックとしてエクスポート",
     "ru": "Экспортировать таблицу в книгу Excel"
+  },
+  "Tabelle als Excel-Arbeitsmappe exportieren (Strg+Umschalt+E)": {
+    "de": "Tabelle als Excel-Arbeitsmappe exportieren (Strg+Umschalt+E)",
+    "en": "Export table as Excel workbook (Ctrl+Shift+E)",
+    "es": "Exportar tabla como libro de Excel (Ctrl+Mayús+E)",
+    "zh": "将表格导出为 Excel 工作簿 (Ctrl+Shift+E)",
+    "ja": "テーブルをExcelワークブックとしてエクスポート (Ctrl+Shift+E)",
+    "ru": "Экспортировать таблицу в книгу Excel (Ctrl+Shift+E)"
+  },
+  "Tabelle: Pfeiltasten navigieren, Return/Leertaste öffnet primären Link, Strg+C kopiert Auswahl, Strg+A wählt alle aus, Escape hebt Markierung auf.": {
+    "de": "Tabelle: Pfeiltasten navigieren, Return/Leertaste öffnet primären Link, Strg+C kopiert Auswahl, Strg+A wählt alle aus, Escape hebt Markierung auf.",
+    "en": "Table: Arrow keys navigate, Return/Space opens primary link, Ctrl+C copies selection, Ctrl+A selects all, Escape clears selection.",
+    "es": "Tabla: Flechas navegan, Enter/Espacio abre enlace primario, Ctrl+C copia selección, Ctrl+A selecciona todo, Escape deselecciona.",
+    "zh": "表格：方向键导航，回车/空格打开主链接，Ctrl+C 复制所选，Ctrl+A 全选，Escape 清除选择。",
+    "ja": "テーブル：矢印キーで移動、Return/スペースでプライマリリンクを開く、Ctrl+Cで選択をコピー、Ctrl+Aですべて選択、Escapeで選択解除。",
+    "ru": "Таблица: стрелки для навигации, Enter/Пробел открывает основную ссылку, Ctrl+C копирует выбор, Ctrl+A выбирает всё, Escape снимает выбор."
   },
   "Tastaturbedienung & Barrierefreiheit": {
     "de": "Tastaturbedienung & Barrierefreiheit",
@@ -1063,6 +1255,30 @@
     "ja": "ショートカットキー",
     "ru": "Сочетание клавиш"
   },
+  "Varianten als VCF-Datei exportieren": {
+    "de": "Varianten als VCF-Datei exportieren",
+    "en": "Export variants as VCF file",
+    "es": "Exportar variantes como archivo VCF",
+    "zh": "将变异导出为 VCF 文件",
+    "ja": "バリアントをVCFファイルとしてエクスポート",
+    "ru": "Экспортировать варианты в файл VCF"
+  },
+  "Varianten ausgewählt": {
+    "de": "Varianten ausgewählt",
+    "en": "variants selected",
+    "es": "variantes seleccionadas",
+    "zh": "个变异已选中",
+    "ja": "件のバリアントを選択中",
+    "ru": "вариантов выбрано"
+  },
+  "Varianten ohne AF-Wert können verschiedene Gründe haben:": {
+    "de": "Varianten ohne AF-Wert können verschiedene Gründe haben:",
+    "en": "Variants without AF value may have different reasons:",
+    "es": "Las variantes sin valor AF pueden deberse a diferentes razones:",
+    "zh": "缺少 AF 值的变异可能由不同原因导致：",
+    "ja": "AF値のないバリアントにはさまざまな理由が考えられます：",
+    "ru": "Отсутствие значения AF у вариантов может иметь разные причины:"
+  },
   "VCF Export": {
     "de": "VCF Export",
     "en": "VCF export",
@@ -1078,38 +1294,6 @@
     "zh": "VCF 扫描过滤（预处理）",
     "ja": "VCFスキャンフィルター（事前）",
     "ru": "Фильтр сканирования VCF (предварительный)"
-  },
-  "VF Distiller - Ressourcen-Einrichtung": {
-    "de": "VF Distiller - Ressourcen-Einrichtung",
-    "en": "VF Distiller - Resource Setup",
-    "es": "VF Distiller - Configuración de recursos",
-    "zh": "VF Distiller - 资源设置",
-    "ja": "VF Distiller - リソースセットアップ",
-    "ru": "VF Distiller - Настройка ресурсов"
-  },
-  "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.": {
-    "de": "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.",
-    "en": "VFDistiller supports full keyboard and screen reader operation per BITV 2.0 / WCAG 2.1 AA.",
-    "es": "VFDistiller es totalmente compatible con el manejo por teclado y lectores de pantalla según BITV 2.0 / WCAG 2.1 AA.",
-    "zh": "VFDistiller 符合 BITV 2.0 / WCAG 2.1 AA 标准，完全支持键盘和屏幕阅读器操作。",
-    "ja": "VFDistillerはBITV 2.0 / WCAG 2.1 AAに準拠し、完全なキーボードおよびスクリーンリーダー操作をサポートしています。",
-    "ru": "VFDistiller полностью поддерживает управление с клавиатуры и работу с программами чтения с экрана в соответствии с BITV 2.0 / WCAG 2.1 AA."
-  },
-  "Varianten als VCF-Datei exportieren": {
-    "de": "Varianten als VCF-Datei exportieren",
-    "en": "Export variants as VCF file",
-    "es": "Exportar variantes como archivo VCF",
-    "zh": "将变异导出为 VCF 文件",
-    "ja": "バリアントをVCFファイルとしてエクスポート",
-    "ru": "Экспортировать варианты в файл VCF"
-  },
-  "Varianten ohne AF-Wert können verschiedene Gründe haben:": {
-    "de": "Varianten ohne AF-Wert können verschiedene Gründe haben:",
-    "en": "Variants without AF value may have different reasons:",
-    "es": "Las variantes sin valor AF pueden deberse a diferentes razones:",
-    "zh": "缺少 AF 值的变异可能由不同原因导致：",
-    "ja": "AF値のないバリアントにはさまざまな理由が考えられます：",
-    "ru": "Отсутствие значения AF у вариантов может иметь разные причины:"
   },
   "Verarbeitung läuft...": {
     "de": "Verarbeitung läuft...",
@@ -1127,6 +1311,30 @@
     "ja": "利用可能なキーボードショートカット",
     "ru": "Доступные горячие клавиши"
   },
+  "VF Distiller - Ressourcen-Einrichtung": {
+    "de": "VF Distiller - Ressourcen-Einrichtung",
+    "en": "VF Distiller - Resource Setup",
+    "es": "VF Distiller - Configuración de recursos",
+    "zh": "VF Distiller - 资源设置",
+    "ja": "VF Distiller - リソースセットアップ",
+    "ru": "VF Distiller - Настройка ресурсов"
+  },
+  "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.": {
+    "de": "VFDistiller unterstützt die vollständige Tastatur- und Screenreader-Bedienung nach BITV 2.0 / WCAG 2.1 AA.",
+    "en": "VFDistiller supports full keyboard and screen reader operation per BITV 2.0 / WCAG 2.1 AA.",
+    "es": "VFDistiller es totalmente compatible con el manejo por teclado y lectores de pantalla según BITV 2.0 / WCAG 2.1 AA.",
+    "zh": "VFDistiller 符合 BITV 2.0 / WCAG 2.1 AA 标准，完全支持键盘和屏幕阅读器操作。",
+    "ja": "VFDistillerはBITV 2.0 / WCAG 2.1 AAに準拠し、完全なキーボードおよびスクリーンリーダー操作をサポートしています。",
+    "ru": "VFDistiller полностью поддерживает управление с клавиатуры и работу с программами чтения с экрана в соответствии с BITV 2.0 / WCAG 2.1 AA."
+  },
+  "Vordefinierte Profile": {
+    "de": "Vordefinierte Profile",
+    "en": "Predefined Profiles",
+    "es": "Perfiles predefinidos",
+    "zh": "预定义配置文件",
+    "ja": "事前定義プロファイル",
+    "ru": "Предопределенные профили"
+  },
   "Vorhanden": {
     "de": "  Vorhanden",
     "en": "  Available",
@@ -1134,6 +1342,14 @@
     "zh": "  可用",
     "ja": "  利用可能",
     "ru": "  Доступно"
+  },
+  "Vorschau": {
+    "de": "Vorschau",
+    "en": "Preview",
+    "es": "Vista previa",
+    "zh": "预览",
+    "ja": "プレビュー",
+    "ru": "Предварительный просмотр"
   },
   "Whitelist (einschließen):": {
     "de": "Whitelist (einschließen):",
@@ -1190,6 +1406,14 @@
     "zh": "在所有控件和筛选器之间导航",
     "ja": "すべてのコントロールとフィルター間を移動",
     "ru": "Перемещение между всеми элементами управления и фильтрами"
+  },
+  "{count} Variante(n) in Zwischenablage kopiert": {
+    "de": "{count} Variante(n) in Zwischenablage kopiert",
+    "en": "{count} variant(s) copied to clipboard",
+    "es": "{count} variante(s) copiada(s) al portapapeles",
+    "zh": "已复制 {count} 个变异到剪贴板",
+    "ja": "{count} 件のバリアントをクリップボードにコピーしました",
+    "ru": "{count} вариант(ов) скопировано в буфер обмена"
   },
   "Übernehmen": {
     "de": "Übernehmen",
@@ -1254,13 +1478,5 @@
     "zh": "🟢 在显示中包含已验证罕见项",
     "ja": "🟢 検証済み希少バリアントを表示に含める",
     "ru": "🟢 Включить подтвержденные редкие в отображение"
-  },
-  "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\\n": {
-    "de": "Diese verbessern Geschwindigkeit und Offline-Fähigkeit.\\n",
-    "en": "These improve speed and offline capability.\n",
-    "es": "Estos mejoran la velocidad y la capacidad sin conexión.\n",
-    "zh": "这些将提高运行速度和离线能力。\n",
-    "ja": "これらは処理速度とオフライン機能を向上させます。\n",
-    "ru": "Они улучшают скорость работы и автономность.\n"
   }
 }

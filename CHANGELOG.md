@@ -25,6 +25,28 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Barrierefreiheit, Tastatur-Ergonomie & UX-Review (WCAG 2.1 AA / BITV 2.0 — 2026-09-26)
+- **Tastatur-Kurzbefehle & globale Ergonomie (WCAG 2.1 AA / BITV 2.0)**: Vollständige Tastaturbedienbarkeit des Hauptfensters ohne Mauszwang implementiert (`Strg+O` VCF-Datei wählen, `Strg+R` / `Strg+Eingabe` Analyse starten, `Escape` Analyse stoppen / Fokus zurücksetzen, `F5` Ansicht aktualisieren, `Strg+E` CSV-Export, `Strg+Umschalt+E` Excel-Export, `Strg+P` PDF-Export, `F1` Tastaturkürzel-Übersicht).
+- **Varianten-Tabelle & Zwischenablage**:
+  - Zeilenaktivierung per Tastatur (`Eingabe`, `NumPad-Eingabe` und `Leertaste`) öffnet den primären Link der selektierten Variante (Ensembl / NCBI).
+  - Zwischenablage-Export (`Strg+C` / `_copy_selection_to_clipboard`): Ausgewählte Zeilen werden tab-separiert (TSV) inklusive Spaltenköpfen formatiert und in die Windows-Zwischenablage kopiert; Screenreader- und Statuszeilen-Meldung mit Anzahl der kopierten Zeilen.
+  - Auswahlergonomie: `Strg+A` (`_select_all_variants`) selektiert alle Varianten; `Escape` (`_clear_table_selection`) hebt die Markierung auf.
+- **Dialog-Barrierefreiheit & Modaler Komfort**:
+  - `QualitySettingsDialog`: `Escape` bricht den Dialog ab; `Eingabe` / `Strg+Eingabe` übernimmt die Einstellungen; Labelframes, Qualitätsfilter, Vorschau und Aktionsschaltflächen über `self._t(...)` vollständig lokalisierbar angebunden.
+  - `ResourceSetupDialog`: `Escape` und `Eingabe` schließen den Dialog; Buttons und Checkbox vollständig lokalisierbar angebunden.
+  - `open_general_settings`: `Escape` bricht ab, `Strg+Eingabe` speichert; Titel, Tabs (`Allgemein`, `Ressourcen`, `Spalten-Links`, `APIs & Services`) und Buttons über `self._t(...)` angebunden.
+- **Interaktive Tooltips & Barrierefreiheits-Hinweise**:
+  - Informationsreiche Tastatur-Tooltips an die Varianten-Tabelle (`self.tree`) und das System-Log (`self.log_text`) angehängt.
+  - VCF-Modus Radiobuttons (`rb_complete`, `rb_filtered`) mit kontextsensitiven Tooltips ausgestattet.
+- **Tastaturkürzel-Hilfefenster (`show_shortcuts_dialog`)**:
+  - Übersicht auf 13 Tastenkombinationen erweitert (Dokumentation aller Tabellen-, Export- und Analyse-Shortcuts).
+  - Fenster-Dimensionen und Tabellenhöhe angepasst; Referenzierung von BITV 2.0 / WCAG 2.1 AA.
+- **Lokalisierungskatalog (`locales/translations.json`)**:
+  - 27 neue Übersetzungsschlüssel mit 100% Parität über alle 6 Zielsprachen (Deutsch `de`, Englisch `en`, Spanisch `es`, Chinesisch `zh`, Japanisch `ja`, Russisch `ru`) hinzugefügt (Katalog auf 185 Schlüssel und 1.110 Übersetzungen erweitert).
+  - Echte deutsche Umlaute (ä, ö, ü, ß) ohne Ersatzschreibweisen gewahrt.
+- **Automatisierte Vertragstests (`tests/test_ui_accessibility.py`)**:
+  - 10 neue Vertragstests für globale Shortcuts, Treeview-Navigation, Clipboard-Export, Dialog-Modalkontrollen, Tooltip-Präsenz, 6-Sprachen-Übersetzungsparität, Umlaut-Integrität und isolierten Live-GUI-Subprozess-Smoketest.
+
 ### Internationalisierung (Tier-2 Policy P-006 Standard — 2026-09-23)
 - **Vollständige 6-Sprachen-Erweiterung (Tier-2 Parität)**: `locales/translations.json` auf 158 Schlüssel mit 100% Abdeckung für Deutsch (`de`), Englisch (`en`), Spanisch (`es`), Chinesisch (`zh`), Japanisch (`ja`) und Russisch (`ru`) erweitert (948 Übersetzungen, 0 Lücken).
 - **Modernisierte i18n-Engine (`translator.py`)**: Deterministische 4-stufige Fallback-Kette (`target -> en -> de -> key`), System-Locale-Erkennung (`detect_system_language`), kwargs-String-Interpolation, thread-sicherer Singleton-Zugriff (`get_translator`, `t`, `set_language`) und vollständige Rückwärtskompatibilität für PyInstaller (`sys._MEIPASS`) und JSONDecodeError-Regressionswächter.
