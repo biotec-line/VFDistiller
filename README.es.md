@@ -5,13 +5,15 @@
 [![Organización: biotec-line](https://img.shields.io/badge/Organizaci%C3%B3n-biotec--line-0284c7?style=flat&logo=dna&logoColor=white)](https://github.com/biotec-line)
 [![Ecosistema: open-bricks](https://img.shields.io/badge/Ecosistema-open--bricks-blue?style=flat)](https://github.com/open-bricks)
 [![Licencia: AGPL-3.0](https://img.shields.io/badge/Licencia-AGPL_3.0-blue.svg)](LICENSE)
+[![Atribución: NOTICE](https://img.shields.io/badge/Atribuci%C3%B3n-NOTICE-blue.svg)](NOTICE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Estándares: VCF 4.2 | gVCF](https://img.shields.io/badge/Est%C3%A1ndares-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Ensamblajes: GRCh37 | GRCh38](https://img.shields.io/badge/Ensamblajes-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Pruebas: 165 superadas](https://img.shields.io/badge/Pruebas-167%20superadas-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Pruebas: 190 superadas](https://img.shields.io/badge/Pruebas-190%20superadas-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Seguridad: 48h SLA](https://img.shields.io/badge/Seguridad-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Privacidad: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacidad-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Ejecución: RunAsInvoker](https://img.shields.io/badge/Ejecuci%C3%B3n-RunAsInvoker-green?style=flat)](SECURITY.md)
+[![Verificado: 2026-09-28](https://img.shields.io/badge/Verificado-2026--09--28-blue.svg)](SECURITY.md)
 [![Terceros: Auditado](https://img.shields.io/badge/Terceros-Auditado-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Activo-indigo?style=flat)](MARKETING-LOG.txt)
 [![LLM Ready](https://img.shields.io/badge/LLM%20Ready-llms.txt-orange?style=flat)](llms.txt)
@@ -48,6 +50,7 @@
 
 ---
 
+<a id="sec-01"></a>
 <a id="1-overview"></a>
 <a id="overview"></a>
 <a id="1-resumen"></a>
@@ -66,6 +69,7 @@ VFDistiller (Variant Fusion Distiller) es una aplicación de escritorio bioinfor
 
 ---
 
+<a id="sec-02"></a>
 <a id="2-key-capabilities"></a>
 <a id="key-capabilities"></a>
 <a id="2-capacidades-clave"></a>
@@ -86,6 +90,7 @@ VFDistiller (Variant Fusion Distiller) es una aplicación de escritorio bioinfor
 
 ---
 
+<a id="sec-03"></a>
 <a id="3-target-personas--discoverability"></a>
 <a id="target-personas--discoverability"></a>
 <a id="3-perfiles-objetivo--descubrimiento"></a>
@@ -103,6 +108,7 @@ VFDistiller está diseñado para resolver los desafíos de filtrado de datos gen
 
 ---
 
+<a id="sec-04"></a>
 <a id="4-comparative-matrix-vs-alternatives"></a>
 <a id="comparative-matrix-vs-alternatives"></a>
 <a id="4-matriz-comparativa-frente-a-alternativas"></a>
@@ -124,6 +130,7 @@ VFDistiller está diseñado para resolver los desafíos de filtrado de datos gen
 
 ---
 
+<a id="sec-05"></a>
 <a id="5-governance--runtime-invariants"></a>
 <a id="governance--runtime-invariants"></a>
 <a id="5-gobernanza--invariantes-de-ejecucion"></a>
@@ -145,6 +152,7 @@ VFDistiller se desarrolla y mantiene siguiendo diez invariantes de gobernanza y 
 
 ---
 
+<a id="sec-06"></a>
 <a id="6-pipeline-architecture--dataflow"></a>
 <a id="pipeline-architecture--dataflow"></a>
 <a id="6-arquitectura-del-pipeline--flujo-de-datos"></a>
@@ -201,6 +209,7 @@ flowchart TD
 
 ---
 
+<a id="sec-07"></a>
 <a id="7-multi-format-ingestion--build-detection"></a>
 <a id="multi-format-ingestion--build-detection"></a>
 <a id="7-ingestion-multiformato--deteccion-de-ensamblaje"></a>
@@ -215,6 +224,7 @@ flowchart TD
 
 ---
 
+<a id="sec-08"></a>
 <a id="8-multi-source-annotation--info-recycling"></a>
 <a id="multi-source-annotation--info-recycling"></a>
 <a id="8-anotacion-multifuente--reciclaje-de-info"></a>
@@ -229,6 +239,7 @@ flowchart TD
 
 ---
 
+<a id="sec-09"></a>
 <a id="9-quality-filtering--gene-whitelists"></a>
 <a id="quality-filtering--gene-whitelists"></a>
 <a id="9-filtrado-de-calidad--listas-blancas-de-genes"></a>
@@ -243,6 +254,7 @@ flowchart TD
 
 ---
 
+<a id="sec-10"></a>
 <a id="10-desktop-gui--web-companion-pwa"></a>
 <a id="desktop-gui--web-companion-pwa"></a>
 <a id="10-interfaz-de-escritorio--pwa-complementaria"></a>
@@ -256,6 +268,7 @@ flowchart TD
 
 ---
 
+<a id="sec-11"></a>
 <a id="11-multi-format-export--reporting"></a>
 <a id="multi-format-export--reporting"></a>
 <a id="11-exportacion-multiformato--informes"></a>
@@ -269,6 +282,7 @@ flowchart TD
 
 ---
 
+<a id="sec-12"></a>
 <a id="12-cython-hotpath-acceleration"></a>
 <a id="cython-hotpath-acceleration"></a>
 <a id="12-aceleracion-de-hotpaths-con-cython"></a>
@@ -288,6 +302,7 @@ Si Cython o un compilador de C no están disponibles, VFDistiller recurre de for
 
 ---
 
+<a id="sec-13"></a>
 <a id="13-installation--quickstart"></a>
 <a id="installation--quickstart"></a>
 <a id="13-instalacion--inicio-rapido"></a>
@@ -323,6 +338,7 @@ En estaciones de trabajo Windows, simplemente ejecute `START.bat` o genere el ej
 
 ---
 
+<a id="sec-14"></a>
 <a id="14-test-suite--verification-gates"></a>
 <a id="test-suite--verification-gates"></a>
 <a id="14-suite-de-pruebas--puertas-de-verificacion"></a>
@@ -350,6 +366,7 @@ ruff check .
 
 ---
 
+<a id="sec-15"></a>
 <a id="15-third-party-licenses--transparency"></a>
 <a id="third-party-licenses--transparency"></a>
 <a id="15-licencias-de-terceros--transparencia"></a>
@@ -364,6 +381,7 @@ VFDistiller está comprometido con la transparencia absoluta del software libre.
 
 ---
 
+<a id="sec-16"></a>
 <a id="16-security--vulnerability-reporting"></a>
 <a id="security--vulnerability-reporting"></a>
 <a id="16-seguridad--reporte-de-vulnerabilidades"></a>
@@ -377,6 +395,7 @@ VFDistiller está comprometido con la transparencia absoluta del software libre.
 
 ---
 
+<a id="sec-17"></a>
 <a id="17-research-use-only-boundary--compliance"></a>
 <a id="research-use-only-boundary--compliance"></a>
 <a id="17-limite-estricto-de-solo-para-investigacion--cumplimiento"></a>
@@ -392,6 +411,7 @@ VFDistiller se distribuye **exclusivamente a través de GitHub** como herramient
 
 ---
 
+<a id="sec-18"></a>
 <a id="18-license--maintainers"></a>
 <a id="license--maintainers"></a>
 <a id="18-licencia--mantenedores"></a>
@@ -402,5 +422,5 @@ VFDistiller se distribuye **exclusivamente a través de GitHub** como herramient
 
 - **Copyright (C) 2026 Lukas Geiger** (c/o Um:bruch Think Tank)
 - Mantenido bajo la organización bioinformática **[biotec-line](https://github.com/biotec-line)** dentro del ecosistema **[open-bricks](https://github.com/open-bricks)**.
-- Términos de licencia: [LICENSE](LICENSE) • Aviso legal: [NOTICE](NOTICE)
-- Donación de software libre (§§ 516 y ss. BGB). Responsabilidad limitada a dolo y negligencia grave (§ 521 BGB, AGPL-3.0 §§ 15–17). Úselo bajo su propia responsabilidad.
+- Términos de licencia: [LICENSE](LICENSE) • Aviso legal: [NOTICE](NOTICE) • Level 1 SBOM: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)
+- Donación de software libre (§§ 516 y ss. BGB). Responsabilidad legal limitada a dolo y negligencia grave (§ 521 BGB, AGPL-3.0 §§ 15–17). SLA vinculante de respuesta de seguridad de 48 horas bajo INV-SLA-10. Úselo bajo su propia responsabilidad.

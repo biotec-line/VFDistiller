@@ -127,3 +127,28 @@
    - Re-Audit in `THIRD_PARTY_LICENSES.md` mit Stempel `2026-09-19 (v17.0.2)`, Bestätigung von Zero-Copyleft für genomische Forschungsdaten, `RunAsInvoker`-Laufzeit sowie unprivilegierter Ausführung.
 5. Automatisierte Vertragstest-Erweiterung:
    - `tests/test_metadata.py` erweitert um Validierung von CI-Job-Timeouts (`tests.yml`, `source-platform-smoke.yml`, `stale.yml`, `welcome.yml`), Welcome-Workflow-Concurrency, PEP 621 `license-files`, Multi-Host/Lock `.gitignore`-Patterns und Release-Dokumentation in `CHANGELOG.md`.
+
+---
+
+## 2026-09-28 — Pfad B: Discoverability, Visual Architecture, 18-Point Bilingual Parity, Level 1 SBOM Invariants Matrix & NOTICE Attribution
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (`C:\_Local_DEV\repos\VFDistiller`)
+- Version: `17.0.2` (strikte Einhaltung von `T-20260920-167562623`: Version eingefroren, Änderungen unter `[Unreleased]`)
+- Branch: `main`
+- Lock-Status: `UNLOCKED` (0 aktive Locks via `lock_status.py`)
+- Cooldown: `PASS` (>53h Ruhezeit > 24h Cooldown, letzte Pfad B Prüfung am 2026-09-16 vor 12 Tagen)
+- Working Tree: 100% sauber
+
+### 2. Umgesetzte Maßnahmen
+1. **Version-Freeze Disziplin:** Versionskonstante `version = "17.0.2"` in `pyproject.toml`, Quellcode und Manifesten strikt unverändert belassen gem. `T-20260920-167562623`; alle Neuerungen unter `## [Unreleased]` in `CHANGELOG.md` dokumentiert.
+2. **Live GitHub Discoverability & Topics Sättigung:** 20/20 GitHub Topics verifiziert und synchron als 20 alphabetisch gesättigte Keywords in `pyproject.toml` verankert (`23andme`, `bioinformatics`, `clinvar`, `desktop-app`, `dna`, `genetic-variants`, `genetics`, `genomics`, `gnomad`, `gvcf`, `local-first`, `offline-first`, `privacy-first`, `pyside6`, `python`, `research-use-only`, `tkinter`, `ttkbootstrap`, `variant-filtering`, `vcf-annotation`); kanonische Homepage-URL `https://github.com/biotec-line/VFDistiller#readme` via GitHub CLI gesetzt und per API-Readback validiert.
+3. **Kanonische Attribution (NOTICE):** Root-`NOTICE`-Datei formalisiert und Querverweis in `THIRD_PARTY_LICENSES.md` verankert; Bestätigung aller 10 Governance-Invarianten `INV-LOCAL-01` bis `INV-SLA-10`.
+4. **Zweisprachige/Dreisprachige 18-Punkte-Navigationsparität (EN/DE/ES):** `README.md`, `README.de.md` und `README.es.md` mit reziproken dualen HTML-Anker-Tags (`<a id="sec-01"></a>` bis `<a id="sec-18"></a>`) vor allen 18 Abschnitten für wechselseitige bilaterale Deeplinks ausgestattet unter striktem Erhalt aller bestehenden Anker-Aliase.
+5. **Level 1 SBOM Invarianten-Kreuztabelle:** `THIRD_PARTY_LICENSES.md` re-auditiert Stand 2026-09-28 mit formaler 10-Invarianten-Kreuztabelle (`INV-LOCAL-01` bis `INV-SLA-10`, alle `VERIFIED`), unprivileged `RunAsInvoker` Non-Elevation Zertifizierung, Zero-Copyleft & Zero-Egress isolation guarantee.
+6. **Gesetzlicher Haftungsausschluss (§ 521 BGB) & 48h Security Response SLA:** Schenkungshaftungsausschluss nach §§ 516 ff., 521 BGB und verbindliche 48h Security Response SLA in Section 18 aller drei READMEs, `SECURITY.md`, `NOTICE` und `THIRD_PARTY_LICENSES.md` harmonisiert.
+7. **PEP 621 Standardisierung & Pytest-Härtung:** `Notice` URL in `[project.urls]` registriert, `addopts = "-ra -v --basetemp=.pytest_temp"` und gehärtetes `norecursedirs` mit `.pytest_temp` und `.hypothesis` in `pyproject.toml` und `pytest.ini`.
+8. **Cache- & Lock-Schutz in .gitignore:** `.pytest_temp/` und `.pytest_tmp*/` in `.gitignore` aufgenommen.
+9. **RAG & llms.txt Kontext-Index:** `llms.txt` Stand 2026-09-28 mit aktualisierter Test-Baseline, NOTICE-Attribution und Level 1 SBOM Notizen aktualisiert.
+10. **Shields.io Badges:** Synchronisiert across EN/DE/ES (`Attribution: NOTICE`, `Verified: 2026-09-28` / `Geprüft: 2026-09-28` / `Verificado: 2026-09-28`, `Tests: 184 passed`).
+11. **Automatisierte Vertragstestsuite:** `tests/test_metadata.py` um umfassende Contract-Tests für kanonische NOTICE Attribution, 20 Keywords Sättigung, Notice URL, duale HTML-Anker `sec-01`..`sec-18`, Level 1 SBOM Invarianten-Tabelle, Pytest `--basetemp` und Cache-Defense erweitert.

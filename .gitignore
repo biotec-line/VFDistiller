@@ -152,6 +152,8 @@ COMPLETE_PROJECT_CONTEXT.txt
 # ---------------------------------------------------------------------------
 .ruff_cache/
 .hypothesis/
+.pytest_temp/
+.pytest_tmp*/
 .turbo/
 .tox/
 !package-lock.json

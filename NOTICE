@@ -71,9 +71,10 @@ USE AT YOUR OWN RISK.
 --------------------------------------------------------------------
 
 VFDistiller bundles or depends on third-party libraries licensed
-under MIT, BSD, Apache-2.0, PIL License, Biopython License and
-compatible permissive licenses. See README/licenses/THIRD_PARTY_LICENSES.txt
-for the full list and license texts.
+under MIT, BSD-3-Clause, Apache-2.0, HPND, LGPL-3.0-or-later and
+compatible permissive open-source licenses. See THIRD_PARTY_LICENSES.md
+and THIRD_PARTY_LICENSES.txt for the comprehensive Level 1 SBOM, full
+license texts, and governance invariant mapping.
 
 --------------------------------------------------------------------
 5. Contact

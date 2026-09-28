@@ -1,8 +1,9 @@
 # Third-Party Licenses & Transparency Notice
 
 > **Project:** `biotec-line/VFDistiller` (Variant Fusion Distiller — Local-First VCF & Genetic Variant Annotation)<br>
-> **Audited:** 2026-09-19 (v17.0.2)<br>
+> **Audited:** 2026-09-28 (v17.0.2)<br>
 > **Repository License:** [AGPL-3.0-or-later](LICENSE)<br>
+> **Canonical Attribution & Statutory Disclaimer:** [NOTICE](NOTICE)<br>
 > **Architecture & Privacy:** 100% Local-First, Zero-Egress by default, Unprivileged User-Mode (`RunAsInvoker`)<br>
 > **Intended Use:** Research Use Only (RUO) — Bioinformatics tool. Not an IVD medical device under IVDR (EU) 2017/746.
 
@@ -23,20 +24,22 @@ All third-party libraries and runtime components utilized by `VFDistiller` are d
 
 ---
 
-## Governance & Runtime Invariants
+## Level 1 SBOM Invariant Cross-Reference Matrix
 
-`VFDistiller` strictly enforces ten foundational governance and runtime invariants:
+`VFDistiller` strictly enforces ten foundational governance and runtime invariants, verified across test suites and architectural gates:
 
-1. **`INV-LOCAL-01` (100% Local-First & Zero Egress):** All genomic sequencing files, converted VCFs, genome references, SQLite databases, and local settings reside solely on the local workstation. Zero telemetry, zero analytics, zero automated cloud egress.
-2. **`INV-PRIVACY-02` (Automated Locus & rsID Log Redaction):** Sensitive genomic coordinates and rsIDs are automatically stripped from persistent logs via `redact_for_logfile`, strictly protecting genetic privacy according to GDPR/DSGVO Art. 9 and GenDG.
-3. **`INV-INSPECT-03` (Accessible Desktop GUI & Transparent Filtering):** Full visual inspection of variant records via ttkbootstrap desktop GUI and Web Companion PWA; filter criteria (AF thresholds, CADD score, ClinSig, read depth) are completely auditable and user-configurable.
-4. **`INV-CONVERT-04` (Multi-Format Ingestion & Standards Parity):** Seamless conversion and ingestion of VCF v4.2, gVCF, 23andMe raw text, and FASTA files without requiring Unix-only toolchains (`bcftools`, `samtools`, `pysam`).
-5. **`INV-OFFLINE-05` (Offline Allele Frequency & Annotation Capability):** Fast local annotation using offline SQLite LightDB (gnomAD) without mandatory internet connectivity, supplemented by optional async REST endpoints (VEP, MyVariant.info).
-6. **`INV-ACCEL-06` (Optional Cython Hotpath with Graceful Fallback):** Optional compiled Cython extensions provide up to 5x end-to-end acceleration for VCF parsing and AF validation, falling back gracefully to pure Python when no C compiler is available.
-7. **`INV-EXPORT-07` (Format Preservation & Multi-Report Generation):** VCF exports preserve original sample FORMAT metrics (DP, GQ, AD, PL) and multi-sample integrity, with flexible export to CSV, Excel (.xlsx), and PDF reports.
-8. **`INV-UNPRIV-08` (Unprivileged User-Mode Operation — `RunAsInvoker`):** The application runs entirely within unprivileged user space, requiring zero administrative elevation, root rights, or UAC elevation.
-9. **`INV-COMPLY-09` (Strict Research Use Only Boundary — RUO):** Clear and explicit legal boundaries affirming the application is a research and bioinformatics tool, NOT an in-vitro diagnostic medical device under IVDR (EU) 2017/746 and NOT certified for clinical diagnosis.
-10. **`INV-SLA-10` (Open-Source Governance, 48h Security SLA & Test Coverage):** Free open-source distribution under AGPL-3.0-or-later, comprehensive third-party license audit, committed 48-hour security response SLA, and automated regression test suites.
+| Invariant ID | Governance Invariant | Implementation & Architecture Scope | Verification Status |
+|:---|:---|:---|:---:|
+| **`INV-LOCAL-01`** | **100% Local-First & Zero-Egress** | All genomic sequencing files, converted VCFs, genome references, SQLite databases, and local settings reside solely on the local workstation. Zero telemetry, zero analytics, zero automated cloud egress. | `VERIFIED` |
+| **`INV-PRIVACY-02`** | **Automated Locus & rsID Log Redaction** | Sensitive genomic coordinates and rsIDs are automatically stripped from persistent logs via `redact_for_logfile`, strictly protecting genetic privacy according to GDPR/DSGVO Art. 9 and GenDG. | `VERIFIED` |
+| **`INV-INSPECT-03`** | **Accessible Desktop GUI & Transparent Filtering** | Full visual inspection of variant records via ttkbootstrap desktop GUI and Web Companion PWA; filter criteria (AF thresholds, CADD score, ClinSig, read depth) are completely auditable and user-configurable. | `VERIFIED` |
+| **`INV-CONVERT-04`** | **Multi-Format Ingestion & Standards Parity** | Seamless conversion and ingestion of VCF v4.2, gVCF, 23andMe raw text, and FASTA files without requiring Unix-only toolchains (`bcftools`, `samtools`, `pysam`). | `VERIFIED` |
+| **`INV-OFFLINE-05`** | **Offline Allele Frequency & Annotation Capability** | Fast local annotation using offline SQLite LightDB (gnomAD) without mandatory internet connectivity, supplemented by optional async REST endpoints (VEP, MyVariant.info). | `VERIFIED` |
+| **`INV-ACCEL-06`** | **Optional Cython Hotpath Acceleration** | Optional compiled Cython extensions provide up to 5x end-to-end acceleration for VCF parsing and AF validation, falling back gracefully to pure Python when no C compiler is available. | `VERIFIED` |
+| **`INV-EXPORT-07`** | **Format Preservation & Multi-Report Generation** | VCF exports preserve original sample FORMAT metrics (DP, GQ, AD, PL) and multi-sample integrity, with flexible export to CSV, Excel (.xlsx), and PDF reports. | `VERIFIED` |
+| **`INV-UNPRIV-08`** | **Unprivileged User-Mode Operation (`RunAsInvoker`)** | The application runs entirely within unprivileged user space, requiring zero administrative elevation, root rights, or UAC elevation. | `VERIFIED` |
+| **`INV-COMPLY-09`** | **Strict Research Use Only Boundary (RUO)** | Clear and explicit legal boundaries affirming the application is a research and bioinformatics tool, NOT an in-vitro diagnostic medical device under IVDR (EU) 2017/746 and NOT certified for clinical diagnosis. | `VERIFIED` |
+| **`INV-SLA-10`** | **Open-Source Governance & 48h Security SLA** | Free open-source distribution under AGPL-3.0-or-later, comprehensive third-party license audit, committed 48-hour security response SLA, and automated regression test suites. | `VERIFIED` |
 
 ---
 

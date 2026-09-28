@@ -25,6 +25,18 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Discoverability, Visual Architecture, Level 1 SBOM, NOTICE Attribution & Contract Tests (Pfad B — 2026-09-28)
+- **Version-Freeze Disziplin (T-20260920-167562623)**: Versionskonstante `version = "17.0.2"` in `pyproject.toml`, Quellcode und Manifesten strikt unverändert beibehalten; alle Pfad-B-Neuerungen unter `[Unreleased]` dokumentiert.
+- **Live GitHub Discoverability & 20/20 Topics Sättigung**: 20/20 GitHub Topics verifiziert und synchron als gesättigte 20 Keywords in `pyproject.toml` alphabetisch verankert (`23andme`, `bioinformatics`, `clinvar`, `desktop-app`, `dna`, `genetic-variants`, `genetics`, `genomics`, `gnomad`, `gvcf`, `local-first`, `offline-first`, `privacy-first`, `pyside6`, `python`, `research-use-only`, `tkinter`, `ttkbootstrap`, `variant-filtering`, `vcf-annotation`); kanonische Homepage-URL `https://github.com/biotec-line/VFDistiller#readme` via GitHub CLI gesetzt und validiert.
+- **Kanonische NOTICE Attribution & Level 1 SBOM**: Root-`NOTICE`-Datei formalisiert und Querverweis in `THIRD_PARTY_LICENSES.md` verankert; vollständige Level 1 SBOM Invarianten-Kreuztabelle mit allen 10 Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`) auf Status `VERIFIED` gehärtet.
+- **Zweisprachige 18-Punkte-Navigationsparität (EN/DE/ES)**: `README.md`, `README.de.md` und `README.es.md` mit reziproken dualen HTML-Anker-Tags (`<a id="sec-01"></a>` bis `<a id="sec-18"></a>`) vor allen 18 Abschnitten für wechselseitige bilaterale Deeplinks ausgestattet.
+- **Gesetzlicher Haftungsausschluss (§ 521 BGB) & 48h Security Response SLA**: Schenkungshaftungsausschluss nach §§ 516 ff., 521 BGB und verbindliche 48h Security SLA in Section 18 aller drei READMEs, `SECURITY.md`, `NOTICE` und `THIRD_PARTY_LICENSES.md` synchronisiert.
+- **PEP 621 Standardisierung & Pytest-Härtung**: `Notice` URL in `[project.urls]` registriert, `addopts = "-ra -v --basetemp=.pytest_temp"` und gehärtetes `norecursedirs` mit `.pytest_temp` und `.hypothesis` in `pyproject.toml` und `pytest.ini`.
+- **Cache- & Lock-Schutz in .gitignore**: `.pytest_temp/` und `.pytest_tmp*/` in `.gitignore` eingetragen.
+- **RAG & llms.txt Kontext-Index**: `llms.txt` Stand 2026-09-28 mit aktualisierter Test-Baseline, NOTICE-Verweis und Level 1 SBOM Invarianten-Notizen aktualisiert.
+- **Shields.io Badges**: Synchronisiert across EN/DE/ES (`Attribution: NOTICE`, `Verified: 2026-09-28` / `Geprüft: 2026-09-28` / `Verificado: 2026-09-28`, `Tests: 184 passed`).
+- **Automatisierte Vertragstestsuite**: `tests/test_metadata.py` um neue Contract-Tests für kanonische NOTICE Attribution, 20 Keywords, Notice URL, duale HTML-Anker `sec-01`..`sec-18`, Level 1 SBOM Invarianten-Tabelle, Pytest `--basetemp` und Cache-Defense erweitert.
+
 ### Fehlerbehebung & Datenintegrität (Bugsweep Block 9 — 2026-09-26)
 - **Spalten-Index-Synchronisation & TSV-Clipboard-Export**: Behebung eines kritischen Spaltenversatz-Bugs in `_copy_selection_to_clipboard`, `_on_tree_return` und `_generic_click_handler`. Da `Treeview.item().get("values")` stets der Gesamtspaltenliste `self.columns` folgt, führte das Indizieren nach `visible_columns` bei ausgeblendeten Spalten zu Datenverschiebungen (z. B. Referenz-/Alternativ-Allel anstelle von dbSNP/Genotyp).
 - **TSV-Sanitisierung & Härtung**: Tabulatoren und Zeilenumbrüche innerhalb von Zellwerten werden vor der TSV-Zwischenablage-Generierung defensiv zu Leerzeichen normalisiert, um Tabellenstrukturen im Zielprogramm (z. B. Excel) nicht zu zerschlagen.

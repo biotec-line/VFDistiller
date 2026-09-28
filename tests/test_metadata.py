@@ -271,7 +271,7 @@ def test_marketing_log_audit_record() -> None:
 
 
 def test_pyproject_marketing_and_license_urls() -> None:
-    """Verify pyproject.toml defines Marketing Log and Third-Party Licenses URLs."""
+    """Verify pyproject.toml defines Marketing Log, Notice, and Third-Party Licenses URLs."""
     pyproject_path = REPO_ROOT / "pyproject.toml"
     data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
     urls = data.get("project", {}).get("urls", {})
@@ -279,5 +279,90 @@ def test_pyproject_marketing_and_license_urls() -> None:
     assert "Marketing Log" in urls
     assert "Third-Party Licenses" in urls
     assert "LLM Ready" in urls
+    assert "Notice" in urls
     assert urls["Marketing Log"] == "https://github.com/biotec-line/VFDistiller/blob/main/MARKETING-LOG.txt"
     assert urls["Third-Party Licenses"] == "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"
+    assert urls["Notice"] == "https://github.com/biotec-line/VFDistiller/blob/main/NOTICE"
+    assert urls["Homepage"] == "https://github.com/biotec-line/VFDistiller#readme"
+
+
+def test_notice_attribution_and_cross_reference() -> None:
+    """Verify canonical root NOTICE attribution file and cross-references."""
+    notice_path = REPO_ROOT / "NOTICE"
+    assert notice_path.exists(), "NOTICE file must exist in repo root"
+
+    content = notice_path.read_text(encoding="utf-8")
+    assert "VFDistiller" in content
+    assert "Lukas Geiger" in content
+    assert "AGPL-3.0-or-later" in content
+    assert "THIRD_PARTY_LICENSES.md" in content
+    assert "521 BGB" in content
+    assert "Research Use Only" in content
+
+
+def test_pep621_twenty_keywords_saturation() -> None:
+    """Verify pyproject.toml has exactly 20 saturated keywords in alphabetical order."""
+    pyproject_path = REPO_ROOT / "pyproject.toml"
+    data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    keywords = data.get("project", {}).get("keywords", [])
+
+    assert len(keywords) == 20, f"Expected exactly 20 keywords, got {len(keywords)}"
+    assert keywords == sorted(keywords), "Keywords must be sorted alphabetically"
+    assert "bioinformatics" in keywords
+    assert "vcf-annotation" in keywords
+    assert "research-use-only" in keywords
+    assert "local-first" in keywords
+
+
+def test_dual_reciprocal_html_anchors_trilingual() -> None:
+    """Verify all 3 READMEs (EN, DE, ES) contain reciprocal dual HTML anchors sec-01..sec-18."""
+    for fname in ["README.md", "README.de.md", "README.es.md"]:
+        path = REPO_ROOT / fname
+        assert path.exists(), f"{fname} must exist"
+        content = path.read_text(encoding="utf-8")
+        for i in range(1, 19):
+            tag = f'<a id="sec-{i:02d}"></a>'
+            assert tag in content, f"Missing {tag} in {fname}"
+
+
+def test_level1_sbom_invariants_table_and_recency() -> None:
+    """Verify THIRD_PARTY_LICENSES.md Level 1 SBOM Invariant Cross-Reference Matrix and recency."""
+    lic_path = REPO_ROOT / "THIRD_PARTY_LICENSES.md"
+    assert lic_path.exists()
+    content = lic_path.read_text(encoding="utf-8")
+
+    assert "Audited:** 2026-09-28" in content
+    assert "Level 1 SBOM Invariant Cross-Reference Matrix" in content
+    assert "[NOTICE](NOTICE)" in content
+
+    invariants = [
+        "INV-LOCAL-01", "INV-PRIVACY-02", "INV-INSPECT-03", "INV-CONVERT-04",
+        "INV-OFFLINE-05", "INV-ACCEL-06", "INV-EXPORT-07", "INV-UNPRIV-08",
+        "INV-COMPLY-09", "INV-SLA-10",
+    ]
+    for inv in invariants:
+        assert inv in content, f"Missing {inv} in THIRD_PARTY_LICENSES.md table"
+    assert content.count("`VERIFIED`") >= 10
+
+
+def test_pytest_hardening_and_cache_defense() -> None:
+    """Verify --basetemp pytest hardening in pyproject.toml, pytest.ini and .gitignore."""
+    pyproject_text = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "--basetemp=.pytest_temp" in pyproject_text
+    assert '".pytest_temp"' in pyproject_text
+
+    pytest_ini_text = (REPO_ROOT / "pytest.ini").read_text(encoding="utf-8")
+    assert "--basetemp=.pytest_temp" in pytest_ini_text
+    assert ".pytest_temp" in pytest_ini_text
+
+    gitignore_text = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert ".pytest_temp/" in gitignore_text
+    assert ".pytest_tmp*/" in gitignore_text
+
+
+def test_readme_badges_recency_and_notice() -> None:
+    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-09-28."""
+    for fname in ["README.md", "README.de.md", "README.es.md"]:
+        content = (REPO_ROOT / fname).read_text(encoding="utf-8")
+        assert "Attribution-NOTICE" in content or "Atribuci%C3%B3n-NOTICE" in content
+        assert "2026--09--28" in content

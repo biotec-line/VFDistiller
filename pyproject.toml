@@ -15,15 +15,26 @@ authors = [
     {name = "Lukas Geiger", email = "lukas@open-bricks.org"}
 ]
 keywords = [
-    "bioinformatics",
-    "vcf",
-    "gvcf",
-    "genomics",
-    "variant-annotation",
     "23andme",
-    "fasta",
-    "biotec-line",
-    "open-bricks",
+    "bioinformatics",
+    "clinvar",
+    "desktop-app",
+    "dna",
+    "genetic-variants",
+    "genetics",
+    "genomics",
+    "gnomad",
+    "gvcf",
+    "local-first",
+    "offline-first",
+    "privacy-first",
+    "pyside6",
+    "python",
+    "research-use-only",
+    "tkinter",
+    "ttkbootstrap",
+    "variant-filtering",
+    "vcf-annotation",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -83,12 +94,13 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/biotec-line/VFDistiller"
+Homepage = "https://github.com/biotec-line/VFDistiller#readme"
 Repository = "https://github.com/biotec-line/VFDistiller"
 Documentation = "https://github.com/biotec-line/VFDistiller#readme"
 Issues = "https://github.com/biotec-line/VFDistiller/issues"
 Changelog = "https://github.com/biotec-line/VFDistiller/blob/main/CHANGELOG.md"
 Security = "https://github.com/biotec-line/VFDistiller/blob/main/SECURITY.md"
+Notice = "https://github.com/biotec-line/VFDistiller/blob/main/NOTICE"
 "Third-Party Licenses" = "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"
 "Marketing Log" = "https://github.com/biotec-line/VFDistiller/blob/main/MARKETING-LOG.txt"
 "LLM Ready" = "https://github.com/biotec-line/VFDistiller/blob/main/llms.txt"
@@ -99,8 +111,10 @@ Security = "https://github.com/biotec-line/VFDistiller/blob/main/SECURITY.md"
 minversion = "7.0"
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = "-ra -v"
+addopts = "-ra -v --basetemp=.pytest_temp"
 norecursedirs = [
+    ".pytest_temp",
+    ".hypothesis",
     "releases",
     "build",
     "dist",
