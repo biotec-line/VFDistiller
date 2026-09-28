@@ -366,3 +366,16 @@ def test_readme_badges_recency_and_notice() -> None:
         content = (REPO_ROOT / fname).read_text(encoding="utf-8")
         assert "Attribution-NOTICE" in content or "Atribuci%C3%B3n-NOTICE" in content
         assert "2026--09--28" in content
+
+
+def test_pep639_license_expression_and_no_osi_classifier() -> None:
+    """Verify PEP 639 license expression is set and no conflicting OSI classifiers exist."""
+    pyproject_path = REPO_ROOT / "pyproject.toml"
+    data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    project = data.get("project", {})
+    assert project.get("license") == "AGPL-3.0-or-later"
+    classifiers = project.get("classifiers", [])
+    assert not any("License ::" in c for c in classifiers), (
+        "PEP 639 license expressions supersede License classifiers; do not combine them."
+    )
+
