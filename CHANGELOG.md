@@ -25,6 +25,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Repository Lifecycle Hardening, CI Workflow Parity & Level 1 SBOM Text-Companion (Pfad A — 2026-09-29)
+- **CI Lifecycle Automation Workflows**: Provisioniert `.github/workflows/auto-assign.yml` (`actions/github-script@v7`, `timeout-minutes: 5`, least-privilege `pull-requests: write`, `issues: write`, Concurrency `cancel-in-progress: true`) und `.github/workflows/label-sync.yml` (`EndBug/label-sync@v2`, `timeout-minutes: 5`, least-privilege `issues: write`, Concurrency `cancel-in-progress: true`) mit kanonischer `.github/labels.yml` (11 Standard-Governance-Labels nach GOVERNANCE.md §4.2); Concurrency `cancel-in-progress: true` in `.github/workflows/stale.yml` nachgerüstet.
+- **Level 1 SBOM Plain-Text Companion**: `THIRD_PARTY_LICENSES.txt` mit vollständiger Governance-Invarianten-Matrix (`INV-LOCAL-01` bis `INV-SLA-10`), `RunAsInvoker`-Non-Elevation-Zertifizierung (`INV-UNPRIV-08`), Zero-Copyleft-Garantie für Forschungsdaten und Querverweis auf `NOTICE` Stand 2026-09-29 neu strukturiert; `THIRD_PARTY_LICENSES.md` Re-Audit Stand 2026-09-29 harmonisiert.
+- **PEP 621 URLs & Pytest-Schutz**: Registrierung von `"Third-Party Licenses (Text)"` und `"Level 1 SBOM"` in `[project.urls]`; Härtung von `[tool.pytest.ini_options]` `norecursedirs` um `.pytest_tmp*`, `.turbo` und `.nyc_output`.
+- **Multi-Host Sync-, Lock- & Token-Härtung**: `.gitignore` erweitert um Host-Tokens (`*-IDEAPAD*`, `*-IDEAPAD-GEI*`, `*_WORKSTATION*`, `*_WORKSTATION-LG*`, `*-WORKSTATION.*`), `Desktop.ini`, `*.orig` und `*.rej`.
+- **Dokumentations- & Test-Parität**: Badges in `README.md`, `README.de.md` und `README.es.md` sowie `llms.txt` auf Stand 2026-09-29 und 194 verifizierte Tests synchronisiert.
+- **Automatisierte Vertragstests**: `tests/test_metadata.py` um 4 neue Contract-Tests erweitert (`test_ci_lifecycle_workflows_and_labels_manifest`, `test_level1_sbom_plaintext_companion`, `test_expanded_multi_host_and_lock_defense`, `test_version_freeze_discipline`).
+- **Version-Freeze Disziplin (T-20260920-167562623)**: `version = "17.0.2"` strikt unverändert beibehalten.
+
 ### Discoverability, Visual Architecture, Level 1 SBOM, NOTICE Attribution & Contract Tests (Pfad B — 2026-09-28)
 - **Version-Freeze Disziplin (T-20260920-167562623)**: Versionskonstante `version = "17.0.2"` in `pyproject.toml`, Quellcode und Manifesten strikt unverändert beibehalten; alle Pfad-B-Neuerungen unter `[Unreleased]` dokumentiert.
 - **Live GitHub Discoverability & 20/20 Topics Sättigung**: 20/20 GitHub Topics verifiziert und synchron als gesättigte 20 Keywords in `pyproject.toml` alphabetisch verankert (`23andme`, `bioinformatics`, `clinvar`, `desktop-app`, `dna`, `genetic-variants`, `genetics`, `genomics`, `gnomad`, `gvcf`, `local-first`, `offline-first`, `privacy-first`, `pyside6`, `python`, `research-use-only`, `tkinter`, `ttkbootstrap`, `variant-filtering`, `vcf-annotation`); kanonische Homepage-URL `https://github.com/biotec-line/VFDistiller#readme` via GitHub CLI gesetzt und validiert.

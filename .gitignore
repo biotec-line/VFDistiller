@@ -143,9 +143,16 @@ COMPLETE_PROJECT_CONTEXT.txt
 *-WORKSTATION*
 *-WORKSTATION-LG*
 *-WORKSTATION-LG.*
+*_WORKSTATION*
+*_WORKSTATION-LG*
+*-WORKSTATION.*
 *-LAPTOP*
+*-IDEAPAD*
+*-IDEAPAD-GEI*
 *-Mac Studio*
 *-MacBook*
+*.orig
+*.rej
 
 # ---------------------------------------------------------------------------
 # Test- & Packaging-Caches
@@ -173,6 +180,7 @@ htmlcov/
 # ---------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
+Desktop.ini
 desktop.ini
 *.lnk
 

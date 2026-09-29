@@ -152,3 +152,35 @@
 9. **RAG & llms.txt Kontext-Index:** `llms.txt` Stand 2026-09-28 mit aktualisierter Test-Baseline, NOTICE-Attribution und Level 1 SBOM Notizen aktualisiert.
 10. **Shields.io Badges:** Synchronisiert across EN/DE/ES (`Attribution: NOTICE`, `Verified: 2026-09-28` / `Geprüft: 2026-09-28` / `Verificado: 2026-09-28`, `Tests: 184 passed`).
 11. **Automatisierte Vertragstestsuite:** `tests/test_metadata.py` um umfassende Contract-Tests für kanonische NOTICE Attribution, 20 Keywords Sättigung, Notice URL, duale HTML-Anker `sec-01`..`sec-18`, Level 1 SBOM Invarianten-Tabelle, Pytest `--basetemp` und Cache-Defense erweitert.
+
+---
+
+## 2026-09-29 — Pfad A: Repository Lifecycle Hardening, CI Workflow Parity, Multi-Host Lock-Schutz & Level 1 SBOM Text-Companion
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (`C:\_Local_DEV\repos\VFDistiller`)
+- Version: `17.0.2` (strikte Einhaltung von `T-20260920-167562623`: Version eingefroren, Änderungen unter `[Unreleased]`)
+- Branch: `main`
+- Lock-Status: `UNLOCKED` (0 aktive Locks via `lock_status.py`)
+- Cooldown: `PASS` (>29h Ruhezeit > 24h Cooldown, letzte Pfad A Prüfung am 2026-09-19 vor 10 Tagen)
+- Working Tree: 100% sauber
+
+### 2. Umgesetzte Maßnahmen (Pfad A)
+1. **CI Lifecycle Automation Workflows:**
+   - Provisioniert `.github/workflows/auto-assign.yml` (`actions/github-script@v7`, `timeout-minutes: 5`, least-privilege `pull-requests: write`, `issues: write`, Concurrency `cancel-in-progress: true`).
+   - Provisioniert `.github/workflows/label-sync.yml` (`EndBug/label-sync@v2`, `timeout-minutes: 5`, least-privilege `issues: write`, Concurrency `cancel-in-progress: true`) mit kanonischer `.github/labels.yml` (11 Standard-Governance-Labels nach `GOVERNANCE.md` §4.2).
+   - `.github/workflows/stale.yml`: Concurrency-Gruppe `cancel-in-progress: true` nachgerüstet.
+2. **Level 1 SBOM Plain-Text Companion & Re-Audit:**
+   - `THIRD_PARTY_LICENSES.txt` neu strukturiert als vollständiger Level 1 SBOM Text-Companion (Stand: 2026-09-29) mit 10-Invarianten-Matrix (`INV-LOCAL-01` bis `INV-SLA-10`), `RunAsInvoker`-Zertifizierung (`INV-UNPRIV-08`), Zero-Copyleft-Garantie für Forschungsdaten, pystray LGPLv3 § 4 Dynamic Linking Compliance und Querverweis auf root `NOTICE`.
+   - `THIRD_PARTY_LICENSES.md` Re-Audit auf Stand 2026-09-29 harmonisiert.
+3. **PEP 621 URLs & Pytest-Schutz in `pyproject.toml`:**
+   - Registrierung von `"Third-Party Licenses (Text)"` und `"Level 1 SBOM"` unter `[project.urls]`.
+   - Härtung von `[tool.pytest.ini_options]` `norecursedirs` um `.pytest_tmp*`, `.turbo` und `.nyc_output`.
+4. **Multi-Host Sync-, Lock- & Token-Härtung in `.gitignore`:**
+   - Härtung gegen Host-Tokens (`*-IDEAPAD*`, `*-IDEAPAD-GEI*`, `*_WORKSTATION*`, `*_WORKSTATION-LG*`, `*-WORKSTATION.*`), `Desktop.ini`, `*.orig` und `*.rej`.
+5. **Dokumentations-, RAG- & Test-Parität:**
+   - Test- und Verified-Badges in `README.md`, `README.de.md` und `README.es.md` sowie `llms.txt` auf Stand 2026-09-29 und 194 verifizierte Tests synchronisiert.
+6. **Automatisierte Vertragstests (`tests/test_metadata.py`):**
+   - Erweiterung um 4 neue Contract-Tests (`test_ci_lifecycle_workflows_and_labels_manifest`, `test_level1_sbom_plaintext_companion`, `test_expanded_multi_host_and_lock_defense`, `test_version_freeze_discipline`).
+7. **Version-Freeze Disziplin (T-20260920-167562623):**
+   - `version = "17.0.2"` strikt unverändert beibehalten.

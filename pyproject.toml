@@ -102,6 +102,8 @@ Changelog = "https://github.com/biotec-line/VFDistiller/blob/main/CHANGELOG.md"
 Security = "https://github.com/biotec-line/VFDistiller/blob/main/SECURITY.md"
 Notice = "https://github.com/biotec-line/VFDistiller/blob/main/NOTICE"
 "Third-Party Licenses" = "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"
+"Third-Party Licenses (Text)" = "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.txt"
+"Level 1 SBOM" = "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"
 "Marketing Log" = "https://github.com/biotec-line/VFDistiller/blob/main/MARKETING-LOG.txt"
 "LLM Ready" = "https://github.com/biotec-line/VFDistiller/blob/main/llms.txt"
 "Parent Organization" = "https://github.com/biotec-line"
@@ -114,7 +116,10 @@ pythonpath = ["."]
 addopts = "-ra -v --basetemp=.pytest_temp"
 norecursedirs = [
     ".pytest_temp",
+    ".pytest_tmp*",
     ".hypothesis",
+    ".turbo",
+    ".nyc_output",
     "releases",
     "build",
     "dist",
