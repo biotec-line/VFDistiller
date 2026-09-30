@@ -3511,11 +3511,24 @@ def get_ref_base(chrom, pos, fasta_path=None, fai_index=None, cache=None, build=
 
     # Cache (falls vorhanden)
     if cache and build:
-        key = (build, chrom, pos)
-        if key in cache:
-            base = cache[key]
-            if base in "ACGT":
-                return base
+        c_norm = str(chrom).replace("chr", "").upper()
+        try:
+            p_norm = int(pos)
+        except (ValueError, TypeError):
+            p_norm = pos
+        for k in [
+            (build, c_norm, p_norm),
+            (build, chrom, pos),
+            (c_norm, p_norm, build),
+            (chrom, pos, build),
+            f"{build}:{c_norm}:{p_norm}",
+        ]:
+            if k in cache:
+                base = cache[k]
+                if isinstance(base, str) and base.upper() in "ACGT":
+                    return base.upper()
+                elif isinstance(base, dict) and "ref" in base and str(base["ref"]).upper() in "ACGT":
+                    return str(base["ref"]).upper()
 
     return "N"
 # Gemeinsames Key-Format: (chrom, pos, ref, alt, build)
@@ -4757,21 +4770,29 @@ class convert_23andme_to_vcf:
         return empty_cache
 
     def atomic_write_json(self, obj, dst):
-        tmp = f"tmp.{''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=6))}"
+        dst_dir = os.path.dirname(os.path.abspath(dst)) or "."
+        os.makedirs(dst_dir, exist_ok=True)
+        tmp = os.path.join(dst_dir, f".tmp_{''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=8))}.json")
         try:
             with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(obj, f)
+                json.dump(obj, f, indent=2)
             os.replace(tmp, dst)
         except Exception as e:
             self.logger.log(f"[23andMe] ❌ Fehler beim Schreiben von {dst}: {e}")
+        finally:
+            if os.path.exists(tmp):
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
 
     def parse_23andme(self):
         variants = []
-        with open(self.file_path, "r", encoding="utf-8") as f:
+        with open_text_maybe_gzip(self.file_path) as f:
             for line in f:
                 if line.startswith("#") or not line.strip():
                     continue
-                parts = line.strip().split("\t")
+                parts = line.strip().split("\t") if "\t" in line else line.strip().split()
                 if len(parts) < 4:
                     continue
                 rsid, chrom, pos_str, genotype = parts[:4]
@@ -4865,11 +4886,36 @@ class convert_23andme_to_vcf:
             for idx, (rsid, chrom, pos, genotype) in enumerate(variants, start=1):
                 if not genotype:
                     continue
-                genotype = genotype.strip().replace("_", "-")
+                genotype = genotype.strip().replace("_", "-").upper()
                 if genotype in ("--", "-"):
                     continue  # Missing → überspringen
 
-                ref_base = get_ref_base(chrom, pos, fasta_path, fai_index, cache, build)
+                ref_base = None
+                if fasta_path and fai_index:
+                    ref_base = get_ref_base(chrom, pos, fasta_path, fai_index, cache, build)
+
+                if not ref_base or ref_base in (".", "-", "N"):
+                    if cache:
+                        # 1. Direkter rsid-Hit
+                        if rsid in cache and isinstance(cache[rsid], dict):
+                            hit = (cache[rsid].get("assemblies") or {}).get(build)
+                            if hit and hit.get("ref") and str(hit["ref"]).upper() in "ACGT":
+                                ref_base = str(hit["ref"]).upper()
+                        # 2. Koordinaten-Lookup über Cache-String-Key oder lookup_rsid_from_cache
+                        if not ref_base or ref_base in (".", "-", "N"):
+                            coord_key = f"{build}:{str(chrom).replace('chr', '').upper()}:{pos}"
+                            if coord_key in cache and isinstance(cache[coord_key], str) and cache[coord_key].upper() in "ACGT":
+                                ref_base = cache[coord_key].upper()
+                            else:
+                                rid = self.lookup_rsid_from_cache(chrom, pos, build, cache)
+                                if rid and rid in cache and isinstance(cache[rid], dict):
+                                    hit = (cache[rid].get("assemblies") or {}).get(build)
+                                    if hit and hit.get("ref") and str(hit["ref"]).upper() in "ACGT":
+                                        ref_base = str(hit["ref"]).upper()
+                        # 3. Fallback auf get_ref_base mit Cache
+                        if not ref_base or ref_base in (".", "-", "N"):
+                            ref_base = get_ref_base(chrom, pos, fasta_path, fai_index, cache, build)
+
                 if not ref_base or ref_base in (".", "-", "N"):
                     continue
 
@@ -4897,7 +4943,12 @@ class convert_23andme_to_vcf:
                     if not sample_alts:
                         continue
                     alt = ",".join(sample_alts)
-                    alleles_for_gt = alleles if ploid == 2 else alleles[:1]
+                    if ploid == 2:
+                        alleles_for_gt = alleles
+                    else:
+                        if len(alleles) == 2 and alleles[0] != alleles[1]:
+                            continue
+                        alleles_for_gt = alleles[:1]
                     GT = self.gt_from_bases_snp(alleles_for_gt, ref_base, sample_alts, ploid)
                     if not GT:
                         continue
@@ -4961,6 +5012,8 @@ class convert_23andme_to_vcf:
             }
             entry["last_update"] = int(time.time())
             cache[rsid] = entry
+            coord_key = f"{build}:{str(chrom).replace('chr', '').upper()}:{int(pos)}"
+            cache[coord_key] = str(ref).upper()
             self.atomic_write_json(cache, self.cache_file)
             self.logger.log(f"[Cache] {rsid} @ {build} → {chrom}:{pos} {ref}")
 
@@ -5203,15 +5256,27 @@ class convert_23andme_to_vcf:
             for line in f:
                 if line.startswith("#"):
                     continue
-                parts = line.rstrip("\n").split("\t")
+                parts = line.rstrip("\r\n").split("\t") if "\t" in line else line.rstrip("\r\n").split()
                 if len(parts) < 3:
                     continue
-                vid = parts[2]
-                if vid and vid.startswith("rs"):
+                vid = None
+                pos = None
+                # 23andMe format: Col 0 is rsid (starts with 'rs'), Col 1 is chrom, Col 2 is pos
+                if parts[0].lower().startswith("rs"):
+                    vid = parts[0]
+                    try:
+                        pos = int(parts[2])
+                    except (ValueError, TypeError):
+                        pos = None
+                # VCF format fallback: Col 0 is chrom, Col 1 is pos, Col 2 is ID (rsid)
+                elif len(parts) >= 3 and parts[2].lower().startswith("rs"):
+                    vid = parts[2]
                     try:
                         pos = int(parts[1])
-                    except Exception:
-                        continue
+                    except (ValueError, TypeError):
+                        pos = None
+
+                if vid and pos is not None:
                     rs_pos.append((vid, pos))
                 if len(rs_pos) >= max_rsids:
                     break
@@ -5219,24 +5284,31 @@ class convert_23andme_to_vcf:
         if not rs_pos:
             return None
 
-        # rsIDs parallel bei dbSNP abfragen.
+        # rsIDs parallel bei dbSNP abfragen oder aus vorhandenem Cache übernehmen.
         # WICHTIG: adaptive_parallel_fetch persistiert über cache_upsert nach self.cache_file
         # (= CACHE_FILE). Während der Build-Erkennung self.cache_file auf eine Wegwerf-Temp-Datei
         # umlenken, sonst wird der persistente rsID-Cache durch das ~50-Einträge-Detektions-Dict
         # überschrieben (Datenverlust).
         cache = {}
-        _orig_cache_file = self.cache_file
-        _tmp_fd, _tmp_cache = tempfile.mkstemp(suffix=".json", prefix="vfd_buildcheck_")
-        os.close(_tmp_fd)
-        self.cache_file = _tmp_cache
-        try:
-            self.adaptive_parallel_fetch([r for r, _ in rs_pos], cache)
-        finally:
-            self.cache_file = _orig_cache_file
+        if hasattr(self, "cache") and isinstance(self.cache, dict):
+            for r, _ in rs_pos:
+                if r in self.cache:
+                    cache[r] = self.cache[r]
+
+        remaining_to_fetch = [r for r, _ in rs_pos if r not in cache]
+        if remaining_to_fetch:
+            _orig_cache_file = self.cache_file
+            _tmp_fd, _tmp_cache = tempfile.mkstemp(suffix=".json", prefix="vfd_buildcheck_")
+            os.close(_tmp_fd)
+            self.cache_file = _tmp_cache
             try:
-                os.remove(_tmp_cache)
-            except OSError:
-                pass
+                self.adaptive_parallel_fetch(remaining_to_fetch, cache)
+            finally:
+                self.cache_file = _orig_cache_file
+                try:
+                    os.remove(_tmp_cache)
+                except OSError:
+                    pass
 
         tol = 5
         m37 = 0
