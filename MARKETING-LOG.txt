@@ -184,3 +184,36 @@
    - Erweiterung um 4 neue Contract-Tests (`test_ci_lifecycle_workflows_and_labels_manifest`, `test_level1_sbom_plaintext_companion`, `test_expanded_multi_host_and_lock_defense`, `test_version_freeze_discipline`).
 7. **Version-Freeze Disziplin (T-20260920-167562623):**
    - `version = "17.0.2"` strikt unverändert beibehalten.
+
+---
+
+## 2026-10-01 — SOFTWARE GITHUB: 23andMe Conversion Resilienz, Testparität & Remote-Synchronisation
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (`C:\_Local_DEV\repos\VFDistiller`)
+- Version: `17.0.2` (strikte Einhaltung von `T-20260920-167562623`: Version eingefroren, Änderungen unter `[Unreleased]`)
+- Branch: `main`
+- Lock-Status: `UNLOCKED` (0 aktive Locks via `lock_status.py`)
+- Cooldown: `PASS` (>10h seit gestrigem Bugfix, Pfad B > 12 Tage)
+- Working Tree: Sauber, 1 ausstehender lokaler Commit (`a31376d`) zur Remote-Synchronisation bereit.
+
+### 2. Umgesetzte Maßnahmen
+1. **23andMe-zu-VCF Konvertierung & Cache-Resilienz (Commit `a31376d`):**
+   - Spaltenversatz in `detect_build_robust_by_rsids` behoben (Col 0=rsid, Col 2=pos für 23andMe).
+   - Gzip- und Whitespace-Stream-Parsing in `parse_23andme` gehärtet.
+   - Referenzbasen-Auflösung ohne lokale FASTA-Datei über rsID-Cache in `create_vcf` und `get_ref_base` abgesichert.
+   - Genotyp-Normalisierung per `.upper()` und Heterozygotie-Schutz für haploide Chromosomen.
+   - Verzeichnis-Isolation und Leak-Schutz für atomares JSON-Schreiben in `atomic_write_json`.
+   - 8 neue hermetische Regressionstests in `tests/test_bugsweep_partial10_20260930.py` (Vollsuite wächst von 194 auf 202 Tests).
+2. **Dokumentations- & Test-Parität:**
+   - Test-Badges in `README.md`, `README.de.md` und `README.es.md` auf `202 passed` synchronisiert.
+   - Verifikations-Stempel auf `2026-10-01` aktualisiert.
+   - `llms.txt` auf Stand `2026-10-01` und `202 passed, 10 subtests passed (100% green)` angehoben.
+   - Abschnitt 14 der drei READMEs auf die aktuelle Vollsuite (202 Tests) angepasst.
+3. **Vertragstestsuite & Verifikation:**
+   - `tests/test_metadata.py` validiert das aktualisierte Verifikationsdatum `2026-10-01`.
+   - Pytest Vollsuite 202/202 passed (100% grün).
+   - `source_platform_smoke.py`, `compileall` und `ruff check .` fehlerfrei.
+4. **Remote-Synchronisation & Plan-D-Spiegelung:**
+   - Commits nach `origin/main` synchronisiert und via `git ls-remote` rückgelesen.
+   - Aktualisierter Plan-D-Stand nach OneDrive `BIO/REL-PUB_VFDistiller` gespiegelt.

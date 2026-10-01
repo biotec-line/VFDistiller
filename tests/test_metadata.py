@@ -365,11 +365,11 @@ def test_pytest_hardening_and_cache_defense() -> None:
 
 
 def test_readme_badges_recency_and_notice() -> None:
-    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-09-29."""
+    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-10-01."""
     for fname in ["README.md", "README.de.md", "README.es.md"]:
         content = (REPO_ROOT / fname).read_text(encoding="utf-8")
         assert "Attribution-NOTICE" in content or "Atribuci%C3%B3n-NOTICE" in content
-        assert "2026--09--29" in content
+        assert "2026--10--01" in content
 
 
 def test_ci_lifecycle_workflows_and_labels_manifest() -> None:
