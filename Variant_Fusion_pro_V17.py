@@ -11152,6 +11152,7 @@ class BackgroundMaintainer:
         logger, 
         threads=DEFAULT_THREADS, 
         stale_days=Config.STALE_DAYS_AF,
+        stale_days_full=Config.STALE_DAYS_FULL,
         p1_cooldown_hours=24, 
         max_per_round=100,
         short_pause=15, 
@@ -11169,7 +11170,8 @@ class BackgroundMaintainer:
             stopflag: StopFlag für Pipeline-Kontrolle
             logger: Logger-Instanz
             threads: Anzahl Worker-Threads
-            stale_days: Tage bis Daten als veraltet gelten (TODO: aufteilen)
+            stale_days: Tage bis AF-Daten als veraltet gelten (Default Config.STALE_DAYS_AF)
+            stale_days_full: Tage bis Vollannotationen als veraltet gelten (Default Config.STALE_DAYS_FULL)
             p1_cooldown_hours: Cooldown für generische Fehler
             max_per_round: Max. Varianten pro Durchlauf
             short_pause: Kurze Pause (Sekunden)
@@ -11184,6 +11186,7 @@ class BackgroundMaintainer:
         self.stopflag = stopflag
         self.threads = threads
         self.stale_days = stale_days
+        self.stale_days_full = stale_days_full
         self.p1_cooldown_hours = p1_cooldown_hours
         self.max_per_round = max_per_round
         self.short_pause = short_pause
@@ -11488,7 +11491,8 @@ class BackgroundMaintainer:
                 before_fail = self.distiller.end_retry_variants
 
                 self.automatic_fetch_decission_and_processing_unit(
-                    actionable, actionable[0][4], mode=mode, stale_days=self.stale_days
+                    actionable, actionable[0][4], mode=mode,
+                    stale_days=self.stale_days if mode == "af" else self.stale_days_full
                 )
 
                 done = (self.distiller.done_variants - before_done) + deleted
@@ -11548,7 +11552,7 @@ class BackgroundMaintainer:
 
                     # Full-Priorities
                     p0_full, p1_full, p2_full, p3_full = self.db.for_background_priorities(
-                        stale_days=self.stale_days,
+                        stale_days=self.stale_days_full,
                         p1_cooldown_hours=self.p1_cooldown_hours,
                         mode="full",
                         af_none_policy=policy,
@@ -21262,8 +21266,13 @@ class App(ttk.Window):
         self.distiller.app_ref = self
         
         # Maintainer
+        m_stale_af = getattr(self, "stale_days", None)
+        m_stale_full = getattr(self, "stale_days_full", None)
+        val_af = m_stale_af.get() if (m_stale_af is not None and hasattr(m_stale_af, "get")) else Config.STALE_DAYS_AF
+        val_full = m_stale_full.get() if (m_stale_full is not None and hasattr(m_stale_full, "get")) else Config.STALE_DAYS_FULL
         self.maint = BackgroundMaintainer(
             distiller=self.distiller, db=self.db, stopflag=self.stopflag, logger=logger,
+            stale_days=val_af, stale_days_full=val_full,
             gene_annotator=None, af_fetcher=self.af_fetcher
         )
         self.distiller.maint = self.maint
