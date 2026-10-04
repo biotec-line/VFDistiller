@@ -205,3 +205,11 @@ DECISIONS.md
 PORTIERUNGSPLAN.md
 TODO.md
 DONE.md
+
+# ---- Interne Arbeitsdateien (after-care 2026-10-04) ----
+_sources/
+SCREENSHOTS_CHECKLIST.md
+README/archive/Feature_Analyse_VFDistiller.md
+README/archive/migration_concept_v1.md
+docs/I18N_LOGGING_AND_DOCSTRING_INVENTORY.md
+_after-care/
