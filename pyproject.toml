@@ -28,12 +28,12 @@ keywords = [
     "local-first",
     "offline-first",
     "privacy-first",
-    "pyside6",
     "python",
     "research-use-only",
     "tkinter",
     "ttkbootstrap",
     "variant-filtering",
+    "vcf",
     "vcf-annotation",
 ]
 classifiers = [

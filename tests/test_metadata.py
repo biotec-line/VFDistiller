@@ -319,6 +319,8 @@ def test_pep621_twenty_keywords_saturation() -> None:
     assert "vcf-annotation" in keywords
     assert "research-use-only" in keywords
     assert "local-first" in keywords
+    assert "tkinter" in keywords
+    assert "pyside6" not in keywords, "GUI is tkinter/ttkbootstrap, not PySide6"
 
 
 def test_dual_reciprocal_html_anchors_trilingual() -> None:
