@@ -1,9 +1,10 @@
 # Third-Party Licenses & Transparency Notice
 
 > **Project:** `biotec-line/VFDistiller` (Variant Fusion Distiller — Local-First VCF & Genetic Variant Annotation)<br>
-> **Audited:** 2026-09-28 (v17.0.2)<br>
+> **Audited:** 2026-09-29 (v17.0.2)<br>
 > **Repository License:** [AGPL-3.0-or-later](LICENSE)<br>
 > **Canonical Attribution & Statutory Disclaimer:** [NOTICE](NOTICE)<br>
+> **Plain-Text SBOM Companion:** [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt)<br>
 > **Architecture & Privacy:** 100% Local-First, Zero-Egress by default, Unprivileged User-Mode (`RunAsInvoker`)<br>
 > **Intended Use:** Research Use Only (RUO) — Bioinformatics tool. Not an IVD medical device under IVDR (EU) 2017/746.
 

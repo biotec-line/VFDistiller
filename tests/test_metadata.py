@@ -5,7 +5,10 @@ security SLAs, and multi-agent hygiene invariants remain intact.
 """
 from __future__ import annotations
 
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib  # type: ignore[no-redef]
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -278,10 +281,14 @@ def test_pyproject_marketing_and_license_urls() -> None:
 
     assert "Marketing Log" in urls
     assert "Third-Party Licenses" in urls
+    assert "Third-Party Licenses (Text)" in urls
+    assert "Level 1 SBOM" in urls
     assert "LLM Ready" in urls
     assert "Notice" in urls
     assert urls["Marketing Log"] == "https://github.com/biotec-line/VFDistiller/blob/main/MARKETING-LOG.txt"
     assert urls["Third-Party Licenses"] == "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"
+    assert urls["Third-Party Licenses (Text)"] == "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.txt"
+    assert urls["Level 1 SBOM"] == "https://github.com/biotec-line/VFDistiller/blob/main/THIRD_PARTY_LICENSES.md"
     assert urls["Notice"] == "https://github.com/biotec-line/VFDistiller/blob/main/NOTICE"
     assert urls["Homepage"] == "https://github.com/biotec-line/VFDistiller#readme"
 
@@ -331,7 +338,7 @@ def test_level1_sbom_invariants_table_and_recency() -> None:
     assert lic_path.exists()
     content = lic_path.read_text(encoding="utf-8")
 
-    assert "Audited:** 2026-09-28" in content
+    assert "Audited:** 2026-09-29" in content
     assert "Level 1 SBOM Invariant Cross-Reference Matrix" in content
     assert "[NOTICE](NOTICE)" in content
 
@@ -361,11 +368,112 @@ def test_pytest_hardening_and_cache_defense() -> None:
 
 
 def test_readme_badges_recency_and_notice() -> None:
-    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-09-28."""
+    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-10-01."""
     for fname in ["README.md", "README.de.md", "README.es.md"]:
         content = (REPO_ROOT / fname).read_text(encoding="utf-8")
         assert "Attribution-NOTICE" in content or "Atribuci%C3%B3n-NOTICE" in content
-        assert "2026--09--28" in content
+        assert "2026--10--01" in content
+
+
+def test_ci_lifecycle_workflows_and_labels_manifest() -> None:
+    """Verify CI lifecycle workflows (auto-assign, label-sync) and canonical labels.yml."""
+    workflows_dir = REPO_ROOT / ".github" / "workflows"
+    labels_file = REPO_ROOT / ".github" / "labels.yml"
+
+    # auto-assign.yml
+    auto_assign = workflows_dir / "auto-assign.yml"
+    assert auto_assign.exists(), "auto-assign.yml must exist in .github/workflows"
+    aa_text = auto_assign.read_text(encoding="utf-8")
+    assert "pull_request_target:" in aa_text
+    assert "cancel-in-progress: true" in aa_text
+    assert "timeout-minutes: 5" in aa_text
+    assert "pull-requests: write" in aa_text
+    assert "issues: write" in aa_text
+    assert "actions/github-script@v7" in aa_text
+
+    # label-sync.yml
+    label_sync = workflows_dir / "label-sync.yml"
+    assert label_sync.exists(), "label-sync.yml must exist in .github/workflows"
+    ls_text = label_sync.read_text(encoding="utf-8")
+    assert "workflow_dispatch:" in ls_text
+    assert "cancel-in-progress: true" in ls_text
+    assert "timeout-minutes: 5" in ls_text
+    assert "issues: write" in ls_text
+    assert "EndBug/label-sync@v2" in ls_text
+
+    # labels.yml
+    assert labels_file.exists(), ".github/labels.yml must exist"
+    labels_text = labels_file.read_text(encoding="utf-8")
+    for required_label in [
+        "bug", "enhancement", "good first issue", "help wanted",
+        "documentation", "duplicate", "wontfix", "priority: high",
+        "priority: low", "needs-triage", "stale"
+    ]:
+        assert f"name: {required_label}" in labels_text or f"name: '{required_label}'" in labels_text, (
+            f"Missing required label '{required_label}' in .github/labels.yml"
+        )
+
+    # stale.yml concurrency hardening
+    stale_wf = workflows_dir / "stale.yml"
+    assert stale_wf.exists(), "stale.yml must exist"
+    stale_text = stale_wf.read_text(encoding="utf-8")
+    assert "cancel-in-progress: true" in stale_text
+
+
+def test_level1_sbom_plaintext_companion() -> None:
+    """Verify Level 1 SBOM plaintext companion THIRD_PARTY_LICENSES.txt affirms all standards."""
+    txt_path = REPO_ROOT / "THIRD_PARTY_LICENSES.txt"
+    assert txt_path.exists(), "THIRD_PARTY_LICENSES.txt must exist in repo root"
+
+    content = txt_path.read_text(encoding="utf-8")
+    assert "Stand: 2026-09-29" in content
+    assert "Level 1 SBOM" in content
+    assert "RunAsInvoker" in content
+    assert "Zero-Copyleft" in content
+    assert "pystray" in content
+    assert "AGPL-3.0-or-later" in content
+    assert "NOTICE" in content
+
+    invariants = [
+        "INV-LOCAL-01", "INV-PRIVACY-02", "INV-INSPECT-03", "INV-CONVERT-04",
+        "INV-OFFLINE-05", "INV-ACCEL-06", "INV-EXPORT-07", "INV-UNPRIV-08",
+        "INV-COMPLY-09", "INV-SLA-10",
+    ]
+    for inv in invariants:
+        assert inv in content, f"Missing {inv} in THIRD_PARTY_LICENSES.txt"
+
+
+def test_expanded_multi_host_and_lock_defense() -> None:
+    """Verify .gitignore contains comprehensive multi-host, IDEAPAD, and lock exclusion rules."""
+    gitignore_path = REPO_ROOT / ".gitignore"
+    assert gitignore_path.exists()
+    content = gitignore_path.read_text(encoding="utf-8")
+
+    assert "*-IDEAPAD*" in content
+    assert "*-IDEAPAD-GEI*" in content
+    assert "*_WORKSTATION*" in content
+    assert "*_WORKSTATION-LG*" in content
+    assert "*-WORKSTATION.*" in content
+    assert "Desktop.ini" in content
+    assert "desktop.ini" in content
+    assert "*.orig" in content
+    assert "*.rej" in content
+
+
+def test_version_freeze_discipline() -> None:
+    """Verify strict version freeze 17.0.2 is preserved per T-20260920-167562623."""
+    pyproject_path = REPO_ROOT / "pyproject.toml"
+    data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    assert data["project"]["version"] == "17.0.2"
+
+    sec_text = (REPO_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    assert "17.0.2" in sec_text
+
+    llms_text = (REPO_ROOT / "llms.txt").read_text(encoding="utf-8")
+    assert "Version: 17.0.2" in llms_text
+
+    changelog_text = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "## [Unreleased]" in changelog_text
 
 
 def test_pep639_license_expression_and_no_osi_classifier() -> None:
@@ -378,4 +486,3 @@ def test_pep639_license_expression_and_no_osi_classifier() -> None:
     assert not any("License ::" in c for c in classifiers), (
         "PEP 639 license expressions supersede License classifiers; do not combine them."
     )
-

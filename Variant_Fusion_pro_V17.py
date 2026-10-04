@@ -135,7 +135,7 @@ except ImportError:
 try:
     import pystray
     HAVE_PYSTRAY = True
-except ImportError:
+except Exception:  # ImportError, or no display/tray backend (headless Linux, e.g. CI)
     pystray = None
     HAVE_PYSTRAY = False
 
@@ -3511,11 +3511,24 @@ def get_ref_base(chrom, pos, fasta_path=None, fai_index=None, cache=None, build=
 
     # Cache (falls vorhanden)
     if cache and build:
-        key = (build, chrom, pos)
-        if key in cache:
-            base = cache[key]
-            if base in "ACGT":
-                return base
+        c_norm = str(chrom).replace("chr", "").upper()
+        try:
+            p_norm = int(pos)
+        except (ValueError, TypeError):
+            p_norm = pos
+        for k in [
+            (build, c_norm, p_norm),
+            (build, chrom, pos),
+            (c_norm, p_norm, build),
+            (chrom, pos, build),
+            f"{build}:{c_norm}:{p_norm}",
+        ]:
+            if k in cache:
+                base = cache[k]
+                if isinstance(base, str) and base.upper() in "ACGT":
+                    return base.upper()
+                elif isinstance(base, dict) and "ref" in base and str(base["ref"]).upper() in "ACGT":
+                    return str(base["ref"]).upper()
 
     return "N"
 # Gemeinsames Key-Format: (chrom, pos, ref, alt, build)
@@ -4757,21 +4770,29 @@ class convert_23andme_to_vcf:
         return empty_cache
 
     def atomic_write_json(self, obj, dst):
-        tmp = f"tmp.{''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=6))}"
+        dst_dir = os.path.dirname(os.path.abspath(dst)) or "."
+        os.makedirs(dst_dir, exist_ok=True)
+        tmp = os.path.join(dst_dir, f".tmp_{''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=8))}.json")
         try:
             with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(obj, f)
+                json.dump(obj, f, indent=2)
             os.replace(tmp, dst)
         except Exception as e:
             self.logger.log(f"[23andMe] ❌ Fehler beim Schreiben von {dst}: {e}")
+        finally:
+            if os.path.exists(tmp):
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
 
     def parse_23andme(self):
         variants = []
-        with open(self.file_path, "r", encoding="utf-8") as f:
+        with open_text_maybe_gzip(self.file_path) as f:
             for line in f:
                 if line.startswith("#") or not line.strip():
                     continue
-                parts = line.strip().split("\t")
+                parts = line.strip().split("\t") if "\t" in line else line.strip().split()
                 if len(parts) < 4:
                     continue
                 rsid, chrom, pos_str, genotype = parts[:4]
@@ -4865,11 +4886,36 @@ class convert_23andme_to_vcf:
             for idx, (rsid, chrom, pos, genotype) in enumerate(variants, start=1):
                 if not genotype:
                     continue
-                genotype = genotype.strip().replace("_", "-")
+                genotype = genotype.strip().replace("_", "-").upper()
                 if genotype in ("--", "-"):
                     continue  # Missing → überspringen
 
-                ref_base = get_ref_base(chrom, pos, fasta_path, fai_index, cache, build)
+                ref_base = None
+                if fasta_path and fai_index:
+                    ref_base = get_ref_base(chrom, pos, fasta_path, fai_index, cache, build)
+
+                if not ref_base or ref_base in (".", "-", "N"):
+                    if cache:
+                        # 1. Direkter rsid-Hit
+                        if rsid in cache and isinstance(cache[rsid], dict):
+                            hit = (cache[rsid].get("assemblies") or {}).get(build)
+                            if hit and hit.get("ref") and str(hit["ref"]).upper() in "ACGT":
+                                ref_base = str(hit["ref"]).upper()
+                        # 2. Koordinaten-Lookup über Cache-String-Key oder lookup_rsid_from_cache
+                        if not ref_base or ref_base in (".", "-", "N"):
+                            coord_key = f"{build}:{str(chrom).replace('chr', '').upper()}:{pos}"
+                            if coord_key in cache and isinstance(cache[coord_key], str) and cache[coord_key].upper() in "ACGT":
+                                ref_base = cache[coord_key].upper()
+                            else:
+                                rid = self.lookup_rsid_from_cache(chrom, pos, build, cache)
+                                if rid and rid in cache and isinstance(cache[rid], dict):
+                                    hit = (cache[rid].get("assemblies") or {}).get(build)
+                                    if hit and hit.get("ref") and str(hit["ref"]).upper() in "ACGT":
+                                        ref_base = str(hit["ref"]).upper()
+                        # 3. Fallback auf get_ref_base mit Cache
+                        if not ref_base or ref_base in (".", "-", "N"):
+                            ref_base = get_ref_base(chrom, pos, fasta_path, fai_index, cache, build)
+
                 if not ref_base or ref_base in (".", "-", "N"):
                     continue
 
@@ -4897,7 +4943,12 @@ class convert_23andme_to_vcf:
                     if not sample_alts:
                         continue
                     alt = ",".join(sample_alts)
-                    alleles_for_gt = alleles if ploid == 2 else alleles[:1]
+                    if ploid == 2:
+                        alleles_for_gt = alleles
+                    else:
+                        if len(alleles) == 2 and alleles[0] != alleles[1]:
+                            continue
+                        alleles_for_gt = alleles[:1]
                     GT = self.gt_from_bases_snp(alleles_for_gt, ref_base, sample_alts, ploid)
                     if not GT:
                         continue
@@ -4961,6 +5012,8 @@ class convert_23andme_to_vcf:
             }
             entry["last_update"] = int(time.time())
             cache[rsid] = entry
+            coord_key = f"{build}:{str(chrom).replace('chr', '').upper()}:{int(pos)}"
+            cache[coord_key] = str(ref).upper()
             self.atomic_write_json(cache, self.cache_file)
             self.logger.log(f"[Cache] {rsid} @ {build} → {chrom}:{pos} {ref}")
 
@@ -5203,15 +5256,27 @@ class convert_23andme_to_vcf:
             for line in f:
                 if line.startswith("#"):
                     continue
-                parts = line.rstrip("\n").split("\t")
+                parts = line.rstrip("\r\n").split("\t") if "\t" in line else line.rstrip("\r\n").split()
                 if len(parts) < 3:
                     continue
-                vid = parts[2]
-                if vid and vid.startswith("rs"):
+                vid = None
+                pos = None
+                # 23andMe format: Col 0 is rsid (starts with 'rs'), Col 1 is chrom, Col 2 is pos
+                if parts[0].lower().startswith("rs"):
+                    vid = parts[0]
+                    try:
+                        pos = int(parts[2])
+                    except (ValueError, TypeError):
+                        pos = None
+                # VCF format fallback: Col 0 is chrom, Col 1 is pos, Col 2 is ID (rsid)
+                elif len(parts) >= 3 and parts[2].lower().startswith("rs"):
+                    vid = parts[2]
                     try:
                         pos = int(parts[1])
-                    except Exception:
-                        continue
+                    except (ValueError, TypeError):
+                        pos = None
+
+                if vid and pos is not None:
                     rs_pos.append((vid, pos))
                 if len(rs_pos) >= max_rsids:
                     break
@@ -5219,24 +5284,31 @@ class convert_23andme_to_vcf:
         if not rs_pos:
             return None
 
-        # rsIDs parallel bei dbSNP abfragen.
+        # rsIDs parallel bei dbSNP abfragen oder aus vorhandenem Cache übernehmen.
         # WICHTIG: adaptive_parallel_fetch persistiert über cache_upsert nach self.cache_file
         # (= CACHE_FILE). Während der Build-Erkennung self.cache_file auf eine Wegwerf-Temp-Datei
         # umlenken, sonst wird der persistente rsID-Cache durch das ~50-Einträge-Detektions-Dict
         # überschrieben (Datenverlust).
         cache = {}
-        _orig_cache_file = self.cache_file
-        _tmp_fd, _tmp_cache = tempfile.mkstemp(suffix=".json", prefix="vfd_buildcheck_")
-        os.close(_tmp_fd)
-        self.cache_file = _tmp_cache
-        try:
-            self.adaptive_parallel_fetch([r for r, _ in rs_pos], cache)
-        finally:
-            self.cache_file = _orig_cache_file
+        if hasattr(self, "cache") and isinstance(self.cache, dict):
+            for r, _ in rs_pos:
+                if r in self.cache:
+                    cache[r] = self.cache[r]
+
+        remaining_to_fetch = [r for r, _ in rs_pos if r not in cache]
+        if remaining_to_fetch:
+            _orig_cache_file = self.cache_file
+            _tmp_fd, _tmp_cache = tempfile.mkstemp(suffix=".json", prefix="vfd_buildcheck_")
+            os.close(_tmp_fd)
+            self.cache_file = _tmp_cache
             try:
-                os.remove(_tmp_cache)
-            except OSError:
-                pass
+                self.adaptive_parallel_fetch(remaining_to_fetch, cache)
+            finally:
+                self.cache_file = _orig_cache_file
+                try:
+                    os.remove(_tmp_cache)
+                except OSError:
+                    pass
 
         tol = 5
         m37 = 0
@@ -5268,8 +5340,22 @@ class FASTQmap:
         self.build = build
         self.logger = logger
 
-    def convert(self, fastq_path: str, build: Optional[str] = None) -> str:
+    @staticmethod
+    def _chrom_sort_key(chrom: str) -> Tuple[int, Union[int, str]]:
+        c = str(chrom).strip().lower()
+        if c.startswith("chr"):
+            c = c[3:]
+        if c.isdigit():
+            return (0, int(c))
+        special = {"x": 23, "y": 24, "m": 25, "mt": 25}
+        if c in special:
+            return (0, special[c])
+        return (1, c)
+
+    def convert(self, fastq_path: str, build: Optional[str] = None, out_dir: Optional[str] = None) -> str:
         used_build = build or self.build
+        if not os.path.exists(fastq_path):
+            raise FileNotFoundError(f"FASTQ-Datei nicht gefunden: {fastq_path}")
 
         def progress_callback(done: int, total: int):
             percent = (done / total * 100.0) if total else 0.0
@@ -5279,13 +5365,14 @@ class FASTQmap:
         if self.logger:
             self.logger.log(f"[FASTQmap] Starte Verarbeitung von {fastq_path} (Build: {used_build})")
 
-        out_dir = self.process_fastq(
+        final_out_dir = self.process_fastq(
             fastq_path,
             progress_callback=progress_callback,
-            build=used_build
+            build=used_build,
+            out_dir=out_dir
         )
 
-        vcf_path = os.path.join(out_dir, "variants.vcf")
+        vcf_path = os.path.join(final_out_dir, "variants.vcf")
         if not os.path.exists(vcf_path):
             if self.logger:
                 self.logger.log("[FASTQmap] ❌ Keine VCF erzeugt.")
@@ -5300,16 +5387,24 @@ class FASTQmap:
     # small helpers (methods)
     # -------------------------
     def phred_score(self, char: str) -> int:
+        if not char:
+            return 0
         return max(0, ord(char) - 33)
 
     def load_fasta(self, fasta_path: str) -> Dict[str, str]:
+        if is_gzipped(fasta_path) or str(fasta_path).lower().endswith((".gz", ".bgz")):
+            ctx = gzip.open(fasta_path, "rt", encoding="utf-8", errors="ignore")
+        else:
+            ctx = open(fasta_path, "r", encoding="utf-8")
         seqs: Dict[str, List[str]] = {}
         chrom: Optional[str] = None
-        with open(fasta_path, "r", encoding="utf-8") as f:
+        with ctx as f:
             for line in f:
                 if line.startswith(">"):
-                    chrom = line[1:].strip().split()[0]
-                    seqs[chrom] = []
+                    parts = line[1:].strip().split()
+                    chrom = parts[0] if parts else None
+                    if chrom:
+                        seqs[chrom] = []
                 else:
                     if chrom is not None:
                         seqs[chrom].append(line.strip().upper())
@@ -5327,20 +5422,32 @@ class FASTQmap:
     def map_read(self, read_seq: str, ref_seq: str, kmer_index: Dict[str, List[int]], k: int = 15) -> Optional[int]:
         if len(read_seq) < k:
             return None
-        kmer = read_seq[:k]
-        candidates = kmer_index.get(kmer)
-        if not candidates:
+        candidate_starts = set()
+        step = max(1, k // 2)
+        for offset in range(0, len(read_seq) - k + 1, step):
+            kmer = read_seq[offset:offset+k]
+            hits = kmer_index.get(kmer)
+            if hits:
+                for hit_pos in hits:
+                    start = hit_pos - offset
+                    if 0 <= start and start + len(read_seq) <= len(ref_seq):
+                        candidate_starts.add(start)
+                if len(candidate_starts) >= 10:
+                    break
+
+        if not candidate_starts:
             return None
+
         best_pos: Optional[int] = None
         best_mismatches = len(read_seq) + 1
-        for pos in candidates:
-            segment = ref_seq[pos:pos+len(read_seq)]
+        for start in sorted(candidate_starts):
+            segment = ref_seq[start:start+len(read_seq)]
             if len(segment) != len(read_seq):
                 continue
             mismatches = sum(1 for a, b in zip(segment, read_seq) if a != b)
             if mismatches < best_mismatches:
                 best_mismatches = mismatches
-                best_pos = pos
+                best_pos = start
         return best_pos
 
     def ensure_reference(self, build: str = "GRCh38") -> str:
@@ -5377,8 +5484,9 @@ class FASTQmap:
         return lines // 4
 
     def init_cache_entry(self, ref_base: str) -> Dict:
+        clean_ref = (ref_base.strip().upper() if ref_base else "N")
         return {
-            "ref": (ref_base or "N"),
+            "ref": clean_ref,
             "bases": {b: {"count": 0, "qual_sum": 0.0} for b in ["A", "C", "G", "T", "-", "N"]},
             "alt_edge_5p": 0,
             "alt_edge_3p": 0
@@ -5615,7 +5723,7 @@ class FASTQmap:
         else:
             balance = 0.5
 
-        edge_hits = cache_entry.get("alt_edge_5p", 0) + cache_entry.get("alt_edge_3p", 0)
+        edge_hits = (cache_entry or {}).get("alt_edge_5p", 0) + (cache_entry or {}).get("alt_edge_3p", 0)
         edge_factor = 1.0 - min(0.8, edge_hits / max(1, alt_count)) * 0.5
 
         seed_penalty = 1.0
@@ -5753,7 +5861,7 @@ class FASTQmap:
                             if key2 not in cache:
                                 ref_b = ref_seq[pos_key - 1] if 0 < pos_key <= len(ref_seq) else "N"
                                 cache[key2] = self.init_cache_entry(ref_b)
-                            if j < len(alt_event) and alt_event[j] != rb:
+                            if j < len(alt_event):
                                 self.add_base_to_cache(cache, chrom, pos_key, alt_event[j], qual, is_edge_5p=is_edge_5p, is_edge_3p=is_edge_3p)
                             else:
                                 self.add_base_to_cache(cache, chrom, pos_key, "-", 0)
@@ -5801,18 +5909,26 @@ class FASTQmap:
         k: int = 15,
         qual_threshold: int = 20,
         min_dp: int = 5,
-        min_af: float = 0.2
+        min_af: float = 0.2,
+        out_dir: Optional[str] = None
     ) -> str:
         ref_fasta_path: str = self.ensure_reference(build)
         ref_seqs: Dict[str, str] = self.load_fasta(ref_fasta_path)
         if not ref_seqs:
             raise RuntimeError("Referenz FASTA enthält keine Sequenzen.")
 
-        base_name: str = os.path.splitext(os.path.basename(fastq_path))[0]
-        out_dir: str = os.path.join(os.getcwd(), base_name)
-        os.makedirs(out_dir, exist_ok=True)
-        out_fasta: str = os.path.join(out_dir, "consensus.fa")
-        out_vcf: str = os.path.join(out_dir, "variants.vcf")
+        clean_name = os.path.basename(fastq_path)
+        if clean_name.lower().endswith((".gz", ".bgz")):
+            clean_name = os.path.splitext(clean_name)[0]
+        base_name: str = os.path.splitext(clean_name)[0]
+
+        if out_dir is not None:
+            final_out_dir: str = os.path.abspath(out_dir)
+        else:
+            final_out_dir = os.path.join(os.getcwd(), base_name)
+        os.makedirs(final_out_dir, exist_ok=True)
+        out_fasta: str = os.path.join(final_out_dir, "consensus.fa")
+        out_vcf: str = os.path.join(final_out_dir, "variants.vcf")
 
         cache: Dict[Tuple[str, int], Dict] = {}
         kmer_indices: Dict[str, Dict[str, List[int]]] = {chrom: self.build_kmer_index(seq, k) for chrom, seq in ref_seqs.items()}
@@ -5863,7 +5979,7 @@ class FASTQmap:
         events: List[Tuple[str, int, str, str, Optional[float], str, str, int, int, str]] = []
         visited_del: Set[Tuple[str, int]] = set()
 
-        for chrom in sorted(ref_seqs.keys(), key=lambda c: (c.isdigit(), c) if c not in ("X", "Y", "MT") else (False, c)):
+        for chrom in sorted(ref_seqs.keys(), key=lambda c: self._chrom_sort_key(c)):
             chrom_positions = sorted([p for (c, p) in cache.keys() if c == chrom])
             ref_seq = ref_seqs[chrom]
 
@@ -5923,7 +6039,7 @@ class FASTQmap:
                     if dp_block >= min_dp and af_block >= min_af:
                         filt = "PASS"
                         cigar_str = f"1M{len(nref) - len(nalt)}D"
-                        gt = "0/1" if 0.2 <= af_block < 0.8 else "1/1"
+                        gt = "1/1" if af_block >= 0.8 else "0/1"
                         events.append((chrom, npos, nref, nalt, None, filt, cigar_str, dp_block, ac_block, gt))
 
                     for j in range(block_len):
@@ -5931,17 +6047,22 @@ class FASTQmap:
                     idx += block_len
                     continue
 
-                if best_base in {"A", "C", "G", "T"} and best_base != ref_base:
-                    af = (best_count / max(1, total_cov)) if total_cov else 0.0
+                for alt_b in ("A", "C", "G", "T"):
+                    if alt_b == ref_base:
+                        continue
+                    alt_count = base_counts[alt_b]["count"]
+                    if alt_count == 0:
+                        continue
+                    af = (alt_count / max(1, total_cov)) if total_cov else 0.0
                     if total_cov >= min_dp and af >= min_af:
-                        avg_qual = (base_counts[best_base]["qual_sum"] / max(1, best_count)) if best_count else 0.0
+                        avg_qual = (base_counts[alt_b]["qual_sum"] / max(1, alt_count)) if alt_count else 0.0
                         local_thr = qual_threshold + 5 if self.is_homopolymer(ref_seq, pos) else qual_threshold
                         filt = "PASS" if avg_qual >= local_thr else "LowQual"
                         cigar_str = "1X"
-                        gt = "0/1" if 0.2 <= af < 0.8 else "1/1"
-                        events.append((chrom, pos, ref_base, best_base, avg_qual, filt, cigar_str, total_cov, best_count, gt))
-                        if 0 < pos <= len(consensus_seqs[chrom]):
-                            consensus_seqs[chrom][pos - 1] = best_base
+                        gt = "1/1" if af >= 0.8 else "0/1"
+                        events.append((chrom, pos, ref_base, alt_b, avg_qual, filt, cigar_str, total_cov, alt_count, gt))
+                        if af >= 0.5 and 0 < pos <= len(consensus_seqs[chrom]):
+                            consensus_seqs[chrom][pos - 1] = alt_b
 
                 idx += 1
 
@@ -5968,7 +6089,7 @@ class FASTQmap:
             local_thr = qual_threshold + 5 if self.is_homopolymer(ref_seqs[chrom], npos) else qual_threshold
             filt_i = "PASS" if avgq_i >= local_thr else "LowQual"
             cigar_i = f"1M{len(nalt) - len(nref)}I"
-            gt_i = "0/1" if 0.2 <= af_i < 0.8 else "1/1"
+            gt_i = "1/1" if af_i >= 0.8 else "0/1"
 
             events.append((chrom, npos, nref, nalt, avgq_i, filt_i, cigar_i, dp_here, ac_i, gt_i))
 
@@ -5996,7 +6117,7 @@ class FASTQmap:
             vcf.write("##INFO=<ID=AC,Number=1,Type=Integer,Description=\"Alt allele count\">\n")
             vcf.write("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n")
             vcf.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE\n")
-            for chrom, pos, ref, alt, qual, filt, cigar, dp, ac, gt in sorted(unique_events.values(), key=lambda e: (e[0], e[1])):
+            for chrom, pos, ref, alt, qual, filt, cigar, dp, ac, gt in sorted(unique_events.values(), key=lambda e: (self._chrom_sort_key(e[0]), e[1])):
                 if not ref or not alt or pos < 1:
                     continue
                 info_str = f"CIGAR={cigar};DP={dp};AC={ac}"
@@ -6009,7 +6130,7 @@ class FASTQmap:
                 for j in range(0, len(seq_list), 60):
                     fa.write("".join(seq_list[j:j+60]) + "\n")
 
-        return out_dir
+        return final_out_dir
 
 
 class StreamingFastaToGVCF:
@@ -11031,6 +11152,7 @@ class BackgroundMaintainer:
         logger, 
         threads=DEFAULT_THREADS, 
         stale_days=Config.STALE_DAYS_AF,
+        stale_days_full=Config.STALE_DAYS_FULL,
         p1_cooldown_hours=24, 
         max_per_round=100,
         short_pause=15, 
@@ -11048,7 +11170,8 @@ class BackgroundMaintainer:
             stopflag: StopFlag für Pipeline-Kontrolle
             logger: Logger-Instanz
             threads: Anzahl Worker-Threads
-            stale_days: Tage bis Daten als veraltet gelten (TODO: aufteilen)
+            stale_days: Tage bis AF-Daten als veraltet gelten (Default Config.STALE_DAYS_AF)
+            stale_days_full: Tage bis Vollannotationen als veraltet gelten (Default Config.STALE_DAYS_FULL)
             p1_cooldown_hours: Cooldown für generische Fehler
             max_per_round: Max. Varianten pro Durchlauf
             short_pause: Kurze Pause (Sekunden)
@@ -11063,6 +11186,7 @@ class BackgroundMaintainer:
         self.stopflag = stopflag
         self.threads = threads
         self.stale_days = stale_days
+        self.stale_days_full = stale_days_full
         self.p1_cooldown_hours = p1_cooldown_hours
         self.max_per_round = max_per_round
         self.short_pause = short_pause
@@ -11367,7 +11491,8 @@ class BackgroundMaintainer:
                 before_fail = self.distiller.end_retry_variants
 
                 self.automatic_fetch_decission_and_processing_unit(
-                    actionable, actionable[0][4], mode=mode, stale_days=self.stale_days
+                    actionable, actionable[0][4], mode=mode,
+                    stale_days=self.stale_days if mode == "af" else self.stale_days_full
                 )
 
                 done = (self.distiller.done_variants - before_done) + deleted
@@ -11427,7 +11552,7 @@ class BackgroundMaintainer:
 
                     # Full-Priorities
                     p0_full, p1_full, p2_full, p3_full = self.db.for_background_priorities(
-                        stale_days=self.stale_days,
+                        stale_days=self.stale_days_full,
                         p1_cooldown_hours=self.p1_cooldown_hours,
                         mode="full",
                         af_none_policy=policy,
@@ -19030,6 +19155,11 @@ class Distiller:
                 .replace(".g.vcf", "_variants.vcf")
                 .replace(".gvcf", "_variants.vcf")
         )
+        if filtered_vcf == path:
+            base, ext = os.path.splitext(path)
+            if ext.lower() == ".gz":
+                base, _ = os.path.splitext(base)
+            filtered_vcf = f"{base}_variants.vcf"
         
         with open_text_maybe_gzip(path) as fin, open(filtered_vcf, "w", encoding="utf-8") as fout:
             for line in fin:
@@ -21136,8 +21266,13 @@ class App(ttk.Window):
         self.distiller.app_ref = self
         
         # Maintainer
+        m_stale_af = getattr(self, "stale_days", None)
+        m_stale_full = getattr(self, "stale_days_full", None)
+        val_af = m_stale_af.get() if (m_stale_af is not None and hasattr(m_stale_af, "get")) else Config.STALE_DAYS_AF
+        val_full = m_stale_full.get() if (m_stale_full is not None and hasattr(m_stale_full, "get")) else Config.STALE_DAYS_FULL
         self.maint = BackgroundMaintainer(
             distiller=self.distiller, db=self.db, stopflag=self.stopflag, logger=logger,
+            stale_days=val_af, stale_days_full=val_full,
             gene_annotator=None, af_fetcher=self.af_fetcher
         )
         self.distiller.maint = self.maint

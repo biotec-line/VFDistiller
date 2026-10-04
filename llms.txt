@@ -8,10 +8,10 @@ Primary language: Python
 UI stack: Windows-first desktop GUI with ttkbootstrap/Tk, Web Companion PWA, optional PyInstaller build
 Also known as: Variant Fusion Distiller
 Version: 17.0.2
-Last-checked: 2026-09-28
-Test Status: 190 passed, 10 subtests passed (100% green)
+Last-checked: 2026-10-01
+Test Status: 202 passed, 10 subtests passed (100% green)
 Attribution: NOTICE (Canonical root attribution & statutory disclaimer)
-Level 1 SBOM: THIRD_PARTY_LICENSES.md (All 10 invariants INV-LOCAL-01..INV-SLA-10 VERIFIED)
+Level 1 SBOM: THIRD_PARTY_LICENSES.md & THIRD_PARTY_LICENSES.txt (All 10 invariants INV-LOCAL-01..INV-SLA-10 VERIFIED)
 
 ## Summary
 

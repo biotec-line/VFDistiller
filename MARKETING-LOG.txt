@@ -152,3 +152,68 @@
 9. **RAG & llms.txt Kontext-Index:** `llms.txt` Stand 2026-09-28 mit aktualisierter Test-Baseline, NOTICE-Attribution und Level 1 SBOM Notizen aktualisiert.
 10. **Shields.io Badges:** Synchronisiert across EN/DE/ES (`Attribution: NOTICE`, `Verified: 2026-09-28` / `Geprüft: 2026-09-28` / `Verificado: 2026-09-28`, `Tests: 184 passed`).
 11. **Automatisierte Vertragstestsuite:** `tests/test_metadata.py` um umfassende Contract-Tests für kanonische NOTICE Attribution, 20 Keywords Sättigung, Notice URL, duale HTML-Anker `sec-01`..`sec-18`, Level 1 SBOM Invarianten-Tabelle, Pytest `--basetemp` und Cache-Defense erweitert.
+
+---
+
+## 2026-09-29 — Pfad A: Repository Lifecycle Hardening, CI Workflow Parity, Multi-Host Lock-Schutz & Level 1 SBOM Text-Companion
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (`C:\_Local_DEV\repos\VFDistiller`)
+- Version: `17.0.2` (strikte Einhaltung von `T-20260920-167562623`: Version eingefroren, Änderungen unter `[Unreleased]`)
+- Branch: `main`
+- Lock-Status: `UNLOCKED` (0 aktive Locks via `lock_status.py`)
+- Cooldown: `PASS` (>29h Ruhezeit > 24h Cooldown, letzte Pfad A Prüfung am 2026-09-19 vor 10 Tagen)
+- Working Tree: 100% sauber
+
+### 2. Umgesetzte Maßnahmen (Pfad A)
+1. **CI Lifecycle Automation Workflows:**
+   - Provisioniert `.github/workflows/auto-assign.yml` (`actions/github-script@v7`, `timeout-minutes: 5`, least-privilege `pull-requests: write`, `issues: write`, Concurrency `cancel-in-progress: true`).
+   - Provisioniert `.github/workflows/label-sync.yml` (`EndBug/label-sync@v2`, `timeout-minutes: 5`, least-privilege `issues: write`, Concurrency `cancel-in-progress: true`) mit kanonischer `.github/labels.yml` (11 Standard-Governance-Labels nach `GOVERNANCE.md` §4.2).
+   - `.github/workflows/stale.yml`: Concurrency-Gruppe `cancel-in-progress: true` nachgerüstet.
+2. **Level 1 SBOM Plain-Text Companion & Re-Audit:**
+   - `THIRD_PARTY_LICENSES.txt` neu strukturiert als vollständiger Level 1 SBOM Text-Companion (Stand: 2026-09-29) mit 10-Invarianten-Matrix (`INV-LOCAL-01` bis `INV-SLA-10`), `RunAsInvoker`-Zertifizierung (`INV-UNPRIV-08`), Zero-Copyleft-Garantie für Forschungsdaten, pystray LGPLv3 § 4 Dynamic Linking Compliance und Querverweis auf root `NOTICE`.
+   - `THIRD_PARTY_LICENSES.md` Re-Audit auf Stand 2026-09-29 harmonisiert.
+3. **PEP 621 URLs & Pytest-Schutz in `pyproject.toml`:**
+   - Registrierung von `"Third-Party Licenses (Text)"` und `"Level 1 SBOM"` unter `[project.urls]`.
+   - Härtung von `[tool.pytest.ini_options]` `norecursedirs` um `.pytest_tmp*`, `.turbo` und `.nyc_output`.
+4. **Multi-Host Sync-, Lock- & Token-Härtung in `.gitignore`:**
+   - Härtung gegen Host-Tokens (`*-IDEAPAD*`, `*-IDEAPAD-GEI*`, `*_WORKSTATION*`, `*_WORKSTATION-LG*`, `*-WORKSTATION.*`), `Desktop.ini`, `*.orig` und `*.rej`.
+5. **Dokumentations-, RAG- & Test-Parität:**
+   - Test- und Verified-Badges in `README.md`, `README.de.md` und `README.es.md` sowie `llms.txt` auf Stand 2026-09-29 und 194 verifizierte Tests synchronisiert.
+6. **Automatisierte Vertragstests (`tests/test_metadata.py`):**
+   - Erweiterung um 4 neue Contract-Tests (`test_ci_lifecycle_workflows_and_labels_manifest`, `test_level1_sbom_plaintext_companion`, `test_expanded_multi_host_and_lock_defense`, `test_version_freeze_discipline`).
+7. **Version-Freeze Disziplin (T-20260920-167562623):**
+   - `version = "17.0.2"` strikt unverändert beibehalten.
+
+---
+
+## 2026-10-01 — SOFTWARE GITHUB: 23andMe Conversion Resilienz, Testparität & Remote-Synchronisation
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (`C:\_Local_DEV\repos\VFDistiller`)
+- Version: `17.0.2` (strikte Einhaltung von `T-20260920-167562623`: Version eingefroren, Änderungen unter `[Unreleased]`)
+- Branch: `main`
+- Lock-Status: `UNLOCKED` (0 aktive Locks via `lock_status.py`)
+- Cooldown: `PASS` (>10h seit gestrigem Bugfix, Pfad B > 12 Tage)
+- Working Tree: Sauber, 1 ausstehender lokaler Commit (`a31376d`) zur Remote-Synchronisation bereit.
+
+### 2. Umgesetzte Maßnahmen
+1. **23andMe-zu-VCF Konvertierung & Cache-Resilienz (Commit `a31376d`):**
+   - Spaltenversatz in `detect_build_robust_by_rsids` behoben (Col 0=rsid, Col 2=pos für 23andMe).
+   - Gzip- und Whitespace-Stream-Parsing in `parse_23andme` gehärtet.
+   - Referenzbasen-Auflösung ohne lokale FASTA-Datei über rsID-Cache in `create_vcf` und `get_ref_base` abgesichert.
+   - Genotyp-Normalisierung per `.upper()` und Heterozygotie-Schutz für haploide Chromosomen.
+   - Verzeichnis-Isolation und Leak-Schutz für atomares JSON-Schreiben in `atomic_write_json`.
+   - 8 neue hermetische Regressionstests in `tests/test_bugsweep_partial10_20260930.py` (Vollsuite wächst von 194 auf 202 Tests).
+2. **Dokumentations- & Test-Parität:**
+   - Test-Badges in `README.md`, `README.de.md` und `README.es.md` auf `202 passed` synchronisiert.
+   - Verifikations-Stempel auf `2026-10-01` aktualisiert.
+   - `llms.txt` auf Stand `2026-10-01` und `202 passed, 10 subtests passed (100% green)` angehoben.
+   - Abschnitt 14 der drei READMEs auf die aktuelle Vollsuite (202 Tests) angepasst.
+3. **Vertragstestsuite & Verifikation:**
+   - `tests/test_metadata.py` validiert das aktualisierte Verifikationsdatum `2026-10-01`.
+   - Pytest Vollsuite 202/202 passed (100% grün).
+   - `source_platform_smoke.py`, `compileall` und `ruff check .` fehlerfrei.
+4. **Remote-Synchronisation & Plan-D-Spiegelung:**
+   - Commits nach `origin/main` synchronisiert und via `git ls-remote` rückgelesen.
+   - Aktualisierter Plan-D-Stand nach OneDrive `BIO/REL-PUB_VFDistiller` gespiegelt.

@@ -34,12 +34,12 @@ jobs:
           cache: pip
 
       - name: Install Tkinter on Linux
-        run: sudo apt-get update && sudo apt-get install -y python3-tk
+        run: sudo apt-get update && sudo apt-get install -y python3-tk xvfb
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt pytest ruff
+          pip install -r requirements.txt pytest ruff "tomli; python_version < '3.11'"
 
       - name: Bytecode compilation gate
         run: python -m compileall -q .
@@ -50,4 +50,4 @@ jobs:
       - name: Run test suite
         env:
           PYTHONIOENCODING: utf-8
-        run: pytest
+        run: xvfb-run -a pytest

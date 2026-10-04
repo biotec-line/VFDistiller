@@ -1,8 +1,66 @@
-THIRD-PARTY SOFTWARE LICENSES
-=============================
+# Third-Party Licenses & Level 1 SBOM
 
-This document lists the third-party dependencies, libraries, and build tools
-used by VFDistiller along with their respective license and SPDX identifiers.
+Last checked: 2026-09-29 against PyPI metadata and local runtime environment.
+Audited: Stand: 2026-09-29 against Level 1 SBOM and runtime invariants.
+
+Scope: direct dependencies declared in `pyproject.toml` and `requirements.txt`
+as well as optional export packages, packaging tools, and development tooling.
+This inventory is a direct dependency review and Level 1 SBOM affirmation,
+complementing the markdown review in `THIRD_PARTY_LICENSES.md`.
+
+## Project License & Attribution
+
+VFDistiller (Variant Fusion Distiller) is licensed under the
+GNU Affero General Public License Version 3 or later (AGPL-3.0-or-later).
+
+Canonical copyright attribution is maintained in `NOTICE`:
+Copyright (c) 2026 Lukas Geiger, biotec-line family under open-bricks umbrella.
+Statutory disclaimer: § 521 BGB Gefälligkeitsrecht.
+Intended use: Research Use Only (RUO). Not an IVD medical device under IVDR (EU) 2017/746.
+
+## Architecture & Security Invariants
+
+- INV-LOCAL-01: 100% Local-First & Zero-Egress by default
+- INV-PRIVACY-02: Automated Locus & rsID Log Redaction (GDPR Art. 9, GenDG)
+- INV-INSPECT-03: Accessible Desktop GUI & Transparent Filtering
+- INV-CONVERT-04: Multi-Format Ingestion & Standards Parity (VCF, gVCF, 23andMe, FASTA)
+- INV-OFFLINE-05: Offline Allele Frequency & Annotation Capability (gnomAD LightDB SQLite)
+- INV-ACCEL-06: Optional Cython Hotpath Acceleration with pure-Python fallback
+- INV-EXPORT-07: Format Preservation & Multi-Report Generation (CSV, Excel, PDF, VCF)
+- INV-UNPRIV-08: Unprivileged User-Mode Operation (RunAsInvoker non-elevation)
+- INV-COMPLY-09: Strict Research Use Only Boundary (RUO — non-clinical)
+- INV-SLA-10: Open-Source Governance, 48h Security Response & 5-Day Triage SLA
+
+## Level 1 SBOM Invariant Verification (Stand: 2026-09-29)
+
+All 10 architectural and runtime governance invariants are confirmed:
+- INV-LOCAL-01: 100% Local-First & Zero Egress (zero background analytics, zero telemetry)
+- INV-PRIVACY-02: Automated Locus & rsID Log Redaction (GDPR Art. 9, GenDG compliant)
+- INV-INSPECT-03: Accessible Desktop GUI & Transparent Filtering (WCAG 2.1 AA keyboard support)
+- INV-CONVERT-04: Multi-Format Ingestion & Standards Parity (VCF v4.2, gVCF, 23andMe, FASTA)
+- INV-OFFLINE-05: Offline Allele Frequency & Annotation Capability (gnomAD SQLite LightDB)
+- INV-ACCEL-06: Optional Cython Hotpath Acceleration with pure-Python fallback
+- INV-EXPORT-07: Format Preservation & Multi-Report Generation (CSV, Excel, PDF, VCF FORMAT metrics)
+- INV-UNPRIV-08: Unprivileged User-Mode Operation (RunAsInvoker non-elevation principle)
+- INV-COMPLY-09: Strict Research Use Only Boundary (RUO — non-clinical, not an IVD medical device)
+- INV-SLA-10: 48h Response, 5-Day Triage SLA (coordinated disclosure via security@open-bricks.org)
+
+## Zero-Copyleft Contagion for Genomic Research Data
+
+All input sequencing files, user genomic datasets, filtered variant results,
+annotated output VCFs, and generated reports (CSV, Excel, PDF) are scientific
+research artifacts owned exclusively by the researcher or institution. They are
+never subjected to AGPL-3.0-or-later copyleft contagion or licensing obligations.
+
+## LGPL Dynamic Linking Compliance Statement
+
+`pystray` is licensed under the LGPL-3.0-or-later and is linked dynamically via
+unmodified PyPI wheel distributions in accordance with LGPLv3 Section 4. Users
+retain full rights to inspect, update, or replace the `pystray` dependency in
+their local Python environment. VFDistiller retains full functionality even if
+`pystray` is omitted.
+
+## Third-Party Package Inventory
 
 requests
 License: Apache-2.0
@@ -135,3 +193,5 @@ License: MIT
 SPDX: MIT
 URL: https://pypi.org/project/altgraph/
 Notice: Graph computation engine used by PyInstaller for module dependency resolution (>=0.17.4)
+
+Refer to `THIRD_PARTY_LICENSES.md` for comprehensive narrative audit and component analyses.
