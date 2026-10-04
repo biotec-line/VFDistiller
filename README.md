@@ -9,7 +9,7 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Tests: 202 passed](https://img.shields.io/badge/Tests-202%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Tests: 216 passed](https://img.shields.io/badge/Tests-216%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Privacy: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Runtime: RunAsInvoker](https://img.shields.io/badge/Runtime-RunAsInvoker-green?style=flat)](SECURITY.md)
@@ -18,7 +18,7 @@
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active-indigo?style=flat)](MARKETING-LOG.txt)
 [![LLM Ready](https://img.shields.io/badge/LLM%20Ready-llms.txt-orange?style=flat)](llms.txt)
 
-**[English](README.md)** • **[Deutsch](README.de.md)** • **[Español](README.es.md)**
+**[English](README.md)** • **[Deutsch](README.de.md)** • **[Español](README.es.md)** • **[简体中文](README.zh.md)** • **[日本語](README.ja.md)** • **[Русский](README.ru.md)**
 
 </div>
 
@@ -387,7 +387,7 @@ On Windows workstations, you can simply run `START.bat` or build the standalone 
 The repository enforces deterministic quality gates across all releases:
 
 ```bash
-# Run complete test suite (202 passed, 10 subtests)
+# Run complete test suite (216 passed, 10 subtests)
 python -m pytest
 
 # Run fast quiet regression suite

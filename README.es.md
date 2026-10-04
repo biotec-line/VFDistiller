@@ -9,7 +9,7 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Estándares: VCF 4.2 | gVCF](https://img.shields.io/badge/Est%C3%A1ndares-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Ensamblajes: GRCh37 | GRCh38](https://img.shields.io/badge/Ensamblajes-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Pruebas: 202 superadas](https://img.shields.io/badge/Pruebas-202%20superadas-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Pruebas: 216 superadas](https://img.shields.io/badge/Pruebas-216%20superadas-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Seguridad: 48h SLA](https://img.shields.io/badge/Seguridad-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Privacidad: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacidad-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Ejecución: RunAsInvoker](https://img.shields.io/badge/Ejecuci%C3%B3n-RunAsInvoker-green?style=flat)](SECURITY.md)
@@ -18,7 +18,7 @@
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Activo-indigo?style=flat)](MARKETING-LOG.txt)
 [![LLM Ready](https://img.shields.io/badge/LLM%20Ready-llms.txt-orange?style=flat)](llms.txt)
 
-**[English](README.md)** • **[Deutsch](README.de.md)** • **[Español](README.es.md)**
+**[English](README.md)** • **[Deutsch](README.de.md)** • **[Español](README.es.md)** • **[简体中文](README.zh.md)** • **[日本語](README.ja.md)** • **[Русский](README.ru.md)**
 
 </div>
 
@@ -348,7 +348,7 @@ En estaciones de trabajo Windows, simplemente ejecute `START.bat` o genere el ej
 El repositorio impone puertas de calidad deterministas en todos los lanzamientos:
 
 ```bash
-# Ejecutar la suite completa de pruebas (202 superadas, 10 subtests)
+# Ejecutar la suite completa de pruebas (216 superadas, 10 subtests)
 python -m pytest
 
 # Ejecutar suite de regresión rápida
