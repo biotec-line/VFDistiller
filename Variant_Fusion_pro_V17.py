@@ -135,7 +135,7 @@ except ImportError:
 try:
     import pystray
     HAVE_PYSTRAY = True
-except ImportError:
+except Exception:  # ImportError, or no display/tray backend (headless Linux, e.g. CI)
     pystray = None
     HAVE_PYSTRAY = False
 
