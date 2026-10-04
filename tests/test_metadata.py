@@ -474,3 +474,15 @@ def test_version_freeze_discipline() -> None:
 
     changelog_text = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     assert "## [Unreleased]" in changelog_text
+
+
+def test_pep639_license_expression_and_no_osi_classifier() -> None:
+    """Verify PEP 639 license expression is set and no conflicting OSI classifiers exist."""
+    pyproject_path = REPO_ROOT / "pyproject.toml"
+    data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    project = data.get("project", {})
+    assert project.get("license") == "AGPL-3.0-or-later"
+    classifiers = project.get("classifiers", [])
+    assert not any("License ::" in c for c in classifiers), (
+        "PEP 639 license expressions supersede License classifiers; do not combine them."
+    )
