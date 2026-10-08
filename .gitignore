@@ -172,6 +172,8 @@ wheelhouse/
 .coverage
 coverage/
 htmlcov/
+pytest_out.txt
+pytest*.txt
 *.tmp
 *.bak
 

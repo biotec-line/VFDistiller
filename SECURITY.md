@@ -23,7 +23,7 @@ Only the current major release series (`17.x`) receives active security patches.
 Use one of the following secure channels:
 
 1. **GitHub Private Vulnerability Reporting (Preferred):**
-   Navigate to [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) and click **"Report a vulnerability"**.
+   Navigate to [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories/new) and submit a private report.
 2. **Security & Support Email:**
    - Organization: `security@biotec-line.org`
    - Ecosystem: `security@open-bricks.org`
@@ -75,8 +75,8 @@ The following areas are **out of scope**:
 
 Nutzen Sie stattdessen:
 
-1. **Private Vulnerability Reporting:**
-   Über das GitHub-Menü [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) auf **"Report a vulnerability"** klicken.
+1. **Private Vulnerability Reporting (Bevorzugt):**
+   Über das GitHub-Menü [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories/new) eine vertrauliche Meldung einreichen.
 2. **Sicherheits- & Support-E-Mail:**
    - Organisation: `security@biotec-line.org`
    - Ökosystem: `security@open-bricks.org`

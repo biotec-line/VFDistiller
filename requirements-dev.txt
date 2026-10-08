@@ -1,0 +1,6 @@
+# Reproducible development, linting, packaging, and test dependencies
+pytest>=9.1.1
+ruff>=0.9.0
+pyinstaller>=6.10.0
+altgraph>=0.17.4
+packaging>=24.0
