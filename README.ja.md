@@ -11,7 +11,7 @@
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
 [![Tests: 216 passed](https://img.shields.io/badge/Tests-216%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
-[![Privacy: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
+[![Privacy: Local files / Online annotation](https://img.shields.io/badge/Privacy-Local%20files%20%7C%20Online%20annotation-blue?style=flat)](PRIVACY_POLICY.md)
 [![Runtime: RunAsInvoker](https://img.shields.io/badge/Runtime-RunAsInvoker-green?style=flat)](SECURITY.md)
 [![Verified: 2026-10-01](https://img.shields.io/badge/Verified-2026--10--01-blue.svg)](SECURITY.md)
 [![Third-Party: Audited](https://img.shields.io/badge/Third--Party-Audited-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
@@ -26,6 +26,8 @@
 
 > [!TIP]
 > **AIエージェント & LLM向けコンテキスト**: 本リポジトリは、機械可読なアーキテクチャおよび発見性メタデータを [`llms.txt`](llms.txt) に、監査履歴を [`MARKETING-LOG.txt`](MARKETING-LOG.txt) に提供しています。
+
+> **ローカル処理とオンライン注釈:** 複数のオンライン注釈ソースが既定で有効です。解析の開始により外部サービスへのバリアント照会が行われる場合があります。参照データのダウンロードもネットワークを使用します。処理前にAPI設定を確認してください。[プライバシーポリシー](PRIVACY_POLICY.md)を参照してください。
 
 ---
 
@@ -82,7 +84,7 @@ VFDistiller(別名 Variant Fusion Distiller)は、研究グレードの遺伝子
 
 | 機能 | 説明 |
 |---|---|
-| **ローカルファースト・プライバシーアーキテクチャ** | データ処理は100%オフライン。生のシーケンス入力、生成されたVCF、SQLiteデータベースはすべてローカルマシン上に留まり、クラウドへの自動送信は一切ありません。 |
+| **ローカルファースト・プライバシーアーキテクチャ** | ファイル処理とSQLiteへの保存はローカルで行われます。有効な注釈サービスにはバリアント識別子、位置、参照・代替アレルが送信されます。 |
 | **自動ログ墨消し** | 組み込みの `redact_for_logfile` が、機微なゲノム座位とrsIDを永続ディスクログから自動的に除去し、意図しないプライバシー漏洩を防ぎます。 |
 | **ユニバーサル・マルチフォーマット取り込み** | VCF v4.2、gVCF、23andMe生データテキスト形式、FASTAファイルを、Unix専用の依存関係(`pysam`、`bcftools`、`samtools`)なしでネイティブにストリーミング取り込みします。 |
 | **ゲノムビルドの自動検出** | ヘッダーのコンティグ、染色体表記、rsID座標マーカーから、GRCh37(hg19)とGRCh38(hg38)のビルドをインテリジェントに検出します。 |
@@ -105,10 +107,10 @@ VFDistiller は、次の4つの主要ペルソナにおけるゲノムデータ�
 
 | ペルソナID | 対象ユーザー | 主なニーズ | VFDistiller のアーキテクチャによる主な解決策 |
 |---|---|---|---|
-| `[PERSONA-01]` | **臨床遺伝専門医・分子病理医(研究用途)** | クラウドに依存せず、希少疾患および体細胞研究症例に対する迅速なデスクトップトリアージとバリアント優先順位付けを行いたい。 | Windows第一のttkbootstrap GUI、統合されたオフラインgnomAD LightDB(SQLite)、ClinVar ClinSig、CADDハイライト、ゼロ送信のローカル処理。 |
+| `[PERSONA-01]` | **臨床遺伝専門医・分子病理医(研究用途)** | クラウドに依存せず、希少疾患および体細胞研究症例に対する迅速なデスクトップトリアージとバリアント優先順位付けを行いたい。 | gnomAD LightDBを用いたローカル解析。オンラインソースの利用は設定によります。 |
 | `[PERSONA-02]` | **バイオインフォマティクス・コアファシリティのエンジニア、パイプライン開発者** | Windowsワークステーション上で、コンシューマー/生データ(23andMe、生FASTA)と標準的な研究用VCF/gVCF形式を相互変換したい。 | Unixツール(`bcftools`/`pysam`)を使わないVCF/gVCFのストリーミング解析、GRCh37/GRCh38ビルドの自動検出、5倍のCython高速化、クリーンなPEP 621準拠のPythonアーキテクチャ。 |
 | `[PERSONA-03]` | **希少疾患研究者・アカデミックなゲノムアナリスト** | アレル頻度(AF < 0.007)、リードデプス、病原性しきい値、遺伝子ホワイトリストによる透明性のあるフィルタリングを行いたい。 | ローカルファーストのSQLiteインデックス、カスタム遺伝子リストによるフィルタリング、INFOフィールドのリサイクル、FORMATメトリクスを保持したマルチフォーマットエクスポート(Excel、PDFレポート、アノテーション付きVCF)。 |
-| `[PERSONA-04]` | **プライバシーを重視するデータスチュワード・オフライン臨床検査室のIT担当者** | 遺伝情報プライバシー規制(GDPR / DSGVO 第9条、GenDG)への完全な準拠、および生のシーケンスバリアントが外部ログに漏れないことの保証。 | 100%オフライン動作可能なアーキテクチャ、自動ログファイル墨消し(`redact_for_logfile` によるrsID/ゲノム座位の除去)、非特権の `RunAsInvoker` 実行、厳格な Research Use Only の境界。 |
+| `[PERSONA-04]` | **プライバシーを重視するデータスチュワード・オフライン臨床検査室のIT担当者** | 有効な注釈ソースと各サービスに送信されるバリアントデータを確認します。 | gnomAD LightDBを用いたローカル解析。オンラインソースの利用は設定によります。 `redact_for_logfile`, `RunAsInvoker`, Research Use Only. |
 
 ### 高意図の検索クエリ
 
@@ -118,7 +120,7 @@ VFDistiller は、次の4つの主要ペルソナにおけるゲノムデータ�
 - `23andMe raw data to annotated VCF converter python` — 一般消費者向けジェノタイピングのテキストファイルから研究用VCFへの直接変換。
 - `gVCF streaming parser without bcftools pysam dependencies` — Windows互換のゲノムVCFパーサー。
 - `research-grade genetic variant filtering tool CADD ClinVar` — CADDスコアとClinSigによるSNVおよびインデルの優先順位付け。
-- `privacy-preserving clinical genomics analysis desktop app` — ゼロ送信のゲノミクス・ワークステーションアプリケーション。
+- `設定可能なオンライン注釈を備えたローカルバリアント解析` — ファイル処理とSQLiteへの保存はローカルで行われます。有効な注釈サービスにはバリアント識別子、位置、参照・代替アレルが送信されます。
 - `VCF format metrics preservation multi-sample export excel pdf` — DP/GQメトリクス付きでフィルタリング済みバリアント表をExcelおよびPDFへエクスポート。
 - `Cython accelerated VCF parser bioinformatics desktop workstation` — バリアント処理のための高性能なコンパイル済みC拡張。
 
@@ -135,7 +137,7 @@ VFDistiller は、次の4つの主要ペルソナにおけるゲノムデータ�
 
 | 技術的観点 | ガバナンス不変条件 | VFDistiller | Unixシェルパイプライン (bcftools/samtools) | クラウド型バリアントポータル (BaseSpace/VarSome) | デスクトップブラウザ (IGV) | アノテーションエンジン (VEP / SnpEff CLI) |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **1. オフラインファースト & ゼロ送信** | `INV-LOCAL-01` | **100%ローカルファースト(ローカルディスク、SQLite、テレメトリなし)** | 高(ローカルCLI実行) | 低(生の遺伝データのクラウドへのアップロードが必須) | 高(ローカルファイルの閲覧) | 高(ローカルキャッシュでの実行) |
+| **1. ローカル処理とオンライン注釈** | `INV-LOCAL-01` | **ローカルファイルとSQLite、設定可能な外部バリアント照会** | 高(ローカルCLI実行) | 低(生の遺伝データのクラウドへのアップロードが必須) | 高(ローカルファイルの閲覧) | 高(ローカルキャッシュでの実行) |
 | **2. 座位・rsIDのログ墨消し** | `INV-PRIVACY-02` | **組み込み(`redact_for_logfile` がプライバシーを保護)** | なし(座位が標準出力/標準エラーのログに出力される) | リスクあり(クエリ座標がリモートサーバーに記録される) | なし(生の座標セッションがローカルに保存される) | なし(マスクなしでログ出力) |
 | **3. インタラクティブGUI & PWAコンパニオン** | `INV-INSPECT-03` | **デスクトップGUI (ttkbootstrap) + Webコンパニオン PWA** | なし(ヘッドレスCLIのみ) | Webブラウザのポータルのみ | 高機能なゲノムトラックブラウザ | なし(ヘッドレスCLIのみ) |
 | **4. マルチフォーマット取り込み** | `INV-CONVERT-04` | **VCF v4.2、gVCF、23andMe、FASTA(ネイティブ対応)** | VCF/BCFのみ(独自の変換スクリプトが必要) | VCFのみ(厳格な書式要件あり) | BAM/VCFの閲覧のみ(変換なし) | VCFのみ |
@@ -157,8 +159,8 @@ VFDistiller は、次の4つの主要ペルソナにおけるゲノムデータ�
 
 VFDistiller は、10の基本的なガバナンスおよび実行時の不変条件に従って設計・維持されています。
 
-- **`INV-LOCAL-01`(100%ローカルファースト & ゼロ送信):** すべてのゲノムシーケンスファイル、変換済みVCF、ゲノムリファレンス、SQLiteデータベース、ローカル設定は、ローカルのワークステーション上にのみ存在します。テレメトリなし、アナリティクスなし、クラウドへの自動送信なし。
-- **`INV-PRIVACY-02`(座位・rsIDの自動ログ墨消し):** 機微なゲノム座標とrsIDは `redact_for_logfile` によって永続ログから自動的に除去され、GDPR/DSGVO 第9条およびGenDGに従って遺伝情報プライバシーを厳格に保護します。
+- **`INV-LOCAL-01` (ローカル処理とオンライン注釈):** ファイル処理とSQLiteへの保存はローカルで行われます。有効な注釈サービスにはバリアント識別子、位置、参照・代替アレルが送信されます。
+- **`INV-PRIVACY-02` (`redact_for_logfile`):** `redact_for_logfile` はローカルログ内の一部のバリアント識別子を墨消しします。外部注釈への照会を防ぐ機能ではなく、法令遵守を証明するものでもありません。
 - **`INV-INSPECT-03`(アクセス可能なデスクトップGUI & 透明性のあるフィルタリング):** ttkbootstrapデスクトップGUIとWebコンパニオンPWAによってバリアントレコードを視覚的に完全に確認できます。フィルタ条件(AFしきい値、CADDスコア、ClinSig、リードデプス)は完全に監査可能で、ユーザーが設定できます。
 - **`INV-CONVERT-04`(マルチフォーマット取り込み & 標準との同等性):** Unix専用のツールチェーン(`bcftools`、`samtools`、`pysam`)を必要とせず、VCF v4.2、gVCF、23andMe生データテキスト、FASTAファイルをシームレスに変換・取り込みします。
 - **`INV-OFFLINE-05`(オフラインのアレル頻度 & アノテーション機能):** インターネット接続を必須とせず、オフラインのSQLite LightDB(gnomAD)による高速なローカルアノテーションを行い、オプションの非同期RESTエンドポイント(VEP、MyVariant.info)で補完します。
@@ -431,7 +433,7 @@ VFDistiller は、オープンソースとしての完全な透明性にコミ�
 
 セキュリティと遺伝情報のプライバシーは、VFDistiller のアーキテクチャの根幹をなすものです。
 
-- **ローカルファースト & ゼロ送信:** 機微な患者ファイルやバリアントファイルが、お使いのデバイスの外に出ることはありません。
+- **ローカル処理とオンライン注釈:** ファイル処理とSQLiteへの保存はローカルで行われます。有効な注釈サービスにはバリアント識別子、位置、参照・代替アレルが送信されます。
 - **自動ログ墨消し:** `MultiSinkLogger` が生成する永続ログからは、染色体位置、rsID、患者のファイルパスが `redact_for_logfile` によって自動的に消去されます。
 - **48時間のセキュリティ応答SLA:** 報告されたすべてのセキュリティ脆弱性に対し、48時間以内に初回応答を行い、5営業日以内にトリアージ評価を行います。
 - **非公開での報告:** 脆弱性は、GitHubの [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) を通じて、または `security@biotec-line.org` / `security@open-bricks.org` へのメールで報告してください。詳細は [`SECURITY.md`](SECURITY.md) をご覧ください。

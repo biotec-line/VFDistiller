@@ -1,6 +1,6 @@
 # Privacy Policy — VFDistiller
 
-**Last updated:** April 30, 2026
+**Last updated:** October 15, 2026
 **Publisher:** Lukas Geiger
 **Distribution:** GitHub only; the former Microsoft Store listing was withdrawn on April 12, 2026.
 
@@ -12,27 +12,29 @@ VFDistiller is a desktop application for research-grade genetic variant analysis
 
 **VFDistiller does not collect, store, or transmit any personal data to the developer.**
 
-All data processing happens locally on your device. The application does not include analytics, telemetry, crash reporting, or any form of data collection.
+Local file processing and SQLite storage run on your device. Online annotation makes separate requests to external services as described below; local-first does not mean that every feature operates without network traffic.
 
 ## Data Processing
 
-The application processes genetic data files (VCF, gVCF, 23andMe raw data, FASTA) that you choose to open. These files are read and processed entirely on your local machine. No genetic data is sent to the developer or any third party by the application itself.
+The application processes genetic data files (VCF, gVCF, 23andMe raw data, FASTA) that you choose to open. File ingestion, filtering and local database operations run on your machine. Enabled annotation features send variant-level query data to external services. Keeping the input file locally does not keep every variant field off the network.
 
 ## External Services
 
-VFDistiller may connect to the following external services **only when you explicitly request annotation or lookup features**:
+VFDistiller can connect to the following external services when configured annotation or lookup features run. Several sources are enabled by default in `Config.DEFAULT_API_SETTINGS`; starting an analysis can therefore issue requests automatically:
 
 - **Ensembl VEP API** (ensembl.org) — for variant effect prediction
 - **gnomAD** (gnomad.broadinstitute.org) — for population allele frequencies
-- **Google AlphaGenome API** (googleapis.com) — for variant impact prediction
+- **MyVariant.info** (myvariant.info) — for variant annotations and allele frequencies
+- **NCBI E-Utilities / ClinVar** (ncbi.nlm.nih.gov) — for allele and clinical-annotation lookups
+- **Google AlphaGenome API** (googleapis.com) — for variant impact prediction; this also requires the optional client and a configured API key
 
-When using these services, variant identifiers (e.g., chromosome position, reference/alternate alleles) are sent to the respective service. These external services have their own privacy policies. No personal information is included in these requests.
+These requests can contain variant identifiers, chromosome positions, reference/alternate alleles and the genome assembly. AlphaGenome calls also specify a genomic interval. Configured provider credentials may be used for authentication. Each external service has its own privacy policy; omitting a full input-file upload does not eliminate variant-level data transmission.
 
-**No data is sent to any service without your explicit action.**
+Review the API settings and enabled sources before processing your files. Requests and retries can run as part of the analysis; this policy does not promise a separate confirmation for every request. Reference-dataset downloads also require network access.
 
 ## Local Storage
 
-The application stores user preferences and settings locally on your device. No data is synced to external servers.
+The application stores user preferences and settings locally on your device. Local storage is separate from the external annotation and download requests described above.
 
 ## Children's Privacy
 

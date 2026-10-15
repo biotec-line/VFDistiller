@@ -11,7 +11,7 @@
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
 [![Tests: 216 passed](https://img.shields.io/badge/Tests-216%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
-[![Privacy: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
+[![Privacy: Local files / Online annotation](https://img.shields.io/badge/Privacy-Local%20files%20%7C%20Online%20annotation-blue?style=flat)](PRIVACY_POLICY.md)
 [![Runtime: RunAsInvoker](https://img.shields.io/badge/Runtime-RunAsInvoker-green?style=flat)](SECURITY.md)
 [![Verified: 2026-10-01](https://img.shields.io/badge/Verified-2026--10--01-blue.svg)](SECURITY.md)
 [![Third-Party: Audited](https://img.shields.io/badge/Third--Party-Audited-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
@@ -26,6 +26,8 @@
 
 > [!TIP]
 > **AI 智能体与 LLM 上下文**:本仓库在 [`llms.txt`](llms.txt) 中提供机器可读的架构与可发现性元数据,并在 [`MARKETING-LOG.txt`](MARKETING-LOG.txt) 中提供审计历史。
+
+> **本地处理与在线注释:** 多个在线注释来源默认启用。开始分析可能向外部服务发送变异查询；参考数据下载也会使用网络。处理文件前请检查API设置。参见[隐私政策](PRIVACY_POLICY.md)。
 
 ---
 
@@ -82,7 +84,7 @@ VFDistiller(又称 Variant Fusion Distiller)是一款本地优先的生物信息
 
 | 功能 | 说明 |
 |---|---|
-| **本地优先的隐私架构** | 100% 离线数据处理;原始测序输入、生成的 VCF 和 SQLite 数据库均保留在您的本地机器上,不会自动向云端传出任何数据。 |
+| **本地优先的隐私架构** | 文件处理与SQLite存储在本地进行。启用的注释服务会接收变异标识符、位置以及参考和替代等位基因。 |
 | **自动日志脱敏** | 内置的 `redact_for_logfile` 会自动从持久化磁盘日志中去除敏感的基因组位点和 rsID,以防止无意的隐私泄露。 |
 | **通用多格式导入** | 原生流式导入 VCF v4.2、gVCF、23andMe 原始文本格式和 FASTA 文件,无需仅限 Unix 的依赖(`pysam`、`bcftools`、`samtools`)。 |
 | **自动基因组版本检测** | 根据头部 contig、染色体命名方式和 rsID 坐标标记,智能检测 GRCh37 (hg19) 与 GRCh38 (hg38) 版本。 |
@@ -105,10 +107,10 @@ VFDistiller 旨在为四类主要用户画像解决基因组数据过滤和变�
 
 | 画像 ID | 目标受众 | 主要需求 | VFDistiller 的关键架构解决方案 |
 |---|---|---|---|
-| `[PERSONA-01]` | **临床遗传学家与分子病理学家(研究用途)** | 针对罕见病和体细胞研究病例,在不依赖云端的前提下进行快速桌面分诊和变异优先级排序。 | 以 Windows 为先的 ttkbootstrap GUI、集成的离线 gnomAD LightDB (SQLite)、ClinVar ClinSig、CADD 高亮,以及零外传的本地处理。 |
+| `[PERSONA-01]` | **临床遗传学家与分子病理学家(研究用途)** | 针对罕见病和体细胞研究病例,在不依赖云端的前提下进行快速桌面分诊和变异优先级排序。 | 使用gnomAD LightDB进行本地分析；在线来源取决于配置。 |
 | `[PERSONA-02]` | **生物信息学核心平台工程师与流水线开发者** | 在 Windows 工作站上,将消费级/原始数据(23andMe、原始 FASTA)与标准研究用 VCF/gVCF 格式相互转换。 | 无需 Unix 工具(`bcftools`/`pysam`)的流式 VCF/gVCF 解析、自动 GRCh37/GRCh38 版本检测、5 倍 Cython 加速,以及整洁的 PEP 621 Python 架构。 |
 | `[PERSONA-03]` | **罕见病研究人员与学术基因组分析师** | 按等位基因频率(AF < 0.007)、读取深度、致病性阈值和基因白名单进行透明过滤。 | 本地优先的 SQLite 索引、自定义基因列表过滤、INFO 字段复用,以及保留 FORMAT 指标的多格式导出(Excel、PDF 报告、带注释的 VCF)。 |
-| `[PERSONA-04]` | **注重隐私的数据管理员与离线临床实验室 IT** | 绝对符合遗传隐私指令(GDPR / DSGVO 第 9 条、GenDG),确保原始测序变异绝不泄露到外部日志中。 | 100% 可离线运行的架构、自动日志脱敏(`redact_for_logfile` 消除 rsID/基因组位点)、无特权 `RunAsInvoker` 执行,以及严格的仅限研究用途边界。 |
+| `[PERSONA-04]` | **注重隐私的数据管理员与离线临床实验室 IT** | 检查已启用的注释来源以及发送给各服务的变异数据。 | 使用gnomAD LightDB进行本地分析；在线来源取决于配置。 `redact_for_logfile`, `RunAsInvoker`, Research Use Only. |
 
 ### 高意图搜索查询
 
@@ -118,7 +120,7 @@ VFDistiller 旨在为四类主要用户画像解决基因组数据过滤和变�
 - `23andMe raw data to annotated VCF converter python` — 将直接面向消费者的基因分型文本文件直接转换为研究用 VCF。
 - `gVCF streaming parser without bcftools pysam dependencies` — 兼容 Windows 的基因组 VCF 解析器。
 - `research-grade genetic variant filtering tool CADD ClinVar` — 按 CADD 评分和 ClinSig 对 SNV 与 indel 进行优先级排序。
-- `privacy-preserving clinical genomics analysis desktop app` — 零外传的基因组学工作站应用。
+- `支持可配置在线注释的本地变异分析` — 文件处理与SQLite存储在本地进行。启用的注释服务会接收变异标识符、位置以及参考和替代等位基因。
 - `VCF format metrics preservation multi-sample export excel pdf` — 将过滤后的变异表连同 DP/GQ 指标导出为 Excel 和 PDF。
 - `Cython accelerated VCF parser bioinformatics desktop workstation` — 用于变异处理的高性能编译型 C 扩展。
 
@@ -135,7 +137,7 @@ VFDistiller 旨在为四类主要用户画像解决基因组数据过滤和变�
 
 | 技术维度 | 治理不变量 | VFDistiller | Unix Shell 流水线 (bcftools/samtools) | 云端变异门户 (BaseSpace/VarSome) | 桌面浏览器 (IGV) | 注释引擎 (VEP / SnpEff CLI) |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **1. 离线优先与零外传** | `INV-LOCAL-01` | **100% 本地优先(本地磁盘、SQLite、零遥测)** | 高(本地 CLI 执行) | 低(强制将原始遗传数据上传至云端) | 高(本地文件查看) | 高(本地缓存执行) |
+| **1. 本地处理与在线注释** | `INV-LOCAL-01` | **本地文件与SQLite；可配置的外部变异查询** | 高(本地 CLI 执行) | 低(强制将原始遗传数据上传至云端) | 高(本地文件查看) | 高(本地缓存执行) |
 | **2. 位点与 rsID 日志脱敏** | `INV-PRIVACY-02` | **内置(`redact_for_logfile` 保护隐私)** | 无(位点被输出到 stdout/stderr 日志) | 风险(查询坐标被记录在远程服务器上) | 无(原始坐标会话保存在本地) | 无(未脱敏的日志) |
 | **3. 交互式 GUI 与 PWA 配套** | `INV-INSPECT-03` | **桌面 GUI (ttkbootstrap) + Web 配套 PWA** | 无(仅无界面 CLI) | 仅 Web 浏览器门户 | 功能丰富的基因组轨道浏览器 | 无(仅无界面 CLI) |
 | **4. 多格式导入** | `INV-CONVERT-04` | **VCF v4.2、gVCF、23andMe、FASTA(原生)** | 仅 VCF/BCF(需要自定义转换脚本) | 仅 VCF(格式要求严格) | 仅 BAM/VCF 查看(不支持转换) | 仅 VCF |
@@ -157,8 +159,8 @@ VFDistiller 旨在为四类主要用户画像解决基因组数据过滤和变�
 
 VFDistiller 依据十项基础性的治理与运行时不变量进行设计和维护:
 
-- **`INV-LOCAL-01`(100% 本地优先与零外传):** 所有基因组测序文件、转换后的 VCF、基因组参考、SQLite 数据库和本地设置仅存放于本地工作站。零遥测、零分析、零自动云端外传。
-- **`INV-PRIVACY-02`(自动位点与 rsID 日志脱敏):** 敏感的基因组坐标和 rsID 通过 `redact_for_logfile` 自动从持久化日志中去除,依据 GDPR/DSGVO 第 9 条和 GenDG 严格保护遗传隐私。
+- **`INV-LOCAL-01` (本地处理与在线注释):** 文件处理与SQLite存储在本地进行。启用的注释服务会接收变异标识符、位置以及参考和替代等位基因。
+- **`INV-PRIVACY-02` (`redact_for_logfile`):** `redact_for_logfile` 会对本地日志中的部分变异标识符脱敏。这不会阻止外部注释查询，也不构成合规证明。
 - **`INV-INSPECT-03`(可访问的桌面 GUI 与透明过滤):** 通过 ttkbootstrap 桌面 GUI 和 Web 配套 PWA 对变异记录进行完整的可视化检查;过滤条件(AF 阈值、CADD 评分、ClinSig、读取深度)完全可审计且可由用户配置。
 - **`INV-CONVERT-04`(多格式导入与标准一致性):** 无需仅限 Unix 的工具链(`bcftools`、`samtools`、`pysam`),即可无缝转换和导入 VCF v4.2、gVCF、23andMe 原始文本和 FASTA 文件。
 - **`INV-OFFLINE-05`(离线等位基因频率与注释能力):** 使用离线 SQLite LightDB (gnomAD) 进行快速本地注释,无需强制联网,并可由可选的异步 REST 端点(VEP、MyVariant.info)作为补充。
@@ -431,7 +433,7 @@ VFDistiller 致力于实现完全的开源透明。所有运行时和开发依�
 
 安全和遗传隐私是 VFDistiller 架构的基石:
 
-- **本地优先与零外传:** 敏感的患者和变异文件绝不会离开您的设备。
+- **本地处理与在线注释:** 文件处理与SQLite存储在本地进行。启用的注释服务会接收变异标识符、位置以及参考和替代等位基因。
 - **自动日志脱敏:** `MultiSinkLogger` 生成的持久化日志会通过 `redact_for_logfile` 自动清除染色体位置、rsID 和患者文件路径。
 - **48 小时安全响应 SLA:** 所有报告的安全漏洞将在 48 小时内收到初步响应,并在 5 个工作日内完成分诊评估。
 - **私密报告:** 请通过 GitHub [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) 或发送电子邮件至 `security@biotec-line.org` / `security@open-bricks.org` 报告漏洞。完整详情请参阅 [`SECURITY.md`](SECURITY.md)。

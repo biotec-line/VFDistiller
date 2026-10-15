@@ -11,7 +11,7 @@
 [![Ensamblajes: GRCh37 | GRCh38](https://img.shields.io/badge/Ensamblajes-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
 [![Pruebas: 216 superadas](https://img.shields.io/badge/Pruebas-216%20superadas-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Seguridad: 48h SLA](https://img.shields.io/badge/Seguridad-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
-[![Privacidad: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacidad-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
+[![Privacy: Local files / Online annotation](https://img.shields.io/badge/Privacy-Local%20files%20%7C%20Online%20annotation-blue?style=flat)](PRIVACY_POLICY.md)
 [![Ejecución: RunAsInvoker](https://img.shields.io/badge/Ejecuci%C3%B3n-RunAsInvoker-green?style=flat)](SECURITY.md)
 [![Verificado: 2026-10-01](https://img.shields.io/badge/Verificado-2026--10--01-blue.svg)](SECURITY.md)
 [![Terceros: Auditado](https://img.shields.io/badge/Terceros-Auditado-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
@@ -24,6 +24,8 @@
 
 > [!TIP]
 > **Contexto para Agentes de IA y LLMs**: Este repositorio proporciona metadatos de arquitectura legibles por máquina en [`llms.txt`](llms.txt) y el historial de auditoría en [`MARKETING-LOG.txt`](MARKETING-LOG.txt).
+
+> **Procesamiento local y anotación en línea:** Varias fuentes de anotación en línea están activadas de forma predeterminada. Un análisis puede enviar consultas de variantes a servicios externos; las descargas de referencias también usan la red. Revisa la configuración de las API antes de procesar tus archivos. Consulta la [política de privacidad](PRIVACY_POLICY.md).
 
 ---
 
@@ -78,7 +80,7 @@ VFDistiller (Variant Fusion Distiller) es una aplicación de escritorio bioinfor
 
 | Capacidad | Descripción |
 |---|---|
-| **Arquitectura de Privacidad Local-First** | Procesamiento 100% sin conexión; las secuencias sin procesar, VCFs generados y bases de datos SQLite permanecen localmente sin salida a la nube. |
+| **Arquitectura de Privacidad Local-First** | El procesamiento de archivos y el almacenamiento SQLite son locales. Los servicios de anotación activados reciben identificadores, posiciones y alelos de referencia/alternativos. |
 | **Redacción Automática de Registros** | El mecanismo integrado `redact_for_logfile` elimina automáticamente coordenadas genómicas y rsIDs de los archivos de registro en disco. |
 | **Ingestión Multiformato Universal** | Procesamiento fluido de VCF v4.2, gVCF, datos crudos de 23andMe y FASTA sin dependencias exclusivas de Unix (`pysam`, `bcftools`, `samtools`). |
 | **Detección Automática del Ensamblaje** | Identificación automática de ensamblajes GRCh37 (hg19) y GRCh38 (hg38) a partir de contigs del encabezado y coordenadas. |
@@ -101,10 +103,10 @@ VFDistiller está diseñado para resolver los desafíos de filtrado de datos gen
 
 | ID del Perfil | Público Objetivo | Necesidad Principal | Solución Arquitectónica de VFDistiller |
 |---|---|---|---|
-| `[PERSONA-01]` | **Genetistas Clínicos y Patólogos Moleculares (Investigación)** | Triaje rápido de variantes y priorización en enfermedades raras y casos somáticos sin dependencias en la nube. | GUI ttkbootstrap orientada a Windows, gnomAD LightDB local (SQLite), ClinVar ClinSig, resaltado CADD y procesamiento sin salida a internet. |
+| `[PERSONA-01]` | **Genetistas Clínicos y Patólogos Moleculares (Investigación)** | Triaje rápido de variantes y priorización en enfermedades raras y casos somáticos sin dependencias en la nube. | Análisis local con gnomAD LightDB; las fuentes en línea dependen de la configuración. |
 | `[PERSONA-02]` | **Ingenieros de Core Facilities y Desarrolladores de Pipelines** | Conversión directa entre datos direct-to-consumer (23andMe, FASTA) y formatos VCF/gVCF estándar en estaciones Windows. | Parser de streaming VCF/gVCF sin herramientas Unix (`bcftools`/`pysam`), detección automática de build GRCh37/GRCh38 y aceleración Cython 5x. |
 | `[PERSONA-03]` | **Investigadores de Enfermedades Raras y Analistas Genómicos** | Filtrado transparente por frecuencia alélica (AF < 0.007), profundidad de lectura, umbrales de patogenicidad y listas de genes. | Indexación SQLite local-first, listas blancas de genes personalizadas, reciclaje de campos INFO y exportación multiformato (Excel, PDF, VCF). |
-| `[PERSONA-04]` | **Responsables de Protección de Datos y Laboratorios Clínicos Offline** | Cumplimiento absoluto con normativas de privacidad genética (RGPD / GDPR Art. 9), garantizando que las variantes no salgan en registros externos. | Arquitectura 100% funcional sin conexión, redacción automática de logs (`redact_for_logfile`), modo no privilegiado `RunAsInvoker` y frontera RUO explícita. |
+| `[PERSONA-04]` | **Responsables de Protección de Datos y Laboratorios Clínicos Offline** | Revisar las fuentes de anotación activadas y los datos de variantes enviados a cada servicio. | Análisis local con gnomAD LightDB; las fuentes en línea dependen de la configuración. `redact_for_logfile`, `RunAsInvoker`, Research Use Only. |
 
 ---
 
@@ -117,7 +119,7 @@ VFDistiller está diseñado para resolver los desafíos de filtrado de datos gen
 
 | Dimensión Técnica | Invariante | VFDistiller | Pipelines Unix (bcftools/samtools) | Portales Cloud (BaseSpace/VarSome) | Visores Desktop (IGV) | Motores de Anotación (VEP/SnpEff CLI) |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **1. Offline-First y Zero Egress** | `INV-LOCAL-01` | **100% Local-First (Disco local, SQLite, sin telemetría)** | Alta (Ejecución CLI local) | Baja (Subida obligatoria de datos genéticos) | Alta (Visualización de archivos locales) | Alta (Ejecución con caché local) |
+| **1. Procesamiento local y anotación en línea** | `INV-LOCAL-01` | **Archivos locales y SQLite; consultas externas de variantes configurables** | Alta (Ejecución CLI local) | Baja (Subida obligatoria de datos genéticos) | Alta (Visualización de archivos locales) | Alta (Ejecución con caché local) |
 | **2. Redacción de Logs (Loci y rsID)** | `INV-PRIVACY-02` | **Integrada (`redact_for_logfile` protege privacidad)** | Nula (Loci impresos en logs estándar) | Riesgo (Coordenadas registradas en servidores remotos) | Nula (Sesiones con coordenadas locales) | Nula (Registro sin enmascarar) |
 | **3. GUI Interactiva y PWA** | `INV-INSPECT-03` | **GUI Desktop (ttkbootstrap) + PWA Companion** | Nula (Solo CLI) | Solo portal web | Navegador de tracks enriquecido | Nula (Solo CLI) |
 | **4. Ingestión Multiformato** | `INV-CONVERT-04` | **VCF v4.2, gVCF, 23andMe, FASTA (Nativo)** | Solo VCF/BCF (Requiere scripts adicionales) | Solo VCF | Solo visualización BAM/VCF | Solo VCF |
@@ -139,8 +141,8 @@ VFDistiller está diseñado para resolver los desafíos de filtrado de datos gen
 
 VFDistiller se desarrolla y mantiene siguiendo diez invariantes de gobernanza y ejecución:
 
-- **`INV-LOCAL-01` (100% Local-First y Cero Egress):** Todos los archivos genómicos, VCFs convertidos, referencias y bases de datos SQLite residen exclusivamente en la estación local. Cero telemetría, cero analíticas, cero salida automatizada a la nube.
-- **`INV-PRIVACY-02` (Redacción Automática de Loci y rsID en Logs):** Las coordenadas genómicas sensibles y rsIDs se eliminan automáticamente de los registros persistentes mediante `redact_for_logfile` (cumpliendo con RGPD Art. 9 y GenDG).
+- **`INV-LOCAL-01` (Procesamiento local y anotación en línea):** El procesamiento de archivos y el almacenamiento SQLite son locales. Los servicios de anotación activados reciben identificadores, posiciones y alelos de referencia/alternativos.
+- **`INV-PRIVACY-02` (`redact_for_logfile`):** `redact_for_logfile` oculta ciertos identificadores de variantes en los registros locales. Esta función no impide consultas externas ni demuestra cumplimiento legal.
 - **`INV-INSPECT-03` (GUI de Escritorio Accesible y Filtrado Transparente):** Inspección visual completa de registros de variantes con la GUI ttkbootstrap y la PWA complementaria; los criterios de filtrado son totalmente configurables y auditables.
 - **`INV-CONVERT-04` (Ingestión Multiformato y Paridad de Estándares):** Conversión e ingestión fluida de VCF v4.2, gVCF, 23andMe crudo y FASTA sin necesidad de cadenas de herramientas Unix (`bcftools`, `samtools`, `pysam`).
 - **`INV-OFFLINE-05` (Capacidad de Anotación y Frecuencias Sin Conexión):** Anotación local rápida con SQLite LightDB (gnomAD) sin requerir internet, complementada con endpoints REST asíncronos opcionales (VEP, MyVariant.info).
@@ -388,7 +390,7 @@ VFDistiller está comprometido con la transparencia absoluta del software libre.
 <a id="seguridad--reporte-de-vulnerabilidades"></a>
 ## 16. Seguridad y Reporte de Vulnerabilidades
 
-- **Local-First y Cero Egress:** Los archivos de pacientes y variantes genéticas nunca abandonan el dispositivo local.
+- **Procesamiento local y anotación en línea:** El procesamiento de archivos y el almacenamiento SQLite son locales. Los servicios de anotación activados reciben identificadores, posiciones y alelos de referencia/alternativos.
 - **Redacción Automática de Logs:** `MultiSinkLogger` elimina automáticamente coordenadas cromosómicas y rsIDs mediante `redact_for_logfile`.
 - **SLA de Respuesta de Seguridad de 48 Horas:** Toda vulnerabilidad recibe respuesta inicial en un plazo máximo de 48 horas y evaluación en 5 días laborables.
 - **Reporte Privado:** Informe vulnerabilidades mediante [Security Advisories de GitHub](https://github.com/biotec-line/VFDistiller/security/advisories) o por correo electrónico a `security@biotec-line.org` / `security@open-bricks.org`. Más detalles en [`SECURITY.md`](SECURITY.md).
