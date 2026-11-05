@@ -217,3 +217,38 @@
 4. **Remote-Synchronisation & Plan-D-Spiegelung:**
    - Commits nach `origin/main` synchronisiert und via `git ls-remote` rückgelesen.
    - Aktualisierter Plan-D-Stand nach OneDrive `BIO/REL-PUB_VFDistiller` gespiegelt.
+
+---
+
+## 2026-10-18 — Pfad B: Discoverability, Visual Architecture, Four-View Topology & Contract Tests
+
+### 1. Ausgangslage & Kriterien
+- Repository: `biotec-line/VFDistiller` (`C:\_Local_DEV\repos\VFDistiller`)
+- Version: `17.0.2` (strikte Einhaltung von `T-20260920-167562623`: Version eingefroren, Änderungen unter `[Unreleased]`)
+- Branch: `main`
+- Lock-Status: `UNLOCKED` (0 aktive Locks via `lock_status.py`)
+- Cooldown: `PASS` (>225h Ruhezeit > 24h Cooldown, letzte Pfad B Prüfung am 2026-09-28 vor 20 Tagen)
+- Working Tree: 100% sauber
+- Live-Traffic: 530 Klone / 125 Unique Visitors (14 Tage) laut `traffic_chart.txt`
+
+### 2. Umgesetzte Maßnahmen (Pfad B)
+1. **Visuelle Vier-Sichten-Architekturtopologie (Section 6):**
+   - Vollständige ASCII Four-View Architectural Topology in `README.md` (`VIEW 1` bis `VIEW 4`) und `README.de.md` (`SICHT 1` bis `SICHT 4`) in Abschnitt 6 (Pipeline-Architektur & Datenfluss) integriert.
+   - Projektion aller 10 Governance- und Laufzeit-Invarianten: `INV-LOCAL-01` (100% Local-First / Zero-Egress), `INV-PRIVACY-02` (Automated Locus/rsID Log Redaction via `redact_for_logfile`), `INV-INSPECT-03` (ttkbootstrap GUI & PWA Companion), `INV-CONVERT-04` (Multi-Format Ingestion VCF/gVCF/23andMe/FASTA), `INV-OFFLINE-05` (Offline SQLite gnomAD LightDB), `INV-ACCEL-06` (Cython Hotpath Acceleration), `INV-EXPORT-07` (FORMAT Integrity & Multi-Format Research Export), `INV-UNPRIV-08` (Strict `RunAsInvoker` Mode), `INV-COMPLY-09` (Research Use Only IVDR EU 2017/746 Demarcation), `INV-SLA-10` (48h Security Response SLA).
+2. **Level 1 SBOM Re-Audit & Lizenz-Transparenz:**
+   - `THIRD_PARTY_LICENSES.md` mit Re-Audit Stand 2026-10-18 versehen; Bestätigung der 10-Invarianten-Kreuztabelle, Zero-Copyleft-Isolation für genomische Forschungsdaten und LGPLv3 § 4 Dynamic Linking Erklärung für `pystray`.
+   - `THIRD_PARTY_LICENSES.txt` mit `Last checked: 2026-10-18` und `Stand: 2026-10-18` aktualisiert.
+3. **Dokumentations- & Test-Parität:**
+   - Test-, Verified- und Last-Checked-Badges in `README.md`, `README.de.md` und `README.es.md` auf Stand `2026-10-18` synchronisiert.
+   - `llms.txt` Kontext-Index auf Stand `2026-10-18` aktualisiert.
+   - 18-Punkte-Schnellnavigation und alle dualen reciprocal HTML-Anker (`sec-01`..`sec-18`) bilateral verifiziert und intakt erhalten.
+4. **Automatisierte Vertragstests (`tests/test_metadata.py`):**
+   - 3 neue Contract-Tests (`test_ascii_four_view_architectural_topology_parity`, `test_third_party_licenses_audit_currency_20261018`, `test_changelog_and_marketing_log_pfad_b_20261018`) hinzugefügt.
+   - Vollsuite wächst auf 222+ Tests (100% grün via Pytest).
+5. **Version-Freeze Disziplin (T-20260920-167562623):**
+   - Version `17.0.2` strikt eingefroren; Release Notes unter `## [Unreleased]`.
+
+### 3. Actionable Discoverability Recommendations
+- `REC-20261018-01`: Registrierung in bio.tools (Elixir Tool Registry) für `vfdistiller` mit EDAM-Ontologie (Topic: Data architecture, analysis and design; Operation: Genetic variation analysis, Variant filtering; Format: VCF, FASTA).
+- `REC-20261018-02`: Vorbereitung eines GitHub Release-Entwurfs für v17.1.0 (sobald vom Nutzer autorisiert) mit gebündelten Windows Standalone Executables (`VFDistiller.exe`) und SHA-256 Hashes zur Minimierung von Hürden für nicht-technische klinische Forscher.
+- `REC-20261018-03`: Bereitstellung eines minimalen Beispiel-VCF-Datensatzes (`data/examples/sample_mini.vcf`) im Repository, damit Erstnutzer den vollständigen Filter-, Annotations- und Export-Workflow in unter 60 Sekunden ohne externe Downloads testen können.

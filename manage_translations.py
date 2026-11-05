@@ -20,8 +20,9 @@ if hasattr(sys.stdout, "reconfigure"):
     except Exception:
         pass
 
-TRANSLATION_FILE = "locales/translations.json"
-SOURCE_DIR = "."  # durchsucht rekursiv alle .py-Dateien ab hier
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TRANSLATION_FILE = os.path.join(BASE_DIR, "locales", "translations.json")
+SOURCE_DIR = BASE_DIR
 LANGUAGES: tuple[str, ...] = ("de", "en", "es", "zh", "ja", "ru")
 
 # Regex: Erkennung von text="..." in Tkinter-Widgets

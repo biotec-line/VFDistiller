@@ -25,6 +25,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Pfad B (Marketing & Design) Discoverability, Visual Topology & Contract Tests (2026-10-18)
+- **Visuelle Vier-Sichten-Architekturtopologie (Section 6)**: Zweisprachige ASCII Four-View Architectural Topology (`VIEW 1..VIEW 4` in `README.md` und `SICHT 1..SICHT 4` in `README.de.md`) in Abschnitt 6 integriert; vollständige Projektion aller 10 Architektur-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`).
+- **Level 1 SBOM & Lizenzaudit Re-Audit**: `THIRD_PARTY_LICENSES.md` und `THIRD_PARTY_LICENSES.txt` mit Re-Audit Stand 2026-10-18 aktualisiert; 10-Invarianten-Matrix, 5-Felder-Schema und Zero-Copyleft-Freiheit für genomische Forschungsdaten bestätigt.
+- **Dokumentations- & Test-Parität**: Shields.io Badges zweisprachig (EN/DE/ES) auf Stand 2026-10-18 synchronisiert; `llms.txt` Kontext-Index auf verifizierte Testsuite aktualisiert.
+- **Version-Freeze Disziplin (T-20260920-167562623)**: Version `17.0.2` in `pyproject.toml`, Quellcode und Manifesten strikt unverändert eingefroren belassen.
+- **Automatisierte Vertragstests**: `tests/test_metadata.py` um neue Vertragstests für die 4-Sichten-Architekturtopologie, bilaterale Sprachparität, SBOM Re-Audit-Währung und Testzählung erweitert.
+
 ### Turnusgemäßer Security- & License-Audit (2026-10-09)
 - **5-Felder-SBOM-Standardisierung (`THIRD_PARTY_LICENSES.txt`)**: Drittanbieter-Lizenzinventar vollständig auf das standardisierte 5-Felder-Schema (`Package:`, `License:`, `SPDX:`, `URL:`, `Notice:`) für alle 22 Laufzeit-, Export-, Test- und Build-Abhängigkeiten umgestellt; Re-Audit auf Stand 2026-10-09 dokumentiert und alle 10 Architektur-Invarianten (INV-LOCAL-01 bis INV-SLA-10) bestätigt.
 - **Sicherheitsrichtlinie & Private Advisories (`SECURITY.md`)**: Direkten Link zur vertraulichen GitHub Security Advisory Meldung (`https://github.com/biotec-line/VFDistiller/security/advisories/new`) zweisprachig (DE/EN) integriert; SLAs (48h Erstrückmeldung, 5 Werktage Triage) und Zero-Egress / Non-Elevation Invarianten bekräftigt.

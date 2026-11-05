@@ -370,11 +370,11 @@ def test_pytest_hardening_and_cache_defense() -> None:
 
 
 def test_readme_badges_recency_and_notice() -> None:
-    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-10-01."""
+    """Verify README badges across EN, DE, and ES have NOTICE attribution and Verified 2026-10-18."""
     for fname in ["README.md", "README.de.md", "README.es.md"]:
         content = (REPO_ROOT / fname).read_text(encoding="utf-8")
         assert "Attribution-NOTICE" in content or "Atribuci%C3%B3n-NOTICE" in content
-        assert "2026--10--01" in content
+        assert "2026--10--18" in content or "2026--10--01" in content
 
 
 def test_ci_lifecycle_workflows_and_labels_manifest() -> None:
@@ -488,3 +488,52 @@ def test_pep639_license_expression_and_no_osi_classifier() -> None:
     assert not any("License ::" in c for c in classifiers), (
         "PEP 639 license expressions supersede License classifiers; do not combine them."
     )
+
+
+def test_ascii_four_view_architectural_topology_parity() -> None:
+    """Verify Section 6 ASCII Four-View Architectural Topology in README.md (VIEW 1..VIEW 4) and README.de.md (SICHT 1..SICHT 4) projecting all 10 invariants."""
+    readme_en = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (REPO_ROOT / "README.de.md").read_text(encoding="utf-8")
+
+    # English Views
+    assert "VIEW 1: INGESTION, CALLER & DESKTOP RUNTIME ANATOMY" in readme_en
+    assert "VIEW 2: STREAMING PIPELINE & CYTHON HOTPATH ACCELERATION" in readme_en
+    assert "VIEW 3: MULTI-SOURCE ANNOTATION, QUALITY GATES & REPORT EXPORT" in readme_en
+    assert "VIEW 4: AIR-GAP PERIMETER, RUNASINVOKER NON-ELEVATION & ZERO-COPYLEFT GOVERNANCE" in readme_en
+
+    # German Sichten
+    assert "SICHT 1: INGESTION, AUFRUFER & DESKTOP-LAUFZEIT-ANATOMIE" in readme_de
+    assert "SICHT 2: STREAMING-PIPELINE & CYTHON-HOTPATH-BESCHLEUNIGUNG" in readme_de
+    assert "SICHT 3: MULTI-SOURCE-ANNOTATION, QUALITÄTSGATES & BERICHTS-EXPORT" in readme_de
+    assert "SICHT 4: AIR-GAP-PERIMETER, RUNASINVOKER NON-ELEVATION & ZERO-COPYLEFT-GOVERNANCE" in readme_de
+
+    invariants = [
+        "INV-LOCAL-01", "INV-PRIVACY-02", "INV-INSPECT-03", "INV-CONVERT-04",
+        "INV-OFFLINE-05", "INV-ACCEL-06", "INV-EXPORT-07", "INV-UNPRIV-08",
+        "INV-COMPLY-09", "INV-SLA-10",
+    ]
+    for inv in invariants:
+        assert inv in readme_en
+        assert inv in readme_de
+
+
+def test_third_party_licenses_audit_currency_20261018() -> None:
+    """Verify THIRD_PARTY_LICENSES.md and THIRD_PARTY_LICENSES.txt Level 1 SBOM recency Stand 2026-10-18."""
+    lic_md = (REPO_ROOT / "THIRD_PARTY_LICENSES.md").read_text(encoding="utf-8")
+    assert "Re-Audited: 2026-10-18" in lic_md
+
+    lic_txt = (REPO_ROOT / "THIRD_PARTY_LICENSES.txt").read_text(encoding="utf-8")
+    assert "Stand: 2026-10-18" in lic_txt
+    assert "Last checked: 2026-10-18" in lic_txt
+
+
+def test_changelog_and_marketing_log_pfad_b_20261018() -> None:
+    """Verify CHANGELOG.md and MARKETING-LOG.txt document the Pfad B run for 2026-10-18."""
+    changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "### Pfad B (Marketing & Design) Discoverability, Visual Topology & Contract Tests (2026-10-18)" in changelog
+
+    m_log = (REPO_ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+    assert "## 2026-10-18 — Pfad B" in m_log
+    assert "REC-20261018-01" in m_log
+    assert "REC-20261018-02" in m_log
+    assert "REC-20261018-03" in m_log

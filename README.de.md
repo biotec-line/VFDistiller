@@ -9,11 +9,11 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Genom-Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genom--Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Tests: 216 passed](https://img.shields.io/badge/Tests-216%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Tests: 222 passed](https://img.shields.io/badge/Tests-222%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Sicherheit: 48h SLA](https://img.shields.io/badge/Sicherheit-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Datenschutz: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Laufzeit: RunAsInvoker](https://img.shields.io/badge/Laufzeit-RunAsInvoker-green?style=flat)](SECURITY.md)
-[![Geprüft: 2026-10-01](https://img.shields.io/badge/Gepr%C3%BCft-2026--10--01-blue.svg)](SECURITY.md)
+[![Geprüft: 2026-10-18](https://img.shields.io/badge/Gepr%C3%BCft-2026--10--18-blue.svg)](SECURITY.md)
 [![Drittanbieter: Geprüft](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
 [![Marketing-Log](https://img.shields.io/badge/Marketing--Log-Aktiv-indigo?style=flat)](MARKETING-LOG.txt)
 [![LLM Bereit](https://img.shields.io/badge/LLM%20Bereit-llms.txt-orange?style=flat)](llms.txt)
@@ -235,6 +235,55 @@ flowchart TD
     QualityGate --> Outputs
 ```
 
+### Visuelle Vier-Sichten-Architekturtopologie
+
+```text
++==================================================================================================+
+|                    VFDISTILLER: VISUELLE VIER-SICHTEN-ARCHITEKTURTOPOLOGIE                       |
++==================================================================================================+
+|                                                                                                  |
+|  [SICHT 1: INGESTION, AUFRUFER & DESKTOP-LAUFZEIT-ANATOMIE]                                      |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • Multi-Format-Ingestion: VCF v4.2, gVCF, 23andMe-Rohdaten (.txt), Referenz-FASTA (.fa)      |  |
+|  | • Automatische Build-Erkennung: Koordinaten- & rsID-Marker-Klassifikation (GRCh37 / GRCh38)   |  |
+|  | • Interaktive Benutzeroberfläche: ttkbootstrap-Desktop-GUI & Web-Companion PWA (INV-INSPECT)  |  |
+|  | • Standard-Parität: Unix-freie Ingestion ohne bcftools / samtools / pysam (INV-CONVERT-04)   |  |
+|  | • KI-Agenten-Kontext: Maschinenlesbare Architektur- & Auffindbarkeits-Metadaten (llms.txt)    |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|                                                |                                                 |
+|                                                v                                                 |
+|  [SICHT 2: STREAMING-PIPELINE & CYTHON-HOTPATH-BESCHLEUNIGUNG]                                   |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • Streaming-VCF-Engine: Generatorbasierte Ingestion-Pipeline mit begrenztem Speicherbedarf   |  |
+|  | • Cython-Hotpaths: C-kompilierte Beschleunigungsmodule (vcf_parser, af_validator) (INV-ACCEL)  |  |
+|  | • Reiner Python-Fallback: Transparente Ausführung ohne vorhandenen C-Compiler                 |  |
+|  | • Lokaler Referenz-Cache: Thread-sichere SQLite-Verbindungspools & Worker-Isolation           |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|                                                |                                                 |
+|                                                v                                                 |
+|  [SICHT 3: MULTI-SOURCE-ANNOTATION, QUALITÄTSGATES & BERICHTS-EXPORT]                            |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • Offline-gnomAD LightDB: Lokale SQLite-Allelfrequenz-Lookup-Tabelle (INV-OFFLINE-05)         |  |
+|  | • Klinische Annotation: ClinVar ClinSig, CADD-Highlighting, Ensembl VEP, ALFA, TOPMed        |  |
+|  | • Mehrstufige Filterung: AF-Schwellenwerte (< 0.007), Read-Tiefe DP/GQ, Gen-Whitelists, PASS  |  |
+|  | • Forschungs-Export: Annotiertes VCF v4.2, Excel (.xlsx), CSV und PDF-Berichte (INV-EXPORT)  |  |
+|  | • FORMAT-Integrität: Erhaltung probenspezifischer Genotyp-Metriken (DP, GQ, AD, PL)          |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|                                                |                                                 |
+|                                                v                                                 |
+|  [SICHT 4: AIR-GAP-PERIMETER, RUNASINVOKER NON-ELEVATION & ZERO-COPYLEFT-GOVERNANCE]             |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • 100% Local-First / Zero-Egress: Sämtliche genetische Rohdaten bleiben lokal (INV-LOCAL-01)  |  |
+|  | • Automatische Log-Redaktion: redact_for_logfile schwärzt genomische Loci & rsIDs (INV-PRIV) |  |
+|  | • RunAsInvoker-Modus: Unprivilegierte Ausführung ohne UAC-Elevation oder Root (INV-UNPRIV)   |  |
+|  | • Zero-Copyleft-Isolation: Nutzerdaten frei von AGPL-Copyleft-Verpflichtungen                 |  |
+|  | • Dynamische Verlinkung: pystray-System-Tray-Konformität gemäß LGPLv3 Abschnitt 4            |  |
+|  | • Research Use Only (RUO): Nicht-klinische Forschungsgrenze (IVDR EU 2017/746, § 521 BGB)    |  |
+|  | • Sicherheits-SLA: Verbindliche 48h-SLA & security@biotec-line.org Kontakt (INV-SLA-10)       |  |
+|  +--------------------------------------------------------------------------------------------+  |
++==================================================================================================+
+```
+
 ### Screenshot-Galerie
 
 | Haupt-Arbeitsbereich | Filter- & Exportsteuerung |
@@ -401,7 +450,7 @@ Unter Windows kann der Start direkt über `START.bat` oder die Erstellung der St
 Das Repository erzwingt deterministische Qualitäts-Gates:
 
 ```bash
-# Gesamte Testsuite ausführen (216 passed, 10 subtests)
+# Gesamte Testsuite ausführen (222 passed, 10 subtests)
 python -m pytest
 
 # Schnelle Regressionstests

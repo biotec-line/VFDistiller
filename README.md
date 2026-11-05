@@ -9,11 +9,11 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Standards: VCF 4.2 | gVCF](https://img.shields.io/badge/Standards-VCF%204.2%20%7C%20gVCF-teal?style=flat)](https://samtools.github.io/hts-specs/)
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
-[![Tests: 216 passed](https://img.shields.io/badge/Tests-216%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Tests: 222 passed](https://img.shields.io/badge/Tests-222%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
 [![Privacy: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
 [![Runtime: RunAsInvoker](https://img.shields.io/badge/Runtime-RunAsInvoker-green?style=flat)](SECURITY.md)
-[![Verified: 2026-10-01](https://img.shields.io/badge/Verified-2026--10--01-blue.svg)](SECURITY.md)
+[![Verified: 2026-10-18](https://img.shields.io/badge/Verified-2026--10--18-blue.svg)](SECURITY.md)
 [![Third-Party: Audited](https://img.shields.io/badge/Third--Party-Audited-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active-indigo?style=flat)](MARKETING-LOG.txt)
 [![LLM Ready](https://img.shields.io/badge/LLM%20Ready-llms.txt-orange?style=flat)](llms.txt)
@@ -223,6 +223,55 @@ flowchart TD
     QualityGate --> Outputs
 ```
 
+### Visual Four-View Architectural Topology
+
+```text
++==================================================================================================+
+|                         VFDISTILLER: FOUR-VIEW ARCHITECTURAL TOPOLOGY                            |
++==================================================================================================+
+|                                                                                                  |
+|  [VIEW 1: INGESTION, CALLER & DESKTOP RUNTIME ANATOMY]                                           |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • Multi-Format Ingestion: VCF v4.2, gVCF, 23andMe Raw Data (.txt), Reference FASTA (.fa)     |  |
+|  | • Automated Build Detection: Coordinate & rsID Marker Classifier (GRCh37 / GRCh38)          |  |
+|  | • Interactive Desktop UI: ttkbootstrap / Tkinter GUI & Web Companion PWA (INV-INSPECT-03)   |  |
+|  | • Standards Parity: Zero-Unix Ingestion without bcftools / samtools / pysam (INV-CONVERT-04)|  |
+|  | • AI Agent Context: Machine-readable architecture & discoverability introspection (llms.txt) |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|                                                |                                                 |
+|                                                v                                                 |
+|  [VIEW 2: STREAMING PIPELINE & CYTHON HOTPATH ACCELERATION]                                      |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • Streaming VCF Engine: Generator-based processing pipeline with bounded memory footprint     |  |
+|  | • Cython Hotpaths: C-compiled acceleration modules (vcf_parser, af_validator) (INV-ACCEL-06)   |  |
+|  | • Pure-Python Fallback: Transparent execution on environments without a C compiler           |  |
+|  | • Offline Reference Cache: Local SQLite connection pool & thread-safe worker execution       |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|                                                |                                                 |
+|                                                v                                                 |
+|  [VIEW 3: MULTI-SOURCE ANNOTATION, QUALITY GATES & REPORT EXPORT]                                |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • Offline gnomAD LightDB: Local SQLite allele frequency lookup table (INV-OFFLINE-05)         |  |
+|  | • Clinical Annotation Layer: ClinVar ClinSig, CADD highlighting, Ensembl VEP, ALFA, TOPMed   |  |
+|  | • Multi-Level Filtering: AF thresholds (< 0.007), read depth DP/GQ, gene whitelists, PASS     |  |
+|  | • Research Export: Annotated VCF v4.2, Excel (.xlsx), CSV, and printable PDF (INV-EXPORT-07)  |  |
+|  | • FORMAT Integrity: Strict retention of sample-level genotype quality metrics (DP, GQ, AD, PL)|  |
+|  +--------------------------------------------------------------------------------------------+  |
+|                                                |                                                 |
+|                                                v                                                 |
+|  [VIEW 4: AIR-GAP PERIMETER, RUNASINVOKER NON-ELEVATION & ZERO-COPYLEFT GOVERNANCE]             |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | • 100% Local-First / Zero-Egress: All raw genetic data stays on user workstation (INV-LOCAL-01)|  |
+|  | • Automated Log Redaction: redact_for_logfile strips genomic loci & rsIDs (INV-PRIVACY-02)   |  |
+|  | • RunAsInvoker Mode: Unprivileged execution without UAC elevation or admin rights (INV-UNPRIV)|  |
+|  | • Zero-Copyleft Isolation: User genomic data exempt from AGPL copyleft obligations            |  |
+|  | • Dynamic Linking Assurance: pystray system tray compliance under LGPLv3 Section 4           |  |
+|  | • Research Use Only (RUO): Non-clinical research boundary (IVDR EU 2017/746, § 521 BGB)      |  |
+|  | • Security Response SLA: Binding 48h SLA & security@biotec-line.org contact (INV-SLA-10)     |  |
+|  +--------------------------------------------------------------------------------------------+  |
++==================================================================================================+
+```
+
 ### Screenshot Gallery
 
 | Main Workspace | Filter & Export Workspace |
@@ -387,7 +436,7 @@ On Windows workstations, you can simply run `START.bat` or build the standalone 
 The repository enforces deterministic quality gates across all releases:
 
 ```bash
-# Run complete test suite (216 passed, 10 subtests)
+# Run complete test suite (222 passed, 10 subtests)
 python -m pytest
 
 # Run fast quiet regression suite

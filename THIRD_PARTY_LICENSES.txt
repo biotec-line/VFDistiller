@@ -1,7 +1,7 @@
 # Third-Party Licenses & Level 1 SBOM
 
-Last checked: 2026-10-09 against PyPI metadata and local runtime environment.
-Audited: Stand: 2026-09-29 (Re-Audited: Stand: 2026-10-09 against Level 1 SBOM, 5-field schema and runtime invariants).
+Last checked: 2026-10-18 against PyPI metadata and local runtime environment.
+Audited: Stand: 2026-09-29 (Re-Audited: Stand: 2026-10-09, Stand: 2026-10-18 against Level 1 SBOM, 5-field schema and runtime invariants).
 
 Scope: direct dependencies declared in `pyproject.toml` and `requirements.txt`
 as well as optional export packages, packaging tools, and development tooling.

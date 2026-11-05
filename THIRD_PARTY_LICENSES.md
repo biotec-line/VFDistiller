@@ -1,7 +1,7 @@
 # Third-Party Licenses & Transparency Notice
 
 > **Project:** `biotec-line/VFDistiller` (Variant Fusion Distiller — Local-First VCF & Genetic Variant Annotation)<br>
-> **Audited:** 2026-09-29 (v17.0.2)<br>
+> **Audited:** 2026-09-29 / Re-Audited: 2026-10-18 (v17.0.2)<br>
 > **Repository License:** [AGPL-3.0-or-later](LICENSE)<br>
 > **Canonical Attribution & Statutory Disclaimer:** [NOTICE](NOTICE)<br>
 > **Plain-Text SBOM Companion:** [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt)<br>
