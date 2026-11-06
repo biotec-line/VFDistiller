@@ -227,7 +227,9 @@ def test_security_policy_bilingual_and_sla() -> None:
     assert "48 Stunden" in sec_text, "SECURITY.md must define 48h SLA in German"
     assert "48 hours" in sec_text, "SECURITY.md must define 48h SLA in English"
     assert "5 Werktagen" in sec_text or "5 business days" in sec_text, "SECURITY.md must define triage window"
-    assert "Local-First & Zero-Egress" in sec_text, "SECURITY.md must document Local-First commitment"
+    assert "Local processing and online annotation" in sec_text
+    assert "enabled by default" in sec_text
+    assert "reference/alternate alleles" in sec_text
     assert "Non-Elevation" in sec_text, "SECURITY.md must document Non-Elevation guarantee"
 
 

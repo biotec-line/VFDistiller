@@ -11,7 +11,7 @@
 [![Genome Builds: GRCh37 | GRCh38](https://img.shields.io/badge/Genome%20Builds-GRCh37%20%7C%20GRCh38-purple?style=flat)](https://www.ncbi.nlm.nih.gov/genome/guide/human/)
 [![Tests: 222 passed](https://img.shields.io/badge/Tests-222%20passed-success?style=flat&logo=pytest&logoColor=white)](tests/)
 [![Security: 48h SLA](https://img.shields.io/badge/Security-48h%20SLA-blue?style=flat&logo=shield)](SECURITY.md)
-[![Privacy: 100% Local-First / Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Local--First%20%7C%20Zero--Egress-success?style=flat)](SECURITY.md)
+[![Privacy: Local files / Online annotation](https://img.shields.io/badge/Privacy-Local%20files%20%7C%20Online%20annotation-blue?style=flat)](PRIVACY_POLICY.md)
 [![Runtime: RunAsInvoker](https://img.shields.io/badge/Runtime-RunAsInvoker-green?style=flat)](SECURITY.md)
 [![Verified: 2026-10-18](https://img.shields.io/badge/Verified-2026--10--18-blue.svg)](SECURITY.md)
 [![Third-Party: Audited](https://img.shields.io/badge/Third--Party-Audited-blueviolet?style=flat)](THIRD_PARTY_LICENSES.md)
@@ -24,6 +24,8 @@
 
 > [!TIP]
 > **AI Agent & LLM Context**: This repository provides machine-readable architecture and discoverability metadata in [`llms.txt`](llms.txt) and audit history in [`MARKETING-LOG.txt`](MARKETING-LOG.txt).
+
+> **Local processing and online annotation:** Several online annotation sources are enabled by default. Starting an analysis can send variant query data to external services; reference downloads also use the network. Review the API settings before processing your files. See [Privacy Policy](PRIVACY_POLICY.md).
 
 ---
 
@@ -80,7 +82,7 @@ A bioinformatics desktop tool for processing, converting, and annotating researc
 
 | Capability | Description |
 |---|---|
-| **Local-First Privacy Architecture** | 100% offline data processing; raw sequencing inputs, generated VCFs, and SQLite databases remain on your local machine with zero automated cloud egress. |
+| **Local-First Privacy Architecture** | File processing and SQLite storage are local. Enabled annotation services receive variant identifiers, positions and reference/alternate alleles. |
 | **Automated Log Redaction** | Built-in `redact_for_logfile` automatically strips sensitive genomic loci and rsIDs from persistent disk logs to prevent inadvertent privacy leaks. |
 | **Universal Multi-Format Ingestion** | Native streaming ingestion of VCF v4.2, gVCF, 23andMe raw text format, and FASTA files without Unix-only dependencies (`pysam`, `bcftools`, `samtools`). |
 | **Automated Genome Build Detection** | Intelligent detection of GRCh37 (hg19) and GRCh38 (hg38) builds from header contigs, chromosome notations, and rsID coordinate markers. |
@@ -103,10 +105,10 @@ VFDistiller is engineered to solve genomic data filtering and variant annotation
 
 | Persona ID | Target Audience | Primary Need | Key VFDistiller Architectural Solution |
 |---|---|---|---|
-| `[PERSONA-01]` | **Clinical Geneticists & Molecular Pathologists (Research)** | Rapid desktop triage and variant prioritization for rare disease and somatic research cases without cloud dependencies. | Windows-first ttkbootstrap GUI, integrated offline gnomAD LightDB (SQLite), ClinVar ClinSig, CADD highlighting, and zero-egress local processing. |
+| `[PERSONA-01]` | **Clinical Geneticists & Molecular Pathologists (Research)** | Rapid desktop triage and variant prioritization for rare disease and somatic research cases without cloud dependencies. | Local desktop analysis with gnomAD LightDB; online sources depend on configuration. |
 | `[PERSONA-02]` | **Bioinformatics Core Facility Engineers & Pipeline Developers** | Converting between consumer/raw data (23andMe, raw FASTA) and standard research VCF/gVCF formats on Windows workstations. | Streaming VCF/gVCF parsing without Unix tools (`bcftools`/`pysam`), automated GRCh37/GRCh38 build detection, 5x Cython acceleration, and clean PEP 621 Python architecture. |
 | `[PERSONA-03]` | **Rare Disease Researchers & Academic Genomic Analysts** | Transparent filtering by allele frequencies (AF < 0.007), read depth, pathogenicity thresholds, and gene whitelists. | Local-first SQLite indexing, custom gene list filtering, INFO field recycling, and multi-format export (Excel, PDF reports, annotated VCF) with preserved FORMAT metrics. |
-| `[PERSONA-04]` | **Privacy-Conscious Data Stewards & Offline Clinical Lab IT** | Absolute compliance with genetic privacy directives (GDPR / DSGVO Art. 9, GenDG), ensuring raw sequence variants never leak into external logs. | 100% offline-capable architecture, automated logfile redaction (`redact_for_logfile` eliminating rsIDs/genomic loci), unprivileged `RunAsInvoker` execution, and strict Research Use Only boundary. |
+| `[PERSONA-04]` | **Privacy-Conscious Data Stewards & Offline Clinical Lab IT** | Review enabled annotation sources and the variant query data sent to each service. | Local desktop analysis with gnomAD LightDB; online sources depend on configuration. `redact_for_logfile`, `RunAsInvoker`, Research Use Only. |
 
 ### High-Intent Search Queries
 
@@ -116,7 +118,7 @@ To facilitate discoverability across scientific repositories, package managers, 
 - `23andMe raw data to annotated VCF converter python` — Direct conversion of direct-to-consumer genotyping text files to research VCF.
 - `gVCF streaming parser without bcftools pysam dependencies` — Windows-compatible genomic VCF parser.
 - `research-grade genetic variant filtering tool CADD ClinVar` — Prioritize SNVs and indels by CADD score and ClinSig.
-- `privacy-preserving clinical genomics analysis desktop app` — Zero-egress genomics workstation application.
+- `local variant analysis with configurable online annotation` — File processing and SQLite storage are local. Enabled annotation services receive variant identifiers, positions and reference/alternate alleles.
 - `VCF format metrics preservation multi-sample export excel pdf` — Export filtered variant tables to Excel and PDF with DP/GQ metrics.
 - `Cython accelerated VCF parser bioinformatics desktop workstation` — High-performance compiled C-extensions for variant processing.
 
@@ -133,7 +135,7 @@ The following matrix compares VFDistiller against existing bioinformatics tools 
 
 | Technical Dimension | Governance Invariant | VFDistiller | Unix Shell Pipelines (bcftools/samtools) | Cloud Variant Portals (BaseSpace/VarSome) | Desktop Browsers (IGV) | Annotation Engines (VEP / SnpEff CLI) |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **1. Offline-First & Zero Egress** | `INV-LOCAL-01` | **100% Local-First (Local disk, SQLite, zero telemetry)** | High (Local CLI execution) | Low (Mandatory cloud upload of raw genetic data) | High (Local file viewing) | High (Local cache execution) |
+| **1. Local processing and online annotation** | `INV-LOCAL-01` | **Local files and SQLite; configurable external variant queries** | High (Local CLI execution) | Low (Mandatory cloud upload of raw genetic data) | High (Local file viewing) | High (Local cache execution) |
 | **2. Locus & rsID Log Redaction** | `INV-PRIVACY-02` | **Built-in (`redact_for_logfile` protects privacy)** | None (Loci printed to stdout/stderr logs) | Risk (Query coordinates logged on remote servers) | None (Raw coordinate sessions saved locally) | None (Unmasked logging) |
 | **3. Interactive GUI & PWA Companion** | `INV-INSPECT-03` | **Desktop GUI (ttkbootstrap) + Web Companion PWA** | None (Headless CLI only) | Web browser portal only | Rich genome track browser | None (Headless CLI only) |
 | **4. Multi-Format Ingestion** | `INV-CONVERT-04` | **VCF v4.2, gVCF, 23andMe, FASTA (Native)** | VCF/BCF only (Requires custom conversion scripts) | VCF only (Strict formatting requirements) | BAM/VCF viewing only (No conversion) | VCF only |
@@ -155,8 +157,8 @@ The following matrix compares VFDistiller against existing bioinformatics tools 
 
 VFDistiller is architected and maintained according to ten foundational governance and runtime invariants:
 
-- **`INV-LOCAL-01` (100% Local-First & Zero Egress):** All genomic sequencing files, converted VCFs, genome references, SQLite databases, and local settings reside solely on the local workstation. Zero telemetry, zero analytics, zero automated cloud egress.
-- **`INV-PRIVACY-02` (Automated Locus & rsID Log Redaction):** Sensitive genomic coordinates and rsIDs are automatically stripped from persistent logs via `redact_for_logfile`, strictly protecting genetic privacy according to GDPR/DSGVO Art. 9 and GenDG.
+- **`INV-LOCAL-01` (Local processing and online annotation):** File processing and SQLite storage are local. Enabled annotation services receive variant identifiers, positions and reference/alternate alleles.
+- **`INV-PRIVACY-02` (`redact_for_logfile`):** `redact_for_logfile` redacts selected variant identifiers from local logs. Log redaction does not prevent external annotation requests or establish legal compliance.
 - **`INV-INSPECT-03` (Accessible Desktop GUI & Transparent Filtering):** Full visual inspection of variant records via ttkbootstrap desktop GUI and Web Companion PWA; filter criteria (AF thresholds, CADD score, ClinSig, read depth) are completely auditable and user-configurable.
 - **`INV-CONVERT-04` (Multi-Format Ingestion & Standards Parity):** Seamless conversion and ingestion of VCF v4.2, gVCF, 23andMe raw text, and FASTA files without requiring Unix-only toolchains (`bcftools`, `samtools`, `pysam`).
 - **`INV-OFFLINE-05` (Offline Allele Frequency & Annotation Capability):** Fast local annotation using offline SQLite LightDB (gnomAD) without mandatory internet connectivity, supplemented by optional async REST endpoints (VEP, MyVariant.info).
@@ -478,7 +480,7 @@ VFDistiller is committed to complete open-source transparency. All runtime and d
 
 Security and genetic privacy are fundamental to VFDistiller's architecture:
 
-- **Local-First & Zero-Egress:** Sensitive patient and variant files never leave your device.
+- **Local processing and online annotation:** File processing and SQLite storage are local. Enabled annotation services receive variant identifiers, positions and reference/alternate alleles.
 - **Automated Log Redaction:** Persistent logs generated by `MultiSinkLogger` automatically scrub chromosome positions, rsIDs, and patient filepaths via `redact_for_logfile`.
 - **48-Hour Security Response SLA:** All reported security vulnerabilities receive an initial response within 48 hours and a triage assessment within 5 business days.
 - **Private Reporting:** Report vulnerabilities via GitHub [Security Advisories](https://github.com/biotec-line/VFDistiller/security/advisories) or email `security@biotec-line.org` / `security@open-bricks.org`. For full details, see [`SECURITY.md`](SECURITY.md).
