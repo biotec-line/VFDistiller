@@ -235,10 +235,31 @@ except ImportError:
 __version__ = "17.0"
 APP_VERSION = "V17"
 APP_NAME = "Variant Fusion Pro"
-# PyInstaller One-File: _MEIPASS fuer gebundelte Daten, EXE-Pfad fuer User-Dateien
+def _resolve_user_data_dir(exe_dir: str) -> str:
+    """Ordner fuer Nutzerdateien (Einstellungen, Cache, Log, Ressourcen, Downloads).
+
+    Neben der EXE, solange er beschreibbar ist (portable Nutzung). Im MSIX/Store-Container ist das
+    Installationsverzeichnis schreibgeschuetzt -> %LOCALAPPDATA%/VariantFusion, derselbe Ort, den
+    VariantDB._get_writable_db_dir seit V17.3 fuer die Datenbank nutzt.
+    """
+    probe = os.path.join(exe_dir, ".vf_write_test")
+    try:
+        with open(probe, "w") as f:
+            f.write("ok")
+        os.remove(probe)
+        return exe_dir
+    except OSError:
+        data_dir = os.path.join(os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), "VariantFusion")
+        os.makedirs(data_dir, exist_ok=True)
+        return data_dir
+
+
+# PyInstaller One-File: _MEIPASS fuer gebundelte Daten, BASE_DIR fuer User-Dateien
+# (EXE-Ordner bzw. im MSIX-Container %LOCALAPPDATA%/VariantFusion)
 if getattr(sys, 'frozen', False):
-    BASE_DIR = os.path.dirname(sys.executable)
-    _BUNDLE_DIR = getattr(sys, '_MEIPASS', BASE_DIR)
+    _EXE_DIR = os.path.dirname(sys.executable)
+    BASE_DIR = _resolve_user_data_dir(_EXE_DIR)
+    _BUNDLE_DIR = getattr(sys, '_MEIPASS', _EXE_DIR)
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     _BUNDLE_DIR = BASE_DIR
