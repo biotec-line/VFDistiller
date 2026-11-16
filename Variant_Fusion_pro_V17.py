@@ -24051,8 +24051,38 @@ class App(ttk.Window):
             import traceback
             logger.log(traceback.format_exc())
 
+    @staticmethod
+    def _compute_tooltip_position(
+        widget_x: int,
+        widget_y: int,
+        widget_w: int,
+        widget_h: int,
+        tip_w: int,
+        tip_h: int,
+        screen_w: int,
+        screen_h: int,
+        margin: int = 8,
+    ) -> tuple[int, int]:
+        """Berechnet eine innerhalb des sichtbaren Bildschirms liegende Tooltip-Position."""
+        pref_x = widget_x + max(margin, widget_w // 2)
+        max_x = max(margin, screen_w - tip_w - margin)
+        x = max(margin, min(pref_x, max_x))
+
+        below_y = widget_y + widget_h + 8
+        above_y = widget_y - tip_h - 6
+        max_y = max(margin, screen_h - tip_h - margin)
+
+        if below_y + tip_h <= screen_h - margin:
+            y = max(margin, below_y)
+        elif above_y >= margin:
+            y = above_y
+        else:
+            y = max(margin, min(below_y, max_y))
+
+        return x, y
+
     def _attach_tooltip(self, widget, text: str, delay_ms: int = 350):
-        """Ergaenzt kompakten GUI-Controls einen fokussierbaren Hilfetext."""
+        """Ergänzt kompakten GUI-Controls einen fokussierbaren, umgebrochenen Hilfetext."""
         if not widget or not text:
             return
 
@@ -24082,11 +24112,9 @@ class App(ttk.Window):
             try:
                 if not widget.winfo_exists():
                     return
-                x = widget.winfo_rootx() + max(8, widget.winfo_width() // 2)
-                y = widget.winfo_rooty() + widget.winfo_height() + 8
                 tooltip = tk.Toplevel(widget)
+                tooltip.withdraw()
                 tooltip.wm_overrideredirect(True)
-                tooltip.wm_geometry(f"+{x}+{y}")
                 label = tk.Label(
                     tooltip,
                     text=text,
@@ -24096,8 +24124,27 @@ class App(ttk.Window):
                     relief="solid",
                     padx=8,
                     pady=4,
+                    wraplength=420,
+                    justify="left",
                 )
                 label.pack()
+                tooltip.update_idletasks()
+                tip_w = max(tooltip.winfo_reqwidth(), 1)
+                tip_h = max(tooltip.winfo_reqheight(), 1)
+                screen_w = max(widget.winfo_screenwidth(), tip_w + 16)
+                screen_h = max(widget.winfo_screenheight(), tip_h + 16)
+                x, y = self._compute_tooltip_position(
+                    widget.winfo_rootx(),
+                    widget.winfo_rooty(),
+                    widget.winfo_width(),
+                    widget.winfo_height(),
+                    tip_w,
+                    tip_h,
+                    screen_w,
+                    screen_h,
+                )
+                tooltip.wm_geometry(f"+{x}+{y}")
+                tooltip.deiconify()
                 state["window"] = tooltip
             except Exception:
                 hide_tooltip()
@@ -24116,6 +24163,7 @@ class App(ttk.Window):
             ("<FocusOut>", hide_tooltip),
             ("<ButtonPress>", hide_tooltip),
             ("<Escape>", hide_tooltip),
+            ("<Destroy>", hide_tooltip),
         ):
             widget.bind(event, handler, add="+")
 

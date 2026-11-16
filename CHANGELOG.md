@@ -25,6 +25,10 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### UX- & Accessibility-Review: Viewport-Clamping & Zeilenumbruch für Tooltips (2026-11-16)
+- **Tooltip-Viewport-Clamping & Flip-Above (`_compute_tooltip_position`, `_attach_tooltip`)**: Fokus- und Hover-Tooltips in `Variant_Fusion_pro_V17.py` werden vor dem Einblenden vermessen (`wraplength=420`, `justify="left"`), innerhalb der sichtbaren Bildschirmgrenzen gehalten und bei Platzmangel am unteren Rand automatisch oberhalb des jeweiligen Steuerelements positioniert; `<Destroy>`-Cleanup verhindert verwaiste Tooltip-Fenster nach Dialog-Schließung.
+- **Vertrags- & Live-GUI-Tests**: `tests/test_ui_accessibility.py` prüft `_compute_tooltip_position`, `<Destroy>`-Bindung sowie das reale Fokus-Tooltip-Verhalten im isolierten GUI-Smoketest.
+
 ### Pfad B (Marketing & Design) Discoverability, Visual Topology & Contract Tests (2026-10-18)
 - **Visuelle Vier-Sichten-Architekturtopologie (Section 6)**: Zweisprachige ASCII Four-View Architectural Topology (`VIEW 1..VIEW 4` in `README.md` und `SICHT 1..SICHT 4` in `README.de.md`) in Abschnitt 6 integriert; vollständige Projektion aller 10 Architektur-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`).
 - **Level 1 SBOM & Lizenzaudit Re-Audit**: `THIRD_PARTY_LICENSES.md` und `THIRD_PARTY_LICENSES.txt` mit Re-Audit Stand 2026-10-18 aktualisiert; 10-Invarianten-Matrix, 5-Felder-Schema und Zero-Copyleft-Freiheit für genomische Forschungsdaten bestätigt.

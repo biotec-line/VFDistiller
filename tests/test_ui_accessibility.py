@@ -229,7 +229,7 @@ def test_a11y_translations_parity_and_umlaut_hygiene():
 
 
 def test_live_gui_isolated_smoke():
-    """Verify live App creation and keybindings in an isolated Python process."""
+    """Verify live App creation, keybindings, and tooltip viewport clamping in an isolated Python process."""
     smoke_script = """
 import sys
 sys.path.insert(0, ".")
@@ -249,6 +249,38 @@ assert "<Key-space>" in tree_b
 assert "<Key-Return>" in tree_b
 assert "<Control-Key-c>" in tree_b or "<Control-Key-C>" in tree_b
 assert "<Control-Key-a>" in tree_b or "<Control-Key-A>" in tree_b
+assert "<Key-Escape>" in tree_b or "<Escape>" in tree_b
+assert "<Destroy>" in tree_b
+
+# Verify tooltip viewport clamping helper
+assert App._compute_tooltip_position(100, 100, 80, 30, 200, 40, 1280, 720) == (140, 138)
+assert App._compute_tooltip_position(1150, 100, 100, 30, 300, 40, 1280, 720) == (972, 138)
+assert App._compute_tooltip_position(200, 680, 100, 30, 200, 40, 1280, 720) == (250, 634)
+x_tall, y_tall = App._compute_tooltip_position(0, 0, 1280, 720, 420, 60, 1280, 720)
+assert 8 <= x_tall <= 1280 - 420 - 8
+assert 8 <= y_tall <= 720 - 60 - 8
+
+# Trigger delayed tooltip end-to-end on app.tree and verify wraplength & geometry bounds
+app._attach_tooltip(app.tree, "Langer Hilfetext " * 10, delay_ms=10)
+app.tree.event_generate("<FocusIn>")
+import time
+deadline = time.time() + 1.0
+while app.tree._vf_tooltip_state.get("window") is None and time.time() < deadline:
+    app.update()
+    time.sleep(0.01)
+
+tip_win = app.tree._vf_tooltip_state.get("window")
+assert tip_win is not None, "Expected tooltip window to appear on FocusIn"
+lbl = tip_win.winfo_children()[0]
+assert int(lbl.cget("wraplength")) == 420
+assert str(lbl.cget("justify")) == "left"
+sw, sh = app.winfo_screenwidth(), app.winfo_screenheight()
+assert 0 <= tip_win.winfo_x() <= max(8, sw - tip_win.winfo_reqwidth())
+assert 0 <= tip_win.winfo_y() <= max(8, sh - tip_win.winfo_reqheight())
+
+app.tree.event_generate("<FocusOut>")
+app.update()
+assert app.tree._vf_tooltip_state.get("window") is None
 
 app.destroy()
 """
@@ -260,3 +292,37 @@ app.destroy()
         timeout=30,
     )
     assert result.returncode == 0, f"Live GUI smoke failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+
+
+def test_tooltip_position_clamping_unit():
+    """Verify tooltip viewport placement logic handles right-edge, bottom-flip, and small screens."""
+    import ast
+    import textwrap
+
+    src = SRC_PATH.read_text(encoding="utf-8")
+    tree = ast.parse(src)
+    fn_src = None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name == "_compute_tooltip_position":
+            fn_src = textwrap.dedent(ast.get_source_segment(src, node))
+            break
+    assert fn_src, "_compute_tooltip_position not found in Variant_Fusion_pro_V17.py"
+
+    ns = {}
+    exec(compile(fn_src, str(SRC_PATH), "exec"), ns)
+    pos_fn = ns["_compute_tooltip_position"]
+
+    # Normal space below widget
+    assert pos_fn(50, 80, 100, 24, 180, 32, 1920, 1080) == (100, 112)
+    # Clamped at right screen edge
+    x_right, y_right = pos_fn(1800, 80, 100, 24, 300, 32, 1920, 1080)
+    assert x_right == 1920 - 300 - 8
+    assert y_right == 112
+    # Flips above widget when placing below exceeds screen height
+    x_flip, y_flip = pos_fn(200, 1030, 120, 30, 200, 40, 1920, 1080)
+    assert x_flip == 260
+    assert y_flip == 1030 - 40 - 6
+    # Clamped safely inside tiny screens or tall widgets (e.g. Treeview)
+    x_clamp, y_clamp = pos_fn(10, 10, 1200, 700, 420, 80, 1280, 720)
+    assert 8 <= x_clamp <= 1280 - 420 - 8
+    assert 8 <= y_clamp <= 720 - 80 - 8
