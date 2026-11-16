@@ -92,6 +92,9 @@ def _build_minimal_project(base: Path):
     locales = base / "locales"
     locales.mkdir()
     (locales / "translations.json").write_text("{}", encoding="utf-8")
+    pkg = base / "vfdistiller"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text('__version__ = "17.0.2"\n', encoding="utf-8")
 
 
 def test_create_source_zip_produces_file(tmp_path):
@@ -142,3 +145,13 @@ def test_create_source_zip_includes_locales(tmp_path):
     with zipfile.ZipFile(zip_path) as zf:
         names = zf.namelist()
     assert any("translations.json" in n for n in names)
+
+
+def test_create_source_zip_includes_vfdistiller_package(tmp_path):
+    _load()
+    _build_minimal_project(tmp_path)
+    out_dir = tmp_path / "out"
+    zip_path = _msz.create_source_zip(version="TEST", base_dir=str(tmp_path), out_dir=str(out_dir))
+    with zipfile.ZipFile(zip_path) as zf:
+        names = [n.replace("\\", "/") for n in zf.namelist()]
+    assert any(n.endswith("vfdistiller/__init__.py") for n in names)

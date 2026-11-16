@@ -153,4 +153,5 @@ select = ["E", "F", "W"]
 ignore = ["E501"]
 
 [tool.setuptools]
+packages = ["vfdistiller"]
 py-modules = ["Variant_Fusion_pro_V17", "translator", "manage_translations", "app_icon_loader"]
