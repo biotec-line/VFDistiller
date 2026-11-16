@@ -58,6 +58,7 @@ SOURCE_RELEASE_FILES = [
 
 # Verzeichnisse die komplett ins Source-ZIP kommen
 SOURCE_RELEASE_DIRS = [
+    "vfdistiller",    # GUI-freies Kernpaket
     "locales",        # translations.json
     "cython_hotpath", # .pyx + setup.py (optional, Verzeichnis kann fehlen)
     "tests",          # Smoke- und Funktionstests

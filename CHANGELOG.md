@@ -25,6 +25,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Golden-VCF-Baseline, Verhaltensaudit & GUI-freie Strangler-Fig-Extraktion (2026-11-16)
+- **GUI-freies Kernpaket (`vfdistiller/`)**: Extraktion reiner Fach- und I/O-Module (`utils`, `vcf_io`, `quality`, `filters`, `db`, `converters`, `fastqmap`, `_source_tree`) ohne `tkinter`/`ttkbootstrap`-Abhängigkeit bei unverändertem klinischen Filter-, AF-None- und DB-Verhalten.
+- **Abwärtskompatible Re-Exports & Laufzeit-Bindings**: `Variant_Fusion_pro_V17.py` importiert und re-exportiert sämtliche extrahierten Symbole auf Top-Level und injiziert `Config`, `BASE_DIR`, `get_resource_manager` sowie `FASTA_PATHS`/`FASTA_URLS` über `configure_*_environment()`.
+- **Headless-CLI & Paketierung (`pyproject.toml`, `make_source_zip.py`, `VFDistiller.spec`)**: Neue CLI `python -m vfdistiller` (`--version`, `inspect`, `filter`, `db-stats`), `packages = ["vfdistiller"]` in `pyproject.toml` sowie Integration in Source-ZIP und PyInstaller-Spec.
+- **Golden-VCF- & Vertragstests (`tests/test_golden_vcf_pipeline.py`, `tests/test_vfdistiller_package_and_cli.py`)**: 24 deterministische End-to-End-Szenarien (inkl. historischem `7cb8f40`-vs-`main`-Abgleich) sowie Headless-Import-, Identitätsparitäts- und CLI-Tests.
+
 ### UX- & Accessibility-Review: Viewport-Clamping & Zeilenumbruch für Tooltips (2026-11-16)
 - **Tooltip-Viewport-Clamping & Flip-Above (`_compute_tooltip_position`, `_attach_tooltip`)**: Fokus- und Hover-Tooltips in `Variant_Fusion_pro_V17.py` werden vor dem Einblenden vermessen (`wraplength=420`, `justify="left"`), innerhalb der sichtbaren Bildschirmgrenzen gehalten und bei Platzmangel am unteren Rand automatisch oberhalb des jeweiligen Steuerelements positioniert; `<Destroy>`-Cleanup verhindert verwaiste Tooltip-Fenster nach Dialog-Schließung.
 - **Vertrags- & Live-GUI-Tests**: `tests/test_ui_accessibility.py` prüft `_compute_tooltip_position`, `<Destroy>`-Bindung sowie das reale Fokus-Tooltip-Verhalten im isolierten GUI-Smoketest.

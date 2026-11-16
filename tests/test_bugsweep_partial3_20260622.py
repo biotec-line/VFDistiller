@@ -13,12 +13,11 @@ assertTrue(needle in SRC, msg) is used so failures print a short message, not th
   A4 _flush_buffer: cleared the buffer in `finally` -> up to flush_size results silently
      dropped on a DB error; now cleared only on success.
 """
-import os
-from pathlib import Path
 import unittest
 
-_DEFAULT = Path(__file__).resolve().parent.parent / "Variant_Fusion_pro_V17.py"
-SRC = Path(os.environ.get("VFD_SRC", str(_DEFAULT))).read_text(encoding="utf-8")
+from vfdistiller._source_tree import load_project_source
+
+SRC = load_project_source()
 
 
 def has(n):
