@@ -39,7 +39,7 @@ Use one of the following secure channels:
 
 ### Security & Architectural Invariants
 
-- **Local-First & Zero-Egress by Design:** Genomic sequencing data (VCF, gVCF, FASTA, 23andMe) is processed strictly locally in offline mode. No patient or genomic data is ever transmitted to remote telemetry, tracking, or analytics services. External queries to scientific databases (e.g. NCBI, Ensembl, gnomAD, MyVariant.info) are explicitly initiated by user action and transmit only public locus coordinates over encrypted HTTPS connections, never personal or sample identities.
+- **Local processing and online annotation:** File processing and SQLite storage are local. Enabled annotation services receive variant identifiers, positions and reference/alternate alleles. Several sources are enabled by default; an analysis can issue requests automatically according to the API settings. Reference downloads also use the network. See [Privacy Policy](PRIVACY_POLICY.md).
 - **Non-Elevation / Least Privilege:** VFDistiller operates entirely in unprivileged user-space and never requires or requests administrative (root or UAC) privilege elevation.
 
 ### Scope
@@ -92,5 +92,5 @@ Nutzen Sie stattdessen:
 
 ### Sicherheits- und Architektur-Invarianten
 
-- **Local-First & Zero-Egress:** VFDistiller verarbeitet sensible genetische Daten (VCF, gVCF, FASTA, 23andMe) standardmäßig und ausnahmslos lokal im Offline-Modus auf dem Rechner des Anwenders. Es werden keinerlei Telemetrie-, Analyse- oder Nutzerverhaltensdaten übertragen. Abfragen an öffentliche Forschungsdatenbanken (NCBI, Ensembl, gnomAD, MyVariant.info) erfolgen rein anlassbezogen nach expliziter Nutzeraktion über verschlüsselte HTTPS-Verbindungen und übertragen ausschließlich Locus-Koordinaten, niemals Probandenidentitäten.
+- **Lokale Verarbeitung und Online-Annotation:** Dateiverarbeitung und SQLite-Speicherung erfolgen lokal. Aktivierte Annotationsdienste erhalten Variantenkennungen, Positionen und Referenz-/Alternativallele. Mehrere Quellen sind standardmäßig aktiviert; eine Analyse kann entsprechend den API-Einstellungen automatisch Anfragen senden. Referenzdownloads verwenden ebenfalls das Netzwerk. Siehe [Datenschutzerklärung](PRIVACY_POLICY.md).
 - **Non-Elevation / Minimale Rechtevergabe:** Die Anwendung läuft vollständig im unprivilegierten Benutzerkontext und erfordert oder beansprucht zu keinem Zeitpunkt Administrator- oder Root-Rechte (keine UAC-Elevation erforderlich).
