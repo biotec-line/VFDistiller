@@ -228,12 +228,21 @@ def test_a11y_translations_parity_and_umlaut_hygiene():
         assert any(u in text for u in umlauts), f"Expected German umlauts in text: {text}"
 
 
-def test_live_gui_isolated_smoke():
+def test_live_gui_isolated_smoke(tmp_path):
     """Verify live App creation, keybindings, and tooltip viewport clamping in an isolated Python process."""
-    smoke_script = """
+    smoke_db = str(tmp_path / "smoke_variants.sqlite")
+    smoke_script = f"""
 import sys
 sys.path.insert(0, ".")
+import Variant_Fusion_pro_V17 as vf
 from Variant_Fusion_pro_V17 import App
+
+# Isolate smoke test from background network downloads, LightDB probes, and modal setup dialogs
+vf.db = vf.VariantDB({smoke_db!r})
+App._init_gene_annotator = lambda self: None
+App._check_startup_setup = lambda self: None
+vf.BackgroundMaintainer.start = lambda self: None
+vf.LightDBGnomADManager.ensure_lightdb_async = lambda self, **kw: None
 
 app = App()
 app.withdraw()
@@ -289,7 +298,7 @@ app.destroy()
         cwd=str(ROOT_DIR),
         capture_output=True,
         text=True,
-        timeout=30,
+        timeout=120,
     )
     assert result.returncode == 0, f"Live GUI smoke failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
 

@@ -227,3 +227,12 @@ def test_cli_db_stats_reads_variantdb_without_creating_missing_files(tmp_path, c
     missing_db = tmp_path / "missing.sqlite"
     assert cli.main(["db-stats", str(missing_db)]) == 2
     assert not missing_db.exists()
+
+
+def test_flag_manager_default_stale_days_without_gui_sync():
+    fm = vfdistiller.Flag_and_Options_Manager()
+    assert fm.get_stale_days() == 365
+    assert fm.get_stale_days_full() == 30
+    flags = fm.get_all_flags()
+    assert flags["stale_days"] == 365
+    assert flags["stale_days_full"] == 30

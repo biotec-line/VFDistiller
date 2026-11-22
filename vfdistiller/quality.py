@@ -17,12 +17,17 @@ class QualityManager:
     - Vordefinierte Presets (research, clinical, strict, permissive, rma_sensitive)
     - Custom Settings
     - Einheitliche Quality-Gates für FILTER, QUAL, DP, GENOTYPE
+    - Dokumentiertes Standard-ODER-Gate ("PASS ODER QUAL", `strict_qual_gate=False`)
+      sowie optionales eigenständiges Mindest-QUAL-Gate (`strict_qual_gate=True`)
     - Thread-safe für GUI-Updates
 
     Usage:
         qm = QualityManager(preset="clinical")
         if qm.passes(record):
-            # Variante akzeptiert
+            # Variante akzeptiert (Default: PASS ODER QUAL)
+        qm_strict = QualityManager(preset="clinical", strict_qual_gate=True)
+        if qm_strict.passes(record):
+            # Variante erfüllt zusätzlich zwingend QUAL >= qual_threshold
     """
 
     # Vordefinierte Profile
@@ -32,11 +37,18 @@ class QualityManager:
     #
     #   ACHTUNG: Das Referenzgenom kann pathogene Allele enthalten!
     #   Bei Verdacht auf Reference Minor Alleles (RMAs) filter_homref=False setzen.
+    #
+    # HINWEIS zu strict_qual_gate:
+    #   False = Standardverhalten ("PASS ODER QUAL"): akzeptiert PASS-Varianten auch
+    #           dann, wenn QUAL < qual_threshold (oder QUAL='.') ist.
+    #   True  = Eigenständiges Mindest-QUAL-Gate: verwirft jede Variante mit
+    #           QUAL < qual_threshold unabhängig vom FILTER-Status.
     PRESETS = {
         "permissive": {
             "description": "Permissive - Maximale Sensitivität für Forschung",
             "filter_pass_only": False,
             "qual_threshold": 10.0,
+            "strict_qual_gate": False,
             "use_dp_filter": True,
             "min_dp": 5,
             "max_dp": None,
@@ -46,6 +58,7 @@ class QualityManager:
             "description": "Research - Standard für Forschungsprojekte",
             "filter_pass_only": True,
             "qual_threshold": 20.0,
+            "strict_qual_gate": False,
             "use_dp_filter": True,
             "min_dp": 8,
             "max_dp": None,
@@ -55,6 +68,7 @@ class QualityManager:
             "description": "Clinical - Empfohlen für klinische Anwendungen",
             "filter_pass_only": True,
             "qual_threshold": 30.0,
+            "strict_qual_gate": False,
             "use_dp_filter": True,
             "min_dp": 20,
             "max_dp": None,
@@ -64,6 +78,7 @@ class QualityManager:
             "description": "Strict - Maximale Spezifität",
             "filter_pass_only": True,
             "qual_threshold": 50.0,
+            "strict_qual_gate": False,
             "use_dp_filter": True,
             "min_dp": 30,
             "max_dp": None,
@@ -73,6 +88,7 @@ class QualityManager:
             "description": "RMA-Sensitive - Behält 0/0 für Reference Minor Allele Analyse",
             "filter_pass_only": True,
             "qual_threshold": 20.0,
+            "strict_qual_gate": False,
             "use_dp_filter": True,
             "min_dp": 10,
             "max_dp": None,
@@ -82,6 +98,7 @@ class QualityManager:
             "description": "Custom - Benutzerdefinierte Einstellungen",
             "filter_pass_only": True,
             "qual_threshold": 30.0,
+            "strict_qual_gate": False,
             "use_dp_filter": True,
             "min_dp": 10,
             "max_dp": None,
@@ -89,13 +106,15 @@ class QualityManager:
         },
     }
 
-    def __init__(self, preset="clinical", logger=None):
+    def __init__(self, preset="clinical", logger=None, strict_qual_gate: Optional[bool] = None):
         """
         Initialisiert QualityManager.
 
         Args:
             preset: Preset-Name ("research", "clinical", "strict", "permissive", "rma_sensitive", "custom")
             logger: Optional Logger-Instanz
+            strict_qual_gate: Optionaler Override für eigenständiges Mindest-QUAL-Gate
+                (Standard None -> übernimmt Preset-Wert `False`, d. h. "PASS ODER QUAL").
         """
         self.logger = logger
         self.current_preset = preset
@@ -109,6 +128,8 @@ class QualityManager:
             self.current_preset = preset
 
         self.settings = self.PRESETS[preset].copy()
+        if strict_qual_gate is not None:
+            self.settings["strict_qual_gate"] = bool(strict_qual_gate)
 
         # Statistiken
         self.stats = {
@@ -170,7 +191,8 @@ class QualityManager:
                            use_dp_filter=None,
                            min_dp=None,
                            max_dp=None,
-                           filter_homref=None):
+                           filter_homref=None,
+                           strict_qual_gate=None):
         """
         Setzt benutzerdefinierte Settings (Custom-Modus).
 
@@ -181,6 +203,7 @@ class QualityManager:
             min_dp: Minimum read depth
             max_dp: Maximum read depth (None = unbegrenzt)
             filter_homref: 0/0 Genotypen ausfiltern (False für RMA-Analyse)
+            strict_qual_gate: Eigenständiges Mindest-QUAL-Gate aktivieren (Standard False)
         """
         with self._lock:
             self.current_preset = "custom"
@@ -197,6 +220,8 @@ class QualityManager:
                 self.settings["max_dp"] = int(max_dp) if max_dp else None
             if filter_homref is not None:
                 self.settings["filter_homref"] = filter_homref
+            if strict_qual_gate is not None:
+                self.settings["strict_qual_gate"] = bool(strict_qual_gate)
 
             if self.logger:
                 homref_status = "ausfiltern" if self.settings.get('filter_homref', True) else "BEHALTEN (RMA-Modus)"
@@ -221,18 +246,30 @@ class QualityManager:
                 "preset": self.current_preset,
                 "filter_pass_only": self.settings["filter_pass_only"],
                 "qual_threshold": self.settings["qual_threshold"],
+                "strict_qual_gate": bool(self.settings.get("strict_qual_gate", False)),
                 "use_dp_filter": self.settings["use_dp_filter"],
                 "min_dp": self.settings["min_dp"],
                 "max_dp": self.settings["max_dp"],
                 "filter_homref": self.settings.get("filter_homref", True),
             }
 
-    def passes(self, record: dict) -> bool:
+    def passes(self, record: dict, *, strict_qual_gate: Optional[bool] = None) -> bool:
         """
         ✅ HAUPTMETHODE: Prüft ob Variante Quality-Gates besteht.
 
+        QUAL-/FILTER-Semantik (bewusst zweistufig):
+        - Standard (`strict_qual_gate=False`): Kombiniertes **"PASS ODER QUAL"**-Gate.
+          Bei `filter_pass_only=True` werden Nicht-`PASS`-Einträge (außer `.`) in Stufe 1
+          verworfen; `PASS`/`.`-Einträge bestehen Stufe 2 auch dann, wenn `QUAL < qual_threshold`
+          oder `QUAL='.'` ist, weil `FILTER=PASS` bereits die Caller-Freigabe trägt.
+        - Option (`strict_qual_gate=True`): Eigenständiges Mindest-QUAL-Gate.
+          Verwirft jede Variante mit fehlendem/ungültigem QUAL oder `QUAL < qual_threshold`
+          (`stats["failed_qual"] += 1`), selbst wenn `FILTER="PASS"` gesetzt ist.
+
         Args:
             record: VCF-Record dict mit Keys: filter, qual, info, fmt, samples
+            strict_qual_gate: Optionaler Aufruf-Override für das eigenständige Mindest-QUAL-Gate
+                (`None` nutzt `self.settings["strict_qual_gate"]`, Standard `False`).
 
         Returns:
             bool: True wenn akzeptiert, False wenn gefiltert
@@ -258,21 +295,23 @@ class QualityManager:
             except (ValueError, TypeError):
                 has_qual = False
 
-            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, BEWUSST NICHT geändert) ──────────────
-            # Beobachtung: An dieser Stelle ist `has_pass` durch den Kontrollfluss oben
-            # IMMER True (filter_pass_only=True → non-PASS wurde in der FILTER-Stufe bereits
-            # mit `return False` verworfen; filter_pass_only=False → has_pass=True gesetzt).
-            # Folge: `not has_pass and not has_qual` kann nie True werden — qual_threshold
-            # (Presets 20/30/50) wirkt damit als KOMBINIERTES "PASS ODER QUAL"-Gate, NICHT
-            # als eigenständiges QUAL-Mindest-Gate (QUAL allein verwirft keine Variante).
-            # Das ist möglicherweise BEABSICHTIGT (FILTER=PASS impliziert ausreichende
-            # Qualität). NICHT durch den automatischen Bugsweep geändert, weil:
-            #   (a) jede Änderung das KLINISCHE Filterverhalten verschiebt, und
-            #   (b) diese Logik in früheren Reviews mehrfach als "falsch" markiert wurde
-            #       und sich dann als korrekt/beabsichtigt herausstellte.
-            # Falls QUAL ein eigenständiges Gate sein SOLL: `if not has_qual: return False`.
-            # → Fachliche Entscheidung des Maintainers (Lukas), bewusst offen gelassen.
+            enforce_strict_qual = (
+                bool(self.settings.get("strict_qual_gate", False))
+                if strict_qual_gate is None
+                else bool(strict_qual_gate)
+            )
+
+            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, Maintainer-Entscheid 2026-11-21) ─────
+            # Standard (`strict_qual_gate=False`): Bewusstes "PASS ODER QUAL"-Verhalten —
+            # `has_pass` ist hier nach Stufe 1 True, sodass `QUAL` allein im Default-Modus
+            # keine `PASS`-Variante verwirft und bestehende Filterwirkung unverändert bleibt.
+            # Nur bei expliziter Option `strict_qual_gate=True` greift `qual_threshold` als
+            # eigenständiges Mindest-QUAL-Gate unabhängig vom FILTER-Status.
             # ───────────────────────────────────────────────────────────────────────────
+            if enforce_strict_qual and not has_qual:
+                self.stats["failed_qual"] += 1
+                return False
+
             if not has_pass and not has_qual:
                 # Weder PASS noch ausreichendes QUAL
                 self.stats["failed_qual"] += 1

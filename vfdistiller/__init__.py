@@ -23,12 +23,16 @@ from vfdistiller.converters import (
 from vfdistiller.db import VariantDB, configure_db_environment
 from vfdistiller.fastqmap import FASTQmap, configure_fastqmap_environment
 from vfdistiller.filters import (
+    CLIN_SIG_PRECEDENCE,
     AfNoneTreatmentManager,
     CodingFilter,
     FetchStatusManager,
     Flag_and_Options_Manager,
     MainFilterGate,
+    classify_clin_sig,
     configure_filter_environment,
+    is_clin_sig_allowed,
+    tokenize_clin_sig,
 )
 from vfdistiller.quality import QualityManager
 from vfdistiller.utils import (
@@ -91,6 +95,10 @@ __all__ = [
     "Flag_and_Options_Manager",
     "MainFilterGate",
     "CodingFilter",
+    "CLIN_SIG_PRECEDENCE",
+    "tokenize_clin_sig",
+    "classify_clin_sig",
+    "is_clin_sig_allowed",
     "configure_filter_environment",
     "VariantDB",
     "configure_db_environment",
