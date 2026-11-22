@@ -2,6 +2,7 @@
 """AF-None-Policies, Fetch-Status, Filter-Gate und Flag-Verwaltung."""
 from __future__ import annotations
 
+import re
 import threading
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
@@ -661,7 +662,7 @@ class Flag_and_Options_Manager:
         # ═══════════════════════════════════════════════════════════════════
         # CACHE STALE DAYS
         # ═══════════════════════════════════════════════════════════════════
-        self.stale_days: Optional[int] = None        # AF-Daten Staleness
+        self.stale_days: int = _cfg_int("STALE_DAYS_AF", 365)        # AF-Daten Staleness
         self.stale_days_full: int = _cfg_int("STALE_DAYS_FULL", 30)  # Vollannotation Staleness
 
         # ═══════════════════════════════════════════════════════════════════
@@ -1396,3 +1397,165 @@ class CodingFilter:
             "unknown": 0,
             "batches_processed": 0
         }
+
+
+# =============================================================================
+# CLINVAR CLINICAL SIGNIFICANCE TOKEN & PRECEDENCE CLASSIFICATION
+# =============================================================================
+
+CLIN_SIG_PRECEDENCE: Tuple[str, ...] = (
+    "conflicting",
+    "pathogenic",
+    "likely_pathogenic",
+    "vus",
+    "benign",
+    "likely_benign",
+    "other",
+    "missing",
+)
+
+_CLIN_SIG_SPLIT_RE = re.compile(r"[/,;|]+")
+_CLIN_SIG_WS_RE = re.compile(r"[\s_\-]+")
+_CLIN_SIG_MISSING_TOKENS = frozenset({"", ".", "-", "none", "null", "n/a", "na"})
+_CLIN_SIG_CONFLICTING_TOKENS = frozenset(
+    {
+        "conflicting",
+        "conflicting classifications of pathogenicity",
+        "conflicting interpretations of pathogenicity",
+        "conflicting data from submitters",
+    }
+)
+_CLIN_SIG_PATHOGENIC_TOKENS = frozenset(
+    {
+        "pathogenic",
+        "pathogenic low penetrance",
+    }
+)
+_CLIN_SIG_LIKELY_PATHOGENIC_TOKENS = frozenset(
+    {
+        "likely pathogenic",
+        "likely pathogenic low penetrance",
+    }
+)
+_CLIN_SIG_VUS_TOKENS = frozenset(
+    {
+        "vus",
+        "uncertain",
+        "uncertain significance",
+        "uncertain risk allele",
+    }
+)
+_CLIN_SIG_LIKELY_BENIGN_TOKENS = frozenset(
+    {
+        "likely benign",
+    }
+)
+_CLIN_SIG_BENIGN_TOKENS = frozenset(
+    {
+        "benign",
+    }
+)
+
+
+def tokenize_clin_sig(raw: Optional[str]) -> List[str]:
+    """Zerlegt kombinierte ClinVar-Strings an `/`, `,`, `;`, `|` in normalisierte Tokens.
+
+    Unterstriche und Bindestriche werden zu einzelnen Leerzeichen normalisiert,
+    Groß-/Kleinschreibung vereinheitlicht und leere Platzhalter (`.`, `-`, `None`, `null`)
+    entfernt.
+    """
+    if raw is None:
+        return []
+    text = str(raw).strip()
+    if not text or text.lower() in _CLIN_SIG_MISSING_TOKENS:
+        return []
+
+    tokens: List[str] = []
+    for part in _CLIN_SIG_SPLIT_RE.split(text):
+        norm = _CLIN_SIG_WS_RE.sub(" ", part.strip()).strip().lower()
+        if norm and norm not in _CLIN_SIG_MISSING_TOKENS:
+            tokens.append(norm)
+    return tokens
+
+
+def _classify_clin_sig_token(norm_token: str) -> str:
+    """Klassifiziert ein einzelnes normalisiertes ClinVar-Token exakt ohne Substring-Drift."""
+    if norm_token in _CLIN_SIG_CONFLICTING_TOKENS or norm_token.startswith("conflicting "):
+        return "conflicting"
+    if norm_token in _CLIN_SIG_PATHOGENIC_TOKENS:
+        return "pathogenic"
+    if norm_token in _CLIN_SIG_LIKELY_PATHOGENIC_TOKENS:
+        return "likely_pathogenic"
+    if norm_token in _CLIN_SIG_VUS_TOKENS:
+        return "vus"
+    if norm_token in _CLIN_SIG_LIKELY_BENIGN_TOKENS:
+        return "likely_benign"
+    if norm_token in _CLIN_SIG_BENIGN_TOKENS:
+        return "benign"
+    return "other"
+
+
+def classify_clin_sig(raw: Optional[str]) -> str:
+    """Bestimmt die kanonische klinische Signifikanz-Klasse per Token-/Vorrang-Logik.
+
+    Vorrangordnung:
+      1. `missing` — leer, `.`, `-`, `None`, `null`
+      2. `conflicting` — explizite Conflicting-Klassifikation (z. B.
+         `Conflicting_classifications_of_pathogenicity`,
+         `Conflicting_interpretations_of_pathogenicity`) ODER widersprüchliche
+         Kombination aus pathogenem und benignem Token im selben Eintrag.
+         Wird NIEMALS über Substring `"pathogenic"` als `pathogenic` eingestuft!
+      3. `pathogenic` — inkl. `Pathogenic/Likely_pathogenic`, `Pathogenic, drug_response`
+      4. `likely_pathogenic` — inkl. `Likely_pathogenic, low_penetrance`
+      5. `vus` — `Uncertain_significance`, `VUS`
+      6. `benign` — inkl. `Benign/Likely_benign`
+      7. `likely_benign` — `Likely_benign`
+      8. `other` — sonstige Annotationen (`drug_response`, `risk_factor`, `not_provided`, ...)
+    """
+    tokens = tokenize_clin_sig(raw)
+    if not tokens:
+        return "missing"
+
+    classes = {_classify_clin_sig_token(tok) for tok in tokens}
+    if "conflicting" in classes:
+        return "conflicting"
+
+    has_path_side = bool(classes & {"pathogenic", "likely_pathogenic"})
+    has_benign_side = bool(classes & {"benign", "likely_benign"})
+    if has_path_side and has_benign_side:
+        return "conflicting"
+
+    for candidate in ("pathogenic", "likely_pathogenic", "vus", "benign", "likely_benign", "other"):
+        if candidate in classes:
+            return candidate
+    return "other"
+
+
+def is_clin_sig_allowed(
+    raw: Optional[str],
+    *,
+    allow_path: bool = True,
+    allow_likely_path: bool = True,
+    allow_vus: bool = True,
+    allow_benign: bool = True,
+    allow_likely_benign: bool = True,
+    allow_conflicting: bool = True,
+    allow_other: bool = True,
+) -> bool:
+    """Prüft anhand der strikten Token-/Vorrang-Klasse, ob ein Eintrag sichtbar bleibt."""
+    cls = classify_clin_sig(raw)
+    if cls == "missing":
+        return True
+    if cls == "conflicting":
+        return bool(allow_conflicting)
+    if cls == "pathogenic":
+        return bool(allow_path)
+    if cls == "likely_pathogenic":
+        return bool(allow_likely_path)
+    if cls == "vus":
+        return bool(allow_vus)
+    if cls == "benign":
+        return bool(allow_benign)
+    if cls == "likely_benign":
+        return bool(allow_likely_benign)
+    return bool(allow_other)

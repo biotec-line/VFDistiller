@@ -2191,12 +2191,16 @@ from vfdistiller.converters import (
 from vfdistiller.db import VariantDB, configure_db_environment
 from vfdistiller.fastqmap import FASTQmap, configure_fastqmap_environment
 from vfdistiller.filters import (
+    CLIN_SIG_PRECEDENCE,
     AfNoneTreatmentManager,
     CodingFilter,
     FetchStatusManager,
     Flag_and_Options_Manager,
     MainFilterGate,
+    classify_clin_sig,
     configure_filter_environment,
+    is_clin_sig_allowed,
+    tokenize_clin_sig,
 )
 from vfdistiller.quality import QualityManager
 from vfdistiller.utils import (
@@ -18249,6 +18253,11 @@ class App(ttk.Window):
         allow_vus = self.postfilter_vus.get()
         allow_likely_path = self.postfilter_likely_path.get()
         allow_path = self.postfilter_path.get()
+        allow_conflicting = (
+            self.postfilter_conflicting.get()
+            if hasattr(self, "postfilter_conflicting")
+            else True
+        )
         
         # Impact allowed
         allow_high = self.postfilter_impact_high.get()
@@ -18287,36 +18296,26 @@ class App(ttk.Window):
                         pass
             
             # Clinical significance (checked = keep, missing = keep)
-            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, BEWUSST NICHT geändert) ──────────────
-            # Beobachtung: Die Klassifikation per Substring-`in` kann bei ClinVar-MEHRFACH-
-            # werten mehrdeutig sein (z. B. "Pathogenic/Likely_pathogenic", "Benign/Likely_
-            # benign"). Je nach exaktem DB-Stringformat (Trenner "/", "_" vs. Leerzeichen)
-            # greift evtl. der falsche Zweig (eine pathogen klassifizierte Variante könnte
-            # bei allow_likely_path=an / allow_path=aus durchrutschen). EIN möglicher robuster
-            # Ansatz: clin_sig an [/,|] tokenisieren und jedes Token exakt gegen die
-            # Allow-Flags prüfen. NICHT durch den automatischen Bugsweep geändert: hängt vom
-            # tatsächlichen clin_sig-Format der DB ab und verschiebt das KLINISCHE/Anzeige-
-            # Filterverhalten — fachliche Prüfung durch den Maintainer (Lukas) nötig.
+            # ── REVIEW-NOTIZ (Bugsweep 2026-06-22, Maintainer-Entscheid 2026-11-21) ─────
+            # Strikte Token-/Vorrang-Klassifikation (`is_clin_sig_allowed` / `classify_clin_sig`)
+            # für `/`, `,`, `;`, `|`-getrennte ClinVar-Mehrfachwerte statt Substring-Matching:
+            # `Conflicting_classifications_of_pathogenicity` / `Conflicting_interpretations_of_pathogenicity`
+            # bilden die eigene Klasse `conflicting` und werden niemals durch Substring `"pathogenic"`
+            # als `pathogenic` eingestuft; `Pathogenic/Likely_pathogenic`, `Benign/Likely_benign` usw.
+            # werden deterministisch per Vorrangordnung klassifiziert.
             # ───────────────────────────────────────────────────────────────────────────
             sig = row.get("clin_sig")
             if sig and not is_missing(sig):
-                s = sig.lower()
-                # Exclude if explicitly forbidden
-                if "pathogenic" in s and "likely pathogenic" not in s:
-                    if not allow_path:
-                        return False
-                if "likely pathogenic" in s:
-                    if not allow_likely_path:
-                        return False
-                if "benign" in s and "likely benign" not in s:
-                    if not allow_benign:
-                        return False
-                if "likely benign" in s:
-                    if not allow_likely_benign:
-                        return False
-                if "uncertain" in s or "vus" in s:
-                    if not allow_vus:
-                        return False
+                if not is_clin_sig_allowed(
+                    sig,
+                    allow_path=allow_path,
+                    allow_likely_path=allow_likely_path,
+                    allow_vus=allow_vus,
+                    allow_benign=allow_benign,
+                    allow_likely_benign=allow_likely_benign,
+                    allow_conflicting=allow_conflicting,
+                ):
+                    return False
             
             # Impact (checked = keep, missing = keep)
             imp = (row.get("impact") or "").upper()
