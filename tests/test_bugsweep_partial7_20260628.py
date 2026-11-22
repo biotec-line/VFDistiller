@@ -15,16 +15,13 @@ Teststrategie: Statische Quelltext-Assertions (SRC = Dateitext), da die
 StreamingFastaToGVCF-Methoden FASTA-Dateien + FAI-Index + externe
 Subprocess-Calls voraussetzen und keinen leichten Mock-Seam bieten.
 """
-import pathlib
 import re
 
-SRC_FILE = (
-    pathlib.Path(__file__).parent.parent / "Variant_Fusion_pro_V17.py"
-)
+from vfdistiller._source_tree import load_project_source
 
 
 def _src() -> str:
-    return SRC_FILE.read_text(encoding="utf-8")
+    return load_project_source()
 
 
 # ---------------------------------------------------------------------------

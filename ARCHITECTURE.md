@@ -4,21 +4,56 @@ Entwickler-Referenz fuer die interne Architektur von Variant Fusion Pro V17.
 
 ## Ueberblick
 
-VFDistiller ist eine monolithische Single-File-Anwendung (`Variant_Fusion_pro_V17.py`, ~25.000 Zeilen) mit optionalen Cython-Modulen. Die Architektur folgt einem Manager-Pattern mit zentralen Koordinations-Klassen.
+VFDistiller trennt per Strangler-Fig-Muster den GUI-freien Fach- und I/O-Kern (`vfdistiller/`) von der Desktop-GUI- und Pipeline-Orchestrierung in `Variant_Fusion_pro_V17.py` (mit optionalen Cython-Hotpaths). `Variant_Fusion_pro_V17.py` bindet Laufzeit-Konfigurationen über `configure_*_environment()`-Hooks ein und re-exportiert alle extrahierten Symbole abwärtskompatibel auf Top-Level.
+
+### Modulgrenzen (`vfdistiller/` vs. GUI-Shell)
+
+| Schicht / Modul | Verantwortung | GUI-Abhängigkeit (`tkinter`/`ttkbootstrap`) |
+|---|---|---|
+| `vfdistiller/utils.py` | Zeit/ETA, `safe_float`, `determine_is_coding`, `safe_nested_get`, `StopFlag` | Nein |
+| `vfdistiller/vcf_io.py` | VCF/gVCF-I/O, Parser (`smart`/`mmap`), FORMAT/DP, Genotyp-Normalisierung | Nein |
+| `vfdistiller/quality.py` | `QualityManager` (Presets, PASS/QUAL/DP/HomRef-Gates) | Nein |
+| `vfdistiller/filters.py` | `FetchStatusManager`, `AfNoneTreatmentManager`, `MainFilterGate`, `CodingFilter`, `Flag_and_Options_Manager` | Nein |
+| `vfdistiller/db.py` | `VariantDB` (SQLite/WAL/Batch-Upserts/Cache) | Nein |
+| `vfdistiller/converters.py` | HTTP-Retry-Session, FASTA/FAI, HGVS/SPDI, `StreamingFastaToGVCF` | Nein |
+| `vfdistiller/fastqmap.py` | Pure-Python `FASTQmap` (Read-Mapping, Indel/SNV-Caller) | Nein |
+| `vfdistiller/cli.py` + `__main__.py` | Headless-CLI (`--version`, `inspect`, `filter`, `db-stats`) | Nein |
+| `Variant_Fusion_pro_V17.py` | GUI-Shell (`App`), Async-`Distiller`, `BackgroundMaintainer`, `BackofficeCrawler`, Re-Exports | Ja |
+
+```mermaid
+flowchart TD
+    GUI["Variant_Fusion_pro_V17.py (GUI-Shell und Async-Orchestrierung)"] --> CFG["Runtime-Bindings (Config, BASE_DIR, ResourceManager)"]
+    CLI["vfdistiller/cli.py (Headless-CLI)"] --> Q["vfdistiller/quality.py (QualityManager)"]
+    CLI --> VIO["vfdistiller/vcf_io.py (VCF/gVCF-Parser und FORMAT/DP)"]
+    CLI --> DB["vfdistiller/db.py (VariantDB / SQLite)"]
+    GUI --> FLT["vfdistiller/filters.py (MainFilterGate und AF-None)"]
+    GUI --> CNV["vfdistiller/converters.py (FASTA/HGVS/StreamingGVCF)"]
+    GUI --> FQ["vfdistiller/fastqmap.py (FASTQmap)"]
+    GUI --> Q
+    GUI --> VIO
+    GUI --> DB
+    FLT --> DB
+    Q --> VIO
+    FQ --> CNV
+    FQ --> VIO
+    CFG --> DB
+    CFG --> FLT
+    CFG --> CNV
+```
 
 ```
 App (GUI, tkinter/ttkbootstrap)
- ├── Flag_and_Options_Manager .... Zentrale Settings-Verwaltung
- ├── MainFilterGate .............. Zentrale Filter-Entscheidungen
- │    ├── CodingFilter ........... Protein-Coding-Filter
- │    └── AfNoneTreatmentManager . AF-None-Policy
- ├── QualityManager .............. VCF-Record-Level-Filter
- ├── Distiller ................... Pipeline-Orchestrierung
+ ├── Flag_and_Options_Manager .... Zentrale Settings-Verwaltung (`vfdistiller/filters.py`)
+ ├── MainFilterGate .............. Zentrale Filter-Entscheidungen (`vfdistiller/filters.py`)
+ │    ├── CodingFilter ........... Protein-Coding-Filter (`vfdistiller/filters.py`)
+ │    └── AfNoneTreatmentManager . AF-None-Policy (`vfdistiller/filters.py`)
+ ├── QualityManager .............. VCF-Record-Level-Filter (`vfdistiller/quality.py`)
+ ├── Distiller ................... Pipeline-Orchestrierung (`Variant_Fusion_pro_V17.py`)
  │    ├── AFFetchController ...... Multi-API-AF-Fetching
  │    ├── VCFBuffer .............. Gepufferte DB-Writes
  │    ├── PipelineProgress ....... Fortschritts-Tracking
  │    └── EmitQueue .............. GUI-Update-Queue
- ├── VariantDB ................... SQLite-Persistenz
+ ├── VariantDB ................... SQLite-Persistenz (`vfdistiller/db.py`)
  ├── GeneAnnotator ............... Gen-Symbol-Lookup
  ├── BackofficeCrawler ........... System-Tray + Hintergrund-Steuerung
  └── BackgroundMaintainer ........ Leerlauf-Annotation

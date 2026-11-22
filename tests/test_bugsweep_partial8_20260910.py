@@ -20,14 +20,15 @@ Behobene Bugs:
 4. QualityManager._extract_dp: Bevorzugt nun sample-spezifisches FORMAT-DP
    vor dem Kohorten-Gesamt-DP aus INFO (analoge Priorität wie _get_dp_value).
 """
+import inspect
 import os
-import pathlib
 import sys
 import tempfile
 from unittest.mock import MagicMock
 
-SRC_FILE = pathlib.Path(__file__).resolve().parent.parent / "Variant_Fusion_pro_V17.py"
-SRC = SRC_FILE.read_text(encoding="utf-8")
+from vfdistiller._source_tree import load_project_source
+
+SRC = load_project_source()
 
 # Mocking für Module, falls noch nicht importiert
 _MOCKS = [
@@ -76,9 +77,7 @@ def test_no_maxsplit_9_in_active_parsers():
 
 def test_quality_manager_defines_get_vcf_sample_names():
     """QualityManager muss get_vcf_sample_names definieren."""
-    qm_start = SRC.index("class QualityManager:")
-    qm_end = SRC.index("class QualitySettingsDialog(")
-    qm_block = SRC[qm_start:qm_end]
+    qm_block = inspect.getsource(QualityManager)
     assert "def get_vcf_sample_names(" in qm_block, (
         "QualityManager hat keine Methode get_vcf_sample_names definiert"
     )

@@ -14,12 +14,11 @@ Red-on-revert: set VFD_SRC to the PRE-bugsweep backup copy → the three fix ass
   B1 ResourceManager.get(absolute=False): relative branch skipped existence check +
      re-discovery (asymmetric with absolute=True).
 """
-import os
 import unittest
-from pathlib import Path
 
-_DEFAULT = Path(__file__).resolve().parent.parent / "Variant_Fusion_pro_V17.py"
-SRC = Path(os.environ.get("VFD_SRC", str(_DEFAULT))).read_text(encoding="utf-8")
+from vfdistiller._source_tree import load_project_source
+
+SRC = load_project_source()
 
 
 class C1_GnomadNullGuard(unittest.TestCase):
