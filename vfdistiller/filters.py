@@ -661,7 +661,7 @@ class Flag_and_Options_Manager:
         # ═══════════════════════════════════════════════════════════════════
         # CACHE STALE DAYS
         # ═══════════════════════════════════════════════════════════════════
-        self.stale_days: Optional[int] = None        # AF-Daten Staleness
+        self.stale_days: int = _cfg_int("STALE_DAYS_AF", 365)        # AF-Daten Staleness
         self.stale_days_full: int = _cfg_int("STALE_DAYS_FULL", 30)  # Vollannotation Staleness
 
         # ═══════════════════════════════════════════════════════════════════
