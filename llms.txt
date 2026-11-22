@@ -37,7 +37,7 @@ assessments.
 ## Comparative Matrix vs. Alternatives
 
 VFDistiller maps against 4 domain alternatives (Unix Shell Pipelines, Cloud Variant Portals, IGV Desktop, General Annotation Engines) across 10 technical dimensions governed by `INV-LOCAL-01` to `INV-SLA-10`:
-1. `INV-LOCAL-01`: 100% Local-First & Zero Egress (no mandatory cloud upload)
+1. `INV-LOCAL-01`: Local file processing and SQLite storage; enabled online annotation sends variant query data. Several sources are enabled by default; reference downloads also use the network.
 2. `INV-PRIVACY-02`: Locus & rsID Log Redaction (`redact_for_logfile` protects genomic privacy)
 3. `INV-INSPECT-03`: Interactive Windows GUI & PWA Companion (visual filtering & inspection)
 4. `INV-CONVERT-04`: Multi-Format Ingestion (VCF v4.2, gVCF, 23andMe, FASTA without Unix tools)
